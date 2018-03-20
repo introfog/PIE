@@ -27,8 +27,8 @@ public class Circle{
 	}
 	
 	public void update (float deltaTime){
-		force.x += World.gravity.x; //рассчитали итоговую силу
-		force.y += World.gravity.y;
+		force.x = World.gravity.x; //рассчитали итоговую силу
+		force.y = World.gravity.y;
 		
 		acceleration.x = force.x / weight; //рассчитали итоговое ускорение
 		acceleration.y = force.y / weight;
@@ -38,9 +38,6 @@ public class Circle{
 		
 		centre.x += velocity.x * deltaTime; //обновили позицию
 		centre.y += velocity.y * deltaTime;
-		
-		force.x = 0; //сбросили итоговую силу
-		force.y = 0;
 	}
 	
 	public Vec2f getCentre (){
