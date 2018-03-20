@@ -17,7 +17,7 @@ public class AABB{ //Axis Aligned Bounding Box
 		this.max = new Vec2f (max);
 	}
 	
-	public static boolean isIntersected (AABB a, AABB b){
+	public static boolean isIntersected (AABB a, AABB b){ //TODO изменить название метода
 		if(a.max.x < b.min.x || a.min.x > b.max.x){
 			return false;
 		}

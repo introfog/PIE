@@ -1,5 +1,8 @@
 package com.introfog;
 
+import com.introfog.PIE.*;
+import com.sun.javafx.geom.Vec2f;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -10,15 +13,18 @@ import javax.swing.Timer;
 public class Display extends JPanel implements ActionListener{
 	private boolean isFirstUpdate = true;
 	private float deltaTime;
-	private float x;
 	private long previousTime = 0L;
+	
+	private World world;
 	
 	
 	public Display (){
 		Timer timer = new Timer (0, this);
 		timer.start ();
 		
-		x = 0;
+		world = new World ();
+		Circle circle = new Circle (50f, new Vec2f (100f, 100f));
+		world.addCircle (circle);
 	}
 	
 	public void paint (Graphics g){
@@ -37,9 +43,10 @@ public class Display extends JPanel implements ActionListener{
 		g.fillRect (0,0, this.getWidth (), this.getHeight ());
 		g.setColor (Color.BLACK);
 		
-		g.drawString ("" + (int) (1 / deltaTime), 200, 200);
-		g.drawLine ((int) x, 0, 100, 100);
-		x += deltaTime * 10L;
+		g.drawString ("" + (int) (1 / deltaTime), 0, 10);
+		
+		world.update (deltaTime);
+		world.draw (g);
 	}
 	
 	@Override
