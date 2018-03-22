@@ -23,7 +23,7 @@ public class Display extends JPanel implements ActionListener{
 		timer.start ();
 		
 		world = new World ();
-		Circle circle = new Circle (50f, new Vec2f (100f, 100f));
+		Circle circle = new Circle (50f, new Vector2f (100f, 100f));
 		world.addCircle (circle);
 	}
 	
