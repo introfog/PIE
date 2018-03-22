@@ -23,8 +23,10 @@ public class Display extends JPanel implements ActionListener{
 		timer.start ();
 		
 		world = new World ();
-		Circle circle = new Circle (50f, new Vector2f (100f, 100f));
-		world.addCircle (circle);
+		Circle circle = new Circle (50f, 100f, 100f, 10);
+		AABB rect = new AABB (100, 100, 300, 150, Body.INFINITY_MASS);
+		world.addBody (circle);
+		world.addBody (rect);
 	}
 	
 	public void paint (Graphics g){
