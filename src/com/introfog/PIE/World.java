@@ -14,6 +14,24 @@ public class World{
 	
 	
 	private void step (float deltaTime){ //симуляция физики
+		for (int i = 0; i < bodies.size (); i++){
+			Body a = bodies.get (i);
+			for (int j = i + 1; j < bodies.size (); ++j){
+				Body b = bodies.get (j);
+				
+				if (a.invertMass == 0 && b.invertMass == 0){
+					continue;
+				}
+				
+				Manifold m = new Manifold (a, b);
+				/*m.solve ();
+				
+				if (m.contactCount > 0){
+					contacts.add (m);
+				}*/
+			}
+		}
+		
 		for (Body body : bodies){
 			body.update (deltaTime);
 		}

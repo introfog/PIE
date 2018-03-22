@@ -1,7 +1,6 @@
 package com.introfog;
 
 import com.introfog.PIE.*;
-import com.sun.javafx.geom.Vec2f;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -22,10 +21,11 @@ public class Display extends JPanel implements ActionListener{
 		Timer timer = new Timer (0, this);
 		timer.start ();
 		
+		
 		world = new World ();
-		Circle circle = new Circle (50f, 100f, 100f, 10);
-		AABB rect = new AABB (100, 100, 300, 150, Body.INFINITY_MASS);
-		world.addBody (circle);
+		AABB rect = new AABB (50f, 50f, 100f, 100f, 10);
+		world.addBody (rect);
+		rect = new AABB (25, 400, 300, 450, Body.INFINITY_MASS);
 		world.addBody (rect);
 	}
 	
