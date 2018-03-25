@@ -14,19 +14,17 @@ public class Display extends JPanel implements ActionListener{
 	private float deltaTime;
 	private long previousTime = 0L;
 	
-	private World world;
-	
 	
 	public Display (){
 		Timer timer = new Timer (0, this);
 		timer.start ();
 		
 		
-		world = new World ();
-		AABB rect = new AABB (50f, 50f, 100f, 100f, 10);
-		world.addBody (rect);
-		rect = new AABB (25, 400, 300, 450, Body.INFINITY_MASS);
-		world.addBody (rect);
+		Circle circle;
+		circle = new Circle (50f, 100f, 400f, Body.INFINITY_MASS);
+		World.getInstance ().addBody (circle);
+		circle = new Circle (25f, 90f, 100f, 2f);
+		World.getInstance ().addBody (circle);
 	}
 	
 	public void paint (Graphics g){
@@ -47,8 +45,8 @@ public class Display extends JPanel implements ActionListener{
 		
 		g.drawString ("" + (int) (1 / deltaTime), 0, 10);
 		
-		world.update (deltaTime);
-		world.draw (g);
+		World.getInstance ().update (deltaTime);
+		World.getInstance ().draw (g);
 	}
 	
 	@Override

@@ -11,6 +11,7 @@ public class World{
 	
 	private float accumulator;
 	private ArrayList <Body> bodies;
+	private ArrayList <Manifold> collisions;
 	
 	
 	private void step (float deltaTime){ //симуляция физики
@@ -24,11 +25,11 @@ public class World{
 				}
 				
 				Manifold m = new Manifold (a, b);
-				/*m.solve ();
+				m.solve ();
 				
 				if (m.contactCount > 0){
-					contacts.add (m);
-				}*/
+					collisions.add (m);
+				}
 			}
 		}
 		
@@ -38,8 +39,18 @@ public class World{
 	}
 	
 	
-	public World (){
+	private static class WorldHolder{
+		private final static World instance = new World ();
+	}
+	
+	private World (){
 		bodies = new ArrayList <> ();
+		collisions = new ArrayList <> ();
+	}
+	
+	
+	public static World getInstance (){
+		return WorldHolder.instance;
 	}
 	
 	public void update (float deltaTime){
