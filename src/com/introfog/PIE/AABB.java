@@ -12,6 +12,8 @@ public class AABB extends Body{ //Axis Aligned Bounding Box
 		
 		min = new Vector2f (minX, minY);
 		max = new Vector2f (maxX, maxY);
+		
+		shape = Shape.AABB;
 	}
 	
 	public static boolean isIntersected (AABB a, AABB b){ //TODO изменить название метода

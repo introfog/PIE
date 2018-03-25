@@ -41,8 +41,31 @@ public class Vector2f{
 		y = vector2f.y * multiplier;
 	}
 	
+	public Vector2f sub (Vector2f vector2f){
+		return new Vector2f (this.x - vector2f.x, this.y - vector2f.y);
+	}
 	
-	public static float distanceWithoutSqrt (Vector2f a, Vector2f b){
+	public float lengthSqrt (){
+		return x * x + y * y;
+	}
+	
+	public void divi (float value){
+		x /= value;
+		y /= value;
+	}
+	
+	public void muli (float value){
+		x *= value;
+		y *= value;
+	}
+	
+	public void addi (Vector2f vector2f){
+		x += vector2f.x;
+		y += vector2f.y;
+	}
+	
+	
+	public static float distanceSqrt (Vector2f a, Vector2f b){
 		return (a.x - b.x) * (a.x - b.x) + (a.y - b.y)*(a.y - b.y);
 	}
 }

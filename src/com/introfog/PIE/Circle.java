@@ -11,12 +11,14 @@ public class Circle extends Body{
 		super (mass);
 		this.radius = radius;
 		this.centre = new Vector2f (centreX, centreY);
+		
+		shape = Shape.circle;
 	}
 	
 	public static boolean isIntersected (Circle a, Circle b){ //TODO изменить название метода
 		float sumRadius = a.radius + b.radius;
 		sumRadius *= sumRadius;
-		return sumRadius < Vector2f.distanceWithoutSqrt (a.centre, b.centre);
+		return sumRadius < Vector2f.distanceSqrt (a.centre, b.centre);
 	}
 	
 	@Override

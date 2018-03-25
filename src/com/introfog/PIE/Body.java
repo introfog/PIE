@@ -5,6 +5,11 @@ import java.awt.*;
 public abstract class Body{
 	public static final float INFINITY_MASS = 0f;
 	
+	public enum Shape{
+		circle, AABB
+	}
+	
+	public Shape shape;
 	public float mass;
 	public float invertMass;
 	public Vector2f acceleration;
