@@ -28,7 +28,7 @@ public class AABB extends Body{ //Axis Aligned Bounding Box
 	
 	@Override
 	public void update (float deltaTime){
-		force.set (World.gravity);
+		force.set (World.GRAVITY);
 		acceleration.set (force, invertMass);
 		
 		velocity.x += acceleration.x * deltaTime; //обновили скорость

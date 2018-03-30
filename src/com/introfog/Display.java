@@ -18,13 +18,17 @@ public class Display extends JPanel implements ActionListener{
 	public Display (){
 		Timer timer = new Timer (0, this);
 		timer.start ();
+		addMouseListener (new MouseEvents ());
 		
 		
 		Circle circle;
 		circle = new Circle (50f, 100f, 400f, Body.INFINITY_MASS);
 		World.getInstance ().addBody (circle);
-		circle = new Circle (25f, 90f, 100f, 2f);
+		circle = new Circle (40f, 200f, 400f, Body.INFINITY_MASS);
 		World.getInstance ().addBody (circle);
+		circle = new Circle (40f, 500f, 400f, Body.INFINITY_MASS);
+		World.getInstance ().addBody (circle);
+		circle = new Circle (25f, 150f, 100f, 2f);
 	}
 	
 	public void paint (Graphics g){
