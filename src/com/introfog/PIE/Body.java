@@ -12,6 +12,7 @@ public abstract class Body{
 	public Shape shape;
 	public float mass;
 	public float invertMass;
+	public Vector2f position;
 	public Vector2f acceleration;
 	public Vector2f force;
 	public Vector2f velocity;

@@ -12,6 +12,15 @@ public class Manifold{
 	public Manifold (Body a, Body b){
 		this.a = a;
 		this.b = b;
+		
+		normal = new Vector2f ();
+	}
+	
+	public boolean isCollision (){
+		if (a.shape == Body.Shape.circle && b.shape == Body.Shape.circle){
+			return Circle.isIntersected ((Circle) a, (Circle) b);
+		}
+		return false;
 	}
 	
 	public void solve (){
@@ -19,34 +28,33 @@ public class Manifold{
 			Circle A = (Circle) a;
 			Circle B = (Circle) b;
 			
-			//вектор нормали коллизии
-			Vector2f normal = B.centre.sub (A.centre);
+			normal.x = B.position.x - A.position.x;
+			normal.y = B.position.y - A.position.y;
+			normal.normalize ();
 			
-			float distSqrt = normal.lengthSqrt ();
-			float radius = A.radius + B.radius;
+			// Вычисляем относительную скорость
+			Vector2f rv = B.velocity.sub (A.velocity);
 			
-			//нет контакта
-			if (distSqrt >= radius * radius){
-				contactCount = 0;
+			// Вычисляем относительную скорость относительно направления нормали
+			float velAlongNormal = Vector2f.dotProduct (rv, normal); //TODO calculate normal
+			
+			// Не выполняем вычислений, если скорости разделены
+			if(velAlongNormal > 0){
 				return;
 			}
 			
-			float distance = (float) Math.sqrt (distSqrt);
-			contactCount = 1;
+			//TODO restitution = 0
 			
-			if (distance == 0.0f){
-				penetration = A.radius;
-				this.normal.set (1.0f, 0.0f);
-				contacts[0].set (A.centre);
-			}
-			else{
-				penetration = radius - distance;
-				this.normal.set (normal);
-				this.normal.divi (distance);
-				contacts[0].set (this.normal);
-				contacts[0].muli (A.radius);
-				contacts[0].addi (A.centre);
-			}
+			// Вычисляем скаляр импульса силы
+			float j = -velAlongNormal;
+			j /= A.invertMass + B.invertMass;
+			
+			// Прикладываем импульс силы
+			normal.muli (j);
+			Vector2f impulse = new Vector2f (normal);
+			normal.muli (1/ j); //TODO add mullsi
+			A.velocity.subi (impulse.returnMuli (A.invertMass));
+			B.velocity.addi (impulse.returnMuli (B.invertMass));
 		}
 	}
 }

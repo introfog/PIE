@@ -6,8 +6,7 @@ public class Vector2f{
 	
 	
 	public Vector2f (){
-		x = 0;
-		y = 0;
+		this (0f, 0f);
 	}
 	
 	public Vector2f (float x, float y){
@@ -15,15 +14,13 @@ public class Vector2f{
 		this.y = y;
 	}
 	
+	public Vector2f (Vector2f vector2f){
+		this (vector2f.x, vector2f.y);
+	}
+	
 	@Override
 	public String toString (){
 		return "Vector2f [" + x + "][" + y + "]";
-	}
-	
-	
-	public Vector2f (Vector2f vector2f){
-		this.x = vector2f.x;
-		this.y = vector2f.y;
 	}
 	
 	public void set (float x, float y){
@@ -45,7 +42,9 @@ public class Vector2f{
 		return new Vector2f (this.x - vector2f.x, this.y - vector2f.y);
 	}
 	
-	public float lengthSqrt (){
+	
+	
+	public float lengthWithoutSqrt (){
 		return x * x + y * y;
 	}
 	
@@ -64,8 +63,35 @@ public class Vector2f{
 		y += vector2f.y;
 	}
 	
+	public void subi (Vector2f vector2f){
+		x -= vector2f.x;
+		y -= vector2f.y;
+	}
 	
-	public static float distanceSqrt (Vector2f a, Vector2f b){
-		return (a.x - b.x) * (a.x - b.x) + (a.y - b.y)*(a.y - b.y);
+	public void adds (Vector2f vector2f, float s){
+		x += vector2f.x * s;
+		y += vector2f.y * s;
+	}
+	
+	public void normalize (){
+		float length = (float) Math.sqrt (lengthWithoutSqrt ());
+		x /= length;
+		y /= length;
+	}
+	
+	public Vector2f returnMuli ( float s){
+		return new Vector2f (x * s, y * s);
+	}
+	
+	public static Vector2f mul (Vector2f a, Vector2f b){
+		return new Vector2f (a.x * b.x, a.y * b.y);
+	}
+	
+	public static float distanceWithoutSqrt (Vector2f a, Vector2f b){
+		return (a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y);
+	}
+	
+	public static float dotProduct (Vector2f a, Vector2f b){
+		return a.x * b.x + a.y * b.y;
 	}
 }

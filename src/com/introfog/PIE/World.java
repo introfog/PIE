@@ -4,7 +4,7 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class World{
-	public static Vector2f gravity = new Vector2f (0f, 50f); //9.807f
+	public static Vector2f GRAVITY = new Vector2f (0f, 50f); //9.807f
 	
 	private final float FIXED_DELTA_TIME = 1f / 60f;
 	private final float DEAD_LOOP_BORDER = FIXED_DELTA_TIME * 10f;
@@ -25,17 +25,44 @@ public class World{
 				}
 				
 				Manifold m = new Manifold (a, b);
-				m.solve ();
 				
-				if (m.contactCount > 0){
+				if (m.isCollision ()){
 					collisions.add (m);
 				}
 			}
 		}
 		
-		for (Body body : bodies){
-			body.update (deltaTime);
+		// Integrate forces
+		bodies.forEach ((body) -> integrateForces (body, deltaTime));
+		
+		
+		// Solve collisions
+		collisions.forEach ((collision)->collision.solve ());
+		
+		// Integrate velocities
+		bodies.forEach ((body)->integrateVelocity (body, deltaTime));
+		
+		// Clear all forces
+		bodies.forEach ((body) -> body.force.set (0f, 0f));
+	}
+	
+	private void integrateForces (Body b, float deltaTime){
+		if (b.invertMass == 0.0f){
+			return;
 		}
+		
+		b.velocity.adds (b.force, b.invertMass * deltaTime);
+		b.velocity.adds (GRAVITY, deltaTime);
+	}
+	
+	private void integrateVelocity (Body b, float deltaTime){
+		if (b.invertMass == 0.0f){
+			return;
+		}
+		
+		b.position.adds (b.velocity, deltaTime);
+		
+		integrateForces (b, deltaTime);
 	}
 	
 	
