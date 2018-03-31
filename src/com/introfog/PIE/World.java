@@ -41,6 +41,9 @@ public class World{
 		// Integrate velocities
 		bodies.forEach ((body) -> integrateVelocity (body));
 		
+		// Correct positions
+		collisions.forEach ((collision) -> collision.correctPosition ());
+		
 		// Clear all forces
 		bodies.forEach ((body) -> body.force.set (0f, 0f));
 	}

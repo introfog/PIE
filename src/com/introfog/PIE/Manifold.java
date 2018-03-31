@@ -26,9 +26,10 @@ public class Manifold{
 			Circle A = (Circle) a;
 			Circle B = (Circle) b;
 			
-			normal.x = B.position.x - A.position.x;
-			normal.y = B.position.y - A.position.y;
+			normal = Vector2f.sub (B.position, A.position);
 			normal.normalize ();
+			penetration = A.radius + B.radius - (float) Math.sqrt (Vector2f.distanceWithoutSqrt (B.position, A.position));
+			penetration /= 2;
 			
 			// Вычисляем относительную скорость
 			Vector2f rv = Vector2f.sub (B.velocity, A.velocity);
@@ -52,6 +53,18 @@ public class Manifold{
 			Vector2f impulse = Vector2f.mul (normal, j);
 			A.velocity.sub (Vector2f.mul (impulse, A.invertMass));
 			B.velocity.add (Vector2f.mul (impulse, B.invertMass));
+		}
+	}
+	
+	public void correctPosition (){
+		float percent = 0.2f; // обычно от 20% до 80%
+		if (a.shape == Body.Shape.circle && b.shape == Body.Shape.circle){
+			Circle A = (Circle) a;
+			Circle B = (Circle) b;
+		
+			Vector2f correction = Vector2f.mul (normal, penetration * percent);
+			A.position.sub (Vector2f.mul (correction, A.invertMass));
+			B.position.add (Vector2f.mul (correction, B.invertMass));
 		}
 	}
 }
