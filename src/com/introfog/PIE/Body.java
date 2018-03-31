@@ -13,7 +13,6 @@ public abstract class Body{
 	public float mass;
 	public float invertMass;
 	public Vector2f position;
-	public Vector2f acceleration;
 	public Vector2f force;
 	public Vector2f velocity;
 	
@@ -28,12 +27,9 @@ public abstract class Body{
 			invertMass = 1f / mass;
 		}
 		
-		acceleration = new Vector2f (0f, 0f);
 		force = new Vector2f (0f, 0f);
 		velocity = new Vector2f (0f, 0f);
 	}
-	
-	public abstract void update (float deltaTime);
 	
 	public abstract void draw (Graphics graphics);
 }

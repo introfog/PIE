@@ -29,8 +29,7 @@ public class Vector2f{
 	}
 	
 	public void set (Vector2f vector2f){
-		x = vector2f.x;
-		y = vector2f.y;
+		set (vector2f, 1f);
 	}
 	
 	public void set (Vector2f vector2f, float multiplier){
@@ -38,39 +37,32 @@ public class Vector2f{
 		y = vector2f.y * multiplier;
 	}
 	
-	public Vector2f sub (Vector2f vector2f){
-		return new Vector2f (this.x - vector2f.x, this.y - vector2f.y);
-	}
-	
-	
-	
 	public float lengthWithoutSqrt (){
 		return x * x + y * y;
 	}
 	
-	public void divi (float value){
+	public void div (float value){
 		x /= value;
 		y /= value;
 	}
 	
-	public void muli (float value){
+	public void mul (float value){
 		x *= value;
 		y *= value;
 	}
 	
-	public void addi (Vector2f vector2f){
-		x += vector2f.x;
-		y += vector2f.y;
-	}
-	
-	public void subi (Vector2f vector2f){
+	public void sub (Vector2f vector2f){
 		x -= vector2f.x;
 		y -= vector2f.y;
 	}
 	
-	public void adds (Vector2f vector2f, float s){
+	public void add (Vector2f vector2f, float s){
 		x += vector2f.x * s;
 		y += vector2f.y * s;
+	}
+	
+	public void add (Vector2f vector2f){
+		add (vector2f, 1f);
 	}
 	
 	public void normalize (){
@@ -79,12 +71,12 @@ public class Vector2f{
 		y /= length;
 	}
 	
-	public Vector2f returnMuli ( float s){
-		return new Vector2f (x * s, y * s);
+	public static Vector2f mul (Vector2f a, float s){
+		return new Vector2f (a.x * s, a.y * s);
 	}
 	
-	public static Vector2f mul (Vector2f a, Vector2f b){
-		return new Vector2f (a.x * b.x, a.y * b.y);
+	public static Vector2f sub (Vector2f a, Vector2f b){
+		return new Vector2f (a.x - b.x, a.y - b.y);
 	}
 	
 	public static float distanceWithoutSqrt (Vector2f a, Vector2f b){

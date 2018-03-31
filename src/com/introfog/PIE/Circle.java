@@ -21,20 +21,6 @@ public class Circle extends Body{
 	}
 	
 	@Override
-	public void update (float deltaTime){
-		force.set (World.GRAVITY);
-		acceleration.set (force, invertMass);
-		
-		velocity.x += acceleration.x * deltaTime; //обновили скорость
-		velocity.y += acceleration.y * deltaTime;
-		
-		position.x += velocity.x * deltaTime; //обновили позицию
-		position.y += velocity.y * deltaTime;
-		
-		force.set (0f, 0f);
-	}
-	
-	@Override
 	public void draw (Graphics graphics){
 		graphics.drawOval ((int) (position.x - radius), (int) (position.y - radius), (int) radius * 2, (int) radius * 2);
 	}

@@ -2,9 +2,7 @@ package com.introfog.PIE;
 
 public class Manifold{
 	public float penetration;
-	public int contactCount;
 	public Vector2f normal;
-	public final Vector2f[] contacts = {new Vector2f (), new Vector2f ()};
 	public Body a;
 	public Body b;
 	
@@ -33,10 +31,10 @@ public class Manifold{
 			normal.normalize ();
 			
 			// Вычисляем относительную скорость
-			Vector2f rv = B.velocity.sub (A.velocity);
+			Vector2f rv = Vector2f.sub (B.velocity, A.velocity);
 			
 			// Вычисляем относительную скорость относительно направления нормали
-			float velAlongNormal = Vector2f.dotProduct (rv, normal); //TODO calculate normal
+			float velAlongNormal = Vector2f.dotProduct (rv, normal);
 			
 			// Не выполняем вычислений, если скорости разделены
 			if(velAlongNormal > 0){
@@ -50,11 +48,10 @@ public class Manifold{
 			j /= A.invertMass + B.invertMass;
 			
 			// Прикладываем импульс силы
-			normal.muli (j);
-			Vector2f impulse = new Vector2f (normal);
-			normal.muli (1/ j); //TODO add mullsi
-			A.velocity.subi (impulse.returnMuli (A.invertMass));
-			B.velocity.addi (impulse.returnMuli (B.invertMass));
+			
+			Vector2f impulse = Vector2f.mul (normal, j);
+			A.velocity.sub (Vector2f.mul (impulse, A.invertMass));
+			B.velocity.add (Vector2f.mul (impulse, B.invertMass));
 		}
 	}
 }

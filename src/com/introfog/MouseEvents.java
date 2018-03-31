@@ -1,9 +1,9 @@
-package com.introfog.PIE;
-// Продемонстрировать обработчики событий от мыши
+package com.introfog;
+
+import com.introfog.PIE.*;
 
 import java.awt.event.*;
 import java.applet.*;
-import java.util.Random;
 
 public class MouseEvents extends Applet implements MouseListener, MouseMotionListener{
 	@Override
@@ -15,6 +15,7 @@ public class MouseEvents extends Applet implements MouseListener, MouseMotionLis
 	@Override
 	public void mouseClicked (MouseEvent me){ }
 	
+	@Override
 	public void mouseEntered (MouseEvent me){ }
 	
 	@Override

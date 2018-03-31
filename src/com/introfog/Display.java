@@ -15,12 +15,7 @@ public class Display extends JPanel implements ActionListener{
 	private long previousTime = 0L;
 	
 	
-	public Display (){
-		Timer timer = new Timer (0, this);
-		timer.start ();
-		addMouseListener (new MouseEvents ());
-		
-		
+	private void initializeBodies (){
 		Circle circle;
 		circle = new Circle (50f, 100f, 400f, Body.INFINITY_MASS);
 		World.getInstance ().addBody (circle);
@@ -28,7 +23,15 @@ public class Display extends JPanel implements ActionListener{
 		World.getInstance ().addBody (circle);
 		circle = new Circle (40f, 500f, 400f, Body.INFINITY_MASS);
 		World.getInstance ().addBody (circle);
-		circle = new Circle (25f, 150f, 100f, 2f);
+	}
+	
+	
+	public Display (){
+		Timer timer = new Timer (0, this);
+		timer.start ();
+		addMouseListener (new MouseEvents ());
+		
+		initializeBodies ();
 	}
 	
 	public void paint (Graphics g){
