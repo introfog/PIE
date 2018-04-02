@@ -17,7 +17,60 @@ public class Manifold{
 			
 			normal = Vector2f.sub (B.position, A.position);
 			normal.normalize ();
-			penetration = A.radius + B.radius - (float) Math.sqrt (Vector2f.distanceWithoutSqrt (B.position, A.position));
+			penetration = A.radius + B.radius - (float) Math.sqrt (
+					Vector2f.distanceWithoutSqrt (B.position, A.position));
+		}
+		else if (a.shape == Body.Shape.AABB && b.shape == Body.Shape.AABB){
+			AABB A = (AABB) a;
+			AABB B = (AABB) b;
+			
+			normal = Vector2f.sub (B.centre, A.centre);
+			//position == min
+			//max == max
+			
+			// Вычисление половины ширины вдоль оси x для каждого объекта
+			float aExtentX = A.width / 2f;
+			float bExtentX = B.width / 2f;
+			
+			// Вычисление наложения по оси x
+			float xOverlap = aExtentX + bExtentX - Math.abs (normal.x);
+			
+			// Проверка SAT по оси x
+			if (xOverlap > 0f){
+				// Вычисление половины ширины вдоль оси y для каждого объекта
+				float aExtentY = A.height / 2f;
+				float bExtentY = B.height / 2f;
+				
+				// Вычисление наложения по оси y
+				float yOverlap = aExtentY + bExtentY - Math.abs (normal.y);
+				
+				// Проверка SAT по оси y
+				if (yOverlap > 0f){
+					// Определяем, по какой из осей проникновение наименьшее
+					if (xOverlap < yOverlap){
+						// Указываем в направлении B, зная, что n указывает в направлении от A к B
+						if (normal.x < 0f){
+							normal.set (-1f, 0f);
+						}
+						else{
+							normal.set (1f, 0f);
+						}
+						penetration = xOverlap;
+						return;
+					}
+					else{
+						// Указываем в направлении B, зная, что n указывает в направлении от A к B
+						if (normal.y < 0f){
+							normal.set (0f, -1f);
+						}
+						else{
+							normal.set (0f, 1f);
+						}
+						penetration = yOverlap;
+						return;
+					}
+				}
+			}
 		}
 	}
 	
@@ -32,6 +85,9 @@ public class Manifold{
 	public boolean isCollision (){
 		if (a.shape == Body.Shape.circle && b.shape == Body.Shape.circle){
 			return Circle.isIntersected ((Circle) a, (Circle) b);
+		}
+		else if (a.shape == Body.Shape.AABB && b.shape == Body.Shape.AABB){
+			return AABB.isIntersected ((AABB) a, (AABB) b);
 		}
 		return false;
 	}

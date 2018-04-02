@@ -3,23 +3,28 @@ package com.introfog.PIE;
 import java.awt.*;
 
 public class AABB extends Body{ //Axis Aligned Bounding Box
-	private Vector2f max;
+	public float width;
+	public float height;
+	public Vector2f centre;
 	
 	
-	public AABB (float positionX, float positionY, float maxX, float maxY, float mass){
+	public AABB (float positionX, float positionY, float width, float height, float mass){
 		super (mass);
 		
 		position = new Vector2f (positionX, positionY);
-		max = new Vector2f (maxX, maxY);
+		this.width = width;
+		this.height = height;
+		
+		centre = new Vector2f (positionX + width / 2f, positionY + height / 2f);
 		
 		shape = Shape.AABB;
 	}
 	
 	public static boolean isIntersected (AABB a, AABB b){ //TODO изменить название метода
-		if (a.max.x < b.position.x || a.position.x > b.max.x){
+		if (a.position.x + a.width < b.position.x || a.position.x > b.position.x + b.width){
 			return false;
 		}
-		if (a.max.y < b.position.y || a.position.y > b.max.y){
+		if (a.position.y + a.height < b.position.y || a.position.y > b.position.y + b.height){
 			return false;
 		}
 		return true;
@@ -27,6 +32,7 @@ public class AABB extends Body{ //Axis Aligned Bounding Box
 	
 	@Override
 	public void draw (Graphics graphics){
-		graphics.drawRect ((int) position.x, (int) position.y, (int) (max.x - position.x), (int) (max.y - position.y));
+		centre.set (position.x + width / 2f, position.y + height / 2f);
+		graphics.drawRect ((int) position.x, (int) position.y, (int) width, (int) height);
 	}
 }
