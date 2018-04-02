@@ -17,8 +17,7 @@ public class Manifold{
 			
 			normal = Vector2f.sub (B.position, A.position);
 			normal.normalize ();
-			penetration = A.radius + B.radius - (float) Math.sqrt (
-					Vector2f.distanceWithoutSqrt (B.position, A.position));
+			penetration = A.radius + B.radius - (float) Math.sqrt (Vector2f.distanceWithoutSqrt (B.position, A.position));
 		}
 		else if (a.shape == Body.Shape.AABB && b.shape == Body.Shape.AABB){
 			AABB A = (AABB) a;
@@ -49,23 +48,13 @@ public class Manifold{
 					// Определяем, по какой из осей проникновение наименьшее
 					if (xOverlap < yOverlap){
 						// Указываем в направлении B, зная, что n указывает в направлении от A к B
-						if (normal.x < 0f){
-							normal.set (-1f, 0f);
-						}
-						else{
-							normal.set (1f, 0f);
-						}
+						normal.set (Math.signum (normal.x), 0f);
 						penetration = xOverlap;
 						return;
 					}
 					else{
 						// Указываем в направлении B, зная, что n указывает в направлении от A к B
-						if (normal.y < 0f){
-							normal.set (0f, -1f);
-						}
-						else{
-							normal.set (0f, 1f);
-						}
+						normal.set (0f, Math.signum (normal.y));
 						penetration = yOverlap;
 						return;
 					}
