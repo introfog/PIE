@@ -50,7 +50,8 @@ public class Display extends JPanel implements ActionListener{
 		g.fillRect (0,0, this.getWidth (), this.getHeight ());
 		g.setColor (Color.BLACK);
 		
-		g.drawString ("" + (int) (1 / deltaTime), 0, 10);
+		g.drawString ("FPS: " + (int) (1 / deltaTime), 2, 12);
+		g.drawString ("Bodies: " + World.getInstance ().getAmountBodies (), 2, 24);
 		
 		World.getInstance ().update (deltaTime);
 		World.getInstance ().draw (g);

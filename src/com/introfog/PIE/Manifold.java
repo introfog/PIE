@@ -1,6 +1,8 @@
 package com.introfog.PIE;
 
 public class Manifold{
+	public final float CORRECT_POSITION_PERCENT = 0.8f;
+	
 	public float penetration;
 	public Vector2f normal;
 	public Body a;
@@ -28,8 +30,8 @@ public class Manifold{
 			
 			normal = Vector2f.sub (B.position, A.position);
 			normal.normalize ();
-			penetration = A.radius + B.radius - (float) Math.sqrt (Vector2f.distanceWithoutSqrt (B.position, A.position));
-			penetration /= 2;
+			penetration = A.radius + B.radius - (float) Math.sqrt (
+					Vector2f.distanceWithoutSqrt (B.position, A.position));
 			
 			// Вычисляем относительную скорость
 			Vector2f rv = Vector2f.sub (B.velocity, A.velocity);
@@ -38,14 +40,15 @@ public class Manifold{
 			float velAlongNormal = Vector2f.dotProduct (rv, normal);
 			
 			// Не выполняем вычислений, если скорости разделены
-			if(velAlongNormal > 0){
+			if (velAlongNormal > 0){
 				return;
 			}
 			
-			//TODO restitution = 0
+			// Вычисляем упругость
+			float e = Math.min (A.restitution, B.restitution);
 			
 			// Вычисляем скаляр импульса силы
-			float j = -velAlongNormal;
+			float j = -(1 + e) * velAlongNormal;
 			j /= A.invertMass + B.invertMass;
 			
 			// Прикладываем импульс силы
@@ -57,14 +60,8 @@ public class Manifold{
 	}
 	
 	public void correctPosition (){
-		float percent = 0.2f; // обычно от 20% до 80%
-		if (a.shape == Body.Shape.circle && b.shape == Body.Shape.circle){
-			Circle A = (Circle) a;
-			Circle B = (Circle) b;
-		
-			Vector2f correction = Vector2f.mul (normal, penetration * percent);
-			A.position.sub (Vector2f.mul (correction, A.invertMass));
-			B.position.add (Vector2f.mul (correction, B.invertMass));
-		}
+		Vector2f correction = Vector2f.mul (normal, penetration * CORRECT_POSITION_PERCENT);
+		a.position.sub (Vector2f.mul (correction, a.invertMass));
+		b.position.add (Vector2f.mul (correction, b.invertMass));
 	}
 }

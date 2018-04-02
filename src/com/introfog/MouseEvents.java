@@ -27,7 +27,8 @@ public class MouseEvents extends Applet implements MouseListener, MouseMotionLis
 		float mouseY = me.getY ();
 		
 		Circle circle;
-		circle = new Circle ((float) Math.random () * 20f + 5f, mouseX, mouseY, (float ) Math.random () * 10 + 1);
+		float rand =  (float) Math.random ();
+		circle = new Circle (rand * 20f + 5f, mouseX, mouseY, rand * 15f + 1f);
 		World.getInstance ().addBody (circle);
 	}
 	

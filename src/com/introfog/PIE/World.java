@@ -46,6 +46,7 @@ public class World{
 		
 		// Clear all forces
 		bodies.forEach ((body) -> body.force.set (0f, 0f));
+		collisions.clear ();
 	}
 	
 	private void integrateForces (Body b){
@@ -104,5 +105,9 @@ public class World{
 	
 	public void addBody (Body body){
 		bodies.add (body);
+	}
+	
+	public int getAmountBodies (){
+		return bodies.size ();
 	}
 }
