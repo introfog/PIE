@@ -1,8 +1,8 @@
 package com.introfog.PIE;
 
 public class Manifold{
-	public final float CORRECT_POSITION_PERCENT = 0.8f;
-	public final float BORDER_SLOP = 0.1f;
+	public final float CORRECT_POSITION_PERCENT = 0.5f;
+	public final float BORDER_SLOP = 1f;
 	
 	public float penetration;
 	public Vector2f normal;
@@ -25,6 +25,7 @@ public class Manifold{
 			
 			A.updateCentre ();
 			B.updateCentre ();
+			
 			normal = Vector2f.sub (B.centre, A.centre);
 			//position == min
 			//max == max
@@ -62,6 +63,18 @@ public class Manifold{
 					}
 				}
 			}
+		}
+		else if (a.shape == Body.Shape.AABB && b.shape == Body.Shape.circle){
+			AABB A = (AABB) a;
+			Circle B = (Circle) b;
+			
+			A.updateCentre ();
+			
+			normal = Vector2f.sub (B.position, A.centre);
+			Vector2f closest = new Vector2f (normal);
+			
+			float xExtent = A.width / 2;
+			float yExtent = A.width / 2;
 		}
 	}
 	
