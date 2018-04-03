@@ -20,6 +20,17 @@ public class AABB extends Body{ //Axis Aligned Bounding Box
 		shape = Shape.AABB;
 	}
 	
+	public void updateCentre (){
+		centre.set (position.x + width / 2f, position.y + height / 2f);
+	}
+	
+	@Override
+	public void draw (Graphics graphics){
+		centre.set (position.x + width / 2f, position.y + height / 2f);
+		graphics.drawRect ((int) position.x, (int) position.y, (int) width, (int) height);
+	}
+	
+	
 	public static boolean isIntersected (AABB a, AABB b){ //TODO изменить название метода
 		if (a.position.x + a.width < b.position.x || a.position.x > b.position.x + b.width){
 			return false;
@@ -28,11 +39,5 @@ public class AABB extends Body{ //Axis Aligned Bounding Box
 			return false;
 		}
 		return true;
-	}
-	
-	@Override
-	public void draw (Graphics graphics){
-		centre.set (position.x + width / 2f, position.y + height / 2f);
-		graphics.drawRect ((int) position.x, (int) position.y, (int) width, (int) height);
 	}
 }

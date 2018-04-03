@@ -2,7 +2,7 @@ package com.introfog.PIE;
 
 public class Manifold{
 	public final float CORRECT_POSITION_PERCENT = 0.8f;
-	public final float BORDER_SLOP = 0.02f;
+	public final float BORDER_SLOP = 0.1f;
 	
 	public float penetration;
 	public Vector2f normal;
@@ -23,6 +23,8 @@ public class Manifold{
 			AABB A = (AABB) a;
 			AABB B = (AABB) b;
 			
+			A.updateCentre ();
+			B.updateCentre ();
 			normal = Vector2f.sub (B.centre, A.centre);
 			//position == min
 			//max == max
@@ -113,7 +115,7 @@ public class Manifold{
 			return;
 		}
 		
-		Vector2f correction = Vector2f.mul (normal, penetration * CORRECT_POSITION_PERCENT);
+		Vector2f correction = Vector2f.mul (normal, penetration * CORRECT_POSITION_PERCENT / (a.invertMass + b.invertMass));
 		a.position.sub (Vector2f.mul (correction, a.invertMass));
 		b.position.add (Vector2f.mul (correction, b.invertMass));
 	}

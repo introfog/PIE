@@ -9,6 +9,7 @@ public class World{
 	private final float FIXED_DELTA_TIME = 1f / 60f;
 	private final float DEAD_LOOP_BORDER = FIXED_DELTA_TIME * 10f;
 	
+	private int iterations = 1;
 	private float accumulator;
 	private LinkedList <Body> bodies;
 	private LinkedList <Manifold> collisions;
@@ -36,7 +37,9 @@ public class World{
 		bodies.forEach ((body) -> integrateForces (body));
 		
 		// Solve collisions
-		collisions.forEach ((collision) -> collision.solve ());
+		for (int i = 0; i < iterations; i++){
+			collisions.forEach ((collision) -> collision.solve ());
+		}
 		
 		// Integrate velocities
 		bodies.forEach ((body) -> integrateVelocity (body));
@@ -109,5 +112,9 @@ public class World{
 	
 	public int getAmountBodies (){
 		return bodies.size ();
+	}
+	
+	public void setIterations (int iterations){
+		this.iterations = iterations;
 	}
 }
