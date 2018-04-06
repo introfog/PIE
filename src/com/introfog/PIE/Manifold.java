@@ -94,7 +94,7 @@ public class Manifold{
 			if (tmpNormal.equals (closest)){
 				inside = true;
 				
-				if (Math.abs (tmpNormal.x) > Math.abs (tmpNormal.y)){
+				if (Math.abs (tmpNormal.x) < Math.abs (tmpNormal.y)){
 					closest.x = Math.signum (closest.x) * xExtent;
 				}
 				else{
@@ -118,13 +118,9 @@ public class Manifold{
 			
 			distance = (float) Math.sqrt (distance);
 			
-			/*if (inside){
-				normal.x = -tmpNormal.x;
-				normal.y = -tmpNormal.y;
+			if (inside){
+				normal.mul (-1f);
 			}
-			else{
-				normal.set (tmpNormal);
-			}*/
 			penetration = B.radius - distance;
 			normal.normalize ();
 		}
@@ -173,13 +169,10 @@ public class Manifold{
 			distance = (float) Math.sqrt (distance);
 			
 			if (inside){
-				normal.x = -tmpNormal.x;
-				normal.y = -tmpNormal.y;
-			}
-			else{
-				normal.set (tmpNormal);
+				normal.mul (-1f);
 			}
 			penetration = B.radius - distance;
+			normal.mul (-1f);
 			normal.normalize ();
 		}
 	}

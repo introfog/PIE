@@ -9,6 +9,7 @@ public class Vector2f{
 		this (0f, 0f);
 	}
 	
+	
 	public Vector2f (float x, float y){
 		this.x = x;
 		this.y = y;
@@ -16,6 +17,15 @@ public class Vector2f{
 	
 	public Vector2f (Vector2f vector2f){
 		this (vector2f.x, vector2f.y);
+	}
+	
+	@Override
+	public boolean equals (Object obj){
+		if (obj instanceof Vector2f){
+			Vector2f vec2f = (Vector2f) obj;
+			return (vec2f.x == x) && (vec2f.y == y);
+		}
+		return false;
 	}
 	
 	@Override
