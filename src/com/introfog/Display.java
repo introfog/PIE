@@ -17,12 +17,12 @@ public class Display extends JPanel implements ActionListener{
 	
 	private void initializeBodies (){
 		Circle circle;
-		circle = new Circle (50f, 100f, 400f, Body.INFINITY_MASS);
-		World.getInstance ().addBody (circle);
-		circle = new Circle (40f, 200f, 400f, Body.INFINITY_MASS);
+		/*circle = new Circle (50f, 100f, 400f, Body.INFINITY_MASS);
+		World.getInstance ().addBody (circle);*/
+		circle = new Circle (40f, 260f, 350f, Body.INFINITY_MASS);
 		World.getInstance ().addBody (circle);
 		
-		circle = new Circle (40f, 660f, 320f, Body.INFINITY_MASS);
+	/*	circle = new Circle (40f, 660f, 320f, Body.INFINITY_MASS);
 		World.getInstance ().addBody (circle);
 		circle = new Circle (40f, 660f, 400f, Body.INFINITY_MASS);
 		World.getInstance ().addBody (circle);
@@ -33,10 +33,10 @@ public class Display extends JPanel implements ActionListener{
 		circle = new Circle (40f, 420f, 400f, Body.INFINITY_MASS);
 		World.getInstance ().addBody (circle);
 		circle = new Circle (40f, 420f, 320f, Body.INFINITY_MASS);
-		World.getInstance ().addBody (circle);
+		World.getInstance ().addBody (circle);*/
 		
 		AABB aabb;
-		aabb = new AABB (50f, 350f, 300f, 50f, Body.INFINITY_MASS);
+		aabb = new AABB (200f, 450f, 300f, 20f, Body.INFINITY_MASS);
 		World.getInstance ().addBody (aabb);
 		
 		World.getInstance ().setIterations (10);

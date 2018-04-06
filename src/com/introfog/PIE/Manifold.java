@@ -10,6 +10,16 @@ public class Manifold{
 	public Body b;
 	
 	
+	private float clamp (float min, float max, float value){
+		if (value < min){
+			return min;
+		}
+		else if (value > max){
+			return max;
+		}
+		return value;
+	}
+	
 	private void initializeCollision (){
 		if (a.shape == Body.Shape.circle && b.shape == Body.Shape.circle){
 			Circle A = (Circle) a;
@@ -70,11 +80,107 @@ public class Manifold{
 			
 			A.updateCentre ();
 			
-			normal = Vector2f.sub (B.position, A.centre);
-			Vector2f closest = new Vector2f (normal);
+			Vector2f tmpNormal = Vector2f.sub (B.position, A.centre);
+			Vector2f closest = new Vector2f (tmpNormal);  //TODO don't create new object!
 			
 			float xExtent = A.width / 2;
-			float yExtent = A.width / 2;
+			float yExtent = A.height / 2;
+			
+			closest.x = clamp (-xExtent, xExtent, closest.x);
+			closest.y = clamp (-yExtent, yExtent, closest.y);
+			
+			boolean inside = false;
+			
+			if (tmpNormal.equals (closest)){
+				inside = true;
+				
+				if (Math.abs (tmpNormal.x) > Math.abs (tmpNormal.y)){
+					closest.x = Math.signum (closest.x) * xExtent;
+				}
+				else{
+					closest.y = Math.signum (closest.y) * yExtent;
+				}
+			}
+			
+			normal = Vector2f.sub (tmpNormal, closest);
+			float distance = normal.lengthWithoutSqrt ();
+			
+			if (distance > B.radius * B.radius && !inside){
+				penetration = 0f;
+				if (B.velocity.x > A.velocity.x){
+					normal.set (1f, 0f);
+				}
+				else{
+					normal.set (-1f, 0f);
+				}
+				return;
+			}
+			
+			distance = (float) Math.sqrt (distance);
+			
+			/*if (inside){
+				normal.x = -tmpNormal.x;
+				normal.y = -tmpNormal.y;
+			}
+			else{
+				normal.set (tmpNormal);
+			}*/
+			penetration = B.radius - distance;
+			normal.normalize ();
+		}
+		else if (a.shape == Body.Shape.circle && b.shape == Body.Shape.AABB){ //TODO create method
+			AABB A = (AABB) b;
+			Circle B = (Circle) a;
+			
+			A.updateCentre ();
+			
+			Vector2f tmpNormal = Vector2f.sub (B.position, A.centre);
+			Vector2f closest = new Vector2f (tmpNormal);  //TODO don't create new object!
+			
+			float xExtent = A.width / 2;
+			float yExtent = A.height / 2;
+			
+			closest.x = clamp (-xExtent, xExtent, closest.x);
+			closest.y = clamp (-yExtent, yExtent, closest.y);
+			
+			boolean inside = false;
+			
+			if (tmpNormal.equals (closest)){
+				inside = true;
+				
+				if (Math.abs (tmpNormal.x) > Math.abs (tmpNormal.y)){
+					closest.x = Math.signum (closest.x) * xExtent;
+				}
+				else{
+					closest.y = Math.signum (closest.y) * yExtent;
+				}
+			}
+			
+			normal = Vector2f.sub (tmpNormal, closest);
+			float distance = normal.lengthWithoutSqrt ();
+			
+			if (distance > B.radius * B.radius && !inside){
+				penetration = 0f;
+				if (B.velocity.x > A.velocity.x){
+					normal.set (1f, 0f);
+				}
+				else{
+					normal.set (-1f, 0f);
+				}
+				return;
+			}
+			
+			distance = (float) Math.sqrt (distance);
+			
+			if (inside){
+				normal.x = -tmpNormal.x;
+				normal.y = -tmpNormal.y;
+			}
+			else{
+				normal.set (tmpNormal);
+			}
+			penetration = B.radius - distance;
+			normal.normalize ();
 		}
 	}
 	
@@ -92,6 +198,22 @@ public class Manifold{
 		}
 		else if (a.shape == Body.Shape.AABB && b.shape == Body.Shape.AABB){
 			return AABB.isIntersected ((AABB) a, (AABB) b);
+		}
+		else if (a.shape == Body.Shape.AABB && b.shape == Body.Shape.circle){
+			AABB A = (AABB) a;
+			Circle B = (Circle) b;
+			
+			AABB aabbB = new AABB (B.position.x - B.radius, B.position.y - B.radius, 2f * B.radius, 2f * B.radius, Body.INFINITY_MASS);
+			
+			return AABB.isIntersected (A, aabbB);
+		}
+		else if (a.shape == Body.Shape.circle && b.shape == Body.Shape.AABB){
+			AABB A = (AABB) b;
+			Circle B = (Circle) a;
+			
+			AABB aabbB = new AABB (B.position.x - B.radius, B.position.y - B.radius, 2f * B.radius, 2f * B.radius, Body.INFINITY_MASS);
+			
+			return AABB.isIntersected (A, aabbB);
 		}
 		return false;
 	}
