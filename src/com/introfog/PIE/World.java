@@ -36,6 +36,9 @@ public class World{
 		// Integrate forces
 		bodies.forEach ((body) -> integrateForces (body));
 		
+		//Initialize collisions
+		collisions.forEach ((collision) -> collision.initializeCollision ());
+		
 		// Solve collisions
 		for (int i = 0; i < iterations; i++){
 			collisions.forEach ((collision) -> collision.solve ());

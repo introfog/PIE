@@ -20,13 +20,20 @@ public class Manifold{
 		return value;
 	}
 	
-	private void initializeCollision (){
+	
+	public Manifold (Body a, Body b){
+		this.a = a;
+		this.b = b;
+		
+		normal = new Vector2f ();
+	}
+	
+	public void initializeCollision (){
 		if (a.shape == Body.Shape.circle && b.shape == Body.Shape.circle){
 			Circle A = (Circle) a;
 			Circle B = (Circle) b;
 			
 			normal = Vector2f.sub (B.position, A.position);
-			normal.normalize ();
 			penetration = A.radius + B.radius - (float) Math.sqrt (Vector2f.distanceWithoutSqrt (B.position, A.position));
 		}
 		else if (a.shape == Body.Shape.AABB && b.shape == Body.Shape.AABB){
@@ -94,7 +101,7 @@ public class Manifold{
 			if (tmpNormal.equals (closest)){
 				inside = true;
 				
-				if (Math.abs (tmpNormal.x) < Math.abs (tmpNormal.y)){
+				if (Math.abs (tmpNormal.x) > Math.abs (tmpNormal.y)){
 					closest.x = Math.signum (closest.x) * xExtent;
 				}
 				else{
@@ -103,6 +110,14 @@ public class Manifold{
 			}
 			
 			normal = Vector2f.sub (tmpNormal, closest);
+			if (normal.x == 0 && normal.y == 0){
+				if (Math.abs (closest.x) == xExtent){
+					normal.set (-Math.signum (closest.x) * B.radius, 0f);
+				}
+				else{
+					normal.set (0f, -Math.signum (closest.y) * B.radius);
+				}
+			}
 			float distance = normal.lengthWithoutSqrt ();
 			
 			if (distance > B.radius * B.radius && !inside){
@@ -118,11 +133,16 @@ public class Manifold{
 			
 			distance = (float) Math.sqrt (distance);
 			
+			penetration = B.radius - distance;
 			if (inside){
 				normal.mul (-1f);
+				if (normal.x != 0){
+					penetration = Math.abs (normal.x);
+				}
+				else{
+					penetration = Math.abs (normal.y);
+				}
 			}
-			penetration = B.radius - distance;
-			normal.normalize ();
 		}
 		else if (a.shape == Body.Shape.circle && b.shape == Body.Shape.AABB){ //TODO create method
 			AABB A = (AABB) b;
@@ -168,21 +188,17 @@ public class Manifold{
 			
 			distance = (float) Math.sqrt (distance);
 			
+			penetration = B.radius - distance;
 			if (inside){
 				normal.mul (-1f);
+				if (normal.x != 0){
+					penetration = Math.abs (normal.x);
+				}
+				else{
+					penetration = Math.abs (normal.y);
+				}
 			}
-			penetration = B.radius - distance;
-			normal.mul (-1f);
-			normal.normalize ();
 		}
-	}
-	
-	
-	public Manifold (Body a, Body b){
-		this.a = a;
-		this.b = b;
-		
-		normal = new Vector2f ();
 	}
 	
 	public boolean isCollision (){
@@ -212,7 +228,7 @@ public class Manifold{
 	}
 	
 	public void solve (){
-		initializeCollision ();
+		normal.normalize ();
 		
 		// Вычисляем относительную скорость
 		Vector2f rv = Vector2f.sub (b.velocity, a.velocity);

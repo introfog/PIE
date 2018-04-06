@@ -22,6 +22,7 @@ public class Circle extends Body{
 	
 	@Override
 	public void draw (Graphics graphics){
+		graphics.drawOval ((int) position.x, (int) position.y, 1, 1);
 		graphics.drawOval ((int) (position.x - radius), (int) (position.y - radius), (int) radius * 2, (int) radius * 2);
 	}
 }
