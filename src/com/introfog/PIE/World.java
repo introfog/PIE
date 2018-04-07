@@ -6,7 +6,7 @@ import java.util.*;
 public class World{
 	public static final Vector2f GRAVITY = new Vector2f (0f, 50f); //9.807f
 	
-	private final float FIXED_DELTA_TIME = 1f / 60f;
+	private final float FIXED_DELTA_TIME = 1f / 10f;
 	private final float DEAD_LOOP_BORDER = FIXED_DELTA_TIME * 10f;
 	
 	private int iterations = 1;
