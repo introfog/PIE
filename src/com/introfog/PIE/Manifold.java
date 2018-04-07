@@ -69,7 +69,7 @@ public class Manifold{
 		}
 	}
 	
-	private void AABBvsCircle (AABB A, Circle B){
+	private void AABBvsCircle (AABB A, Circle B, boolean revertObjects){
 		A.updateCentre ();
 		
 		Vector2f tmpNormal = Vector2f.sub (B.position, A.centre);
@@ -88,9 +88,15 @@ public class Manifold{
 			
 			if (Math.abs (tmpNormal.x) > Math.abs (tmpNormal.y)){
 				closest.x = Math.signum (closest.x) * xExtent;
+				if (closest.x == 0f){
+					closest.x = xExtent;
+				}
 			}
 			else{
 				closest.y = Math.signum (closest.y) * yExtent;
+				if (closest.y == 0f){
+					closest.y = yExtent;
+				}
 			}
 		}
 		
@@ -121,12 +127,19 @@ public class Manifold{
 		penetration = B.radius - distance; //penetration = -5!!!
 		if (inside){
 			normal.mul (-1f);
+			if (penetration <= 0){
+				penetration = distance;
+			}
 			/*if (normal.x != 0){
 				penetration = Math.abs (normal.x);
 			}
 			else{
 				penetration = Math.abs (normal.y);
 			}*/
+		}
+		
+		if (revertObjects){
+			normal.mul (-1f);
 		}
 	}
 	
@@ -157,13 +170,13 @@ public class Manifold{
 			if (a.shape == Body.Shape.AABB && b.shape == Body.Shape.circle){
 				A = (AABB) a;
 				B = (Circle) b;
+				AABBvsCircle (A, B, false);
 			}
 			else{
 				A = (AABB) b;
 				B = (Circle) a;
+				AABBvsCircle (A, B, true);
 			}
-			
-			AABBvsCircle (A, B);
 		}
 	}
 	
