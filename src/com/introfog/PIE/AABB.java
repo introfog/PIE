@@ -10,14 +10,13 @@ public class AABB extends Body{ //Axis Aligned Bounding Box
 	
 	public AABB (float positionX, float positionY, float width, float height, float mass){
 		super (mass);
+		shape = Shape.AABB;
 		
 		position = new Vector2f (positionX, positionY);
 		this.width = width;
 		this.height = height;
 		
 		centre = new Vector2f (positionX + width / 2f, positionY + height / 2f);
-		
-		shape = Shape.AABB;
 	}
 	
 	public void updateCentre (){
@@ -31,11 +30,21 @@ public class AABB extends Body{ //Axis Aligned Bounding Box
 	}
 	
 	
-	public static boolean isIntersected (AABB a, AABB b){ //TODO изменить название метода
+	public static boolean isIntersected (AABB a, AABB b){
 		if (a.position.x + a.width < b.position.x || a.position.x > b.position.x + b.width){
 			return false;
 		}
 		if (a.position.y + a.height < b.position.y || a.position.y > b.position.y + b.height){
+			return false;
+		}
+		return true;
+	}
+	
+	public static boolean isIntersected (AABB a, Circle b){
+		if (a.position.x + a.width < b.position.x - b.radius || a.position.x > b.position.x + b.radius){
+			return false;
+		}
+		if (a.position.y + a.height < b.position.y - b.radius || a.position.y > b.position.y + b.radius){
 			return false;
 		}
 		return true;

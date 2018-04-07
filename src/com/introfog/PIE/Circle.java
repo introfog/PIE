@@ -14,7 +14,7 @@ public class Circle extends Body{
 		shape = Shape.circle;
 	}
 	
-	public static boolean isIntersected (Circle a, Circle b){ //TODO изменить название метода
+	public static boolean isIntersected (Circle a, Circle b){
 		float sumRadius = a.radius + b.radius;
 		sumRadius *= sumRadius;
 		return sumRadius > Vector2f.distanceWithoutSqrt (a.position, b.position);

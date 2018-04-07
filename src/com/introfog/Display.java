@@ -17,23 +17,8 @@ public class Display extends JPanel implements ActionListener{
 	
 	private void initializeBodies (){
 		Circle circle;
-		/*circle = new Circle (50f, 100f, 400f, Body.INFINITY_MASS);
-		World.getInstance ().addBody (circle);*/
-		circle = new Circle (40f, 260f, 350f, Body.INFINITY_MASS);
+		circle = new Circle (40f, 240f, 350f, Body.INFINITY_MASS);
 		World.getInstance ().addBody (circle);
-		
-	/*	circle = new Circle (40f, 660f, 320f, Body.INFINITY_MASS);
-		World.getInstance ().addBody (circle);
-		circle = new Circle (40f, 660f, 400f, Body.INFINITY_MASS);
-		World.getInstance ().addBody (circle);
-		circle = new Circle (40f, 580f, 400f, Body.INFINITY_MASS);
-		World.getInstance ().addBody (circle);
-		circle = new Circle (40f, 500f, 400f, Body.INFINITY_MASS);
-		World.getInstance ().addBody (circle);
-		circle = new Circle (40f, 420f, 400f, Body.INFINITY_MASS);
-		World.getInstance ().addBody (circle);
-		circle = new Circle (40f, 420f, 320f, Body.INFINITY_MASS);
-		World.getInstance ().addBody (circle);*/
 		
 		AABB aabb;
 		aabb = new AABB (200f, 450f, 300f, 20f, Body.INFINITY_MASS);
@@ -69,6 +54,7 @@ public class Display extends JPanel implements ActionListener{
 		
 		g.drawString ("FPS: " + (int) (1 / deltaTime), 2, 12);
 		g.drawString ("Bodies: " + World.getInstance ().getAmountBodies (), 2, 24);
+		g.drawString ("Version: 0.1.0 without rotation & friction", 2, 36);
 		
 		World.getInstance ().update (deltaTime);
 		World.getInstance ().draw (g);

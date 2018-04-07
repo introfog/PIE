@@ -1,13 +1,17 @@
 package com.introfog.PIE;
 
-public class Manifold{
-	public final float CORRECT_POSITION_PERCENT = 0.5f;
-	public final float BORDER_SLOP = 1f;
+public class Manifold{ //TODO существует баг, када в статическом объекте в центре появлется другой объект находящийся целиком
+	private final float CORRECT_POSITION_PERCENT = 0.5f;
+	private final float BORDER_SLOP = 1f;
 	
-	public float penetration;
-	public Vector2f normal;
-	public Body a;
-	public Body b;
+	private float penetration;
+	private Vector2f normal;
+	private AABB aabbA;
+	private AABB aabbB;
+	private Circle circleA;
+	private Circle circleB;
+	private Body a;
+	private Body b;
 	
 	
 	private float clamp (float min, float max, float value){
@@ -22,8 +26,7 @@ public class Manifold{
 	
 	private void circleVsCircle (Circle A, Circle B){
 		normal = Vector2f.sub (B.position, A.position);
-		penetration = A.radius + B.radius - (float) Math.sqrt (
-				Vector2f.distanceWithoutSqrt (B.position, A.position));
+		penetration = A.radius + B.radius - (float) Math.sqrt (Vector2f.distanceWithoutSqrt (B.position, A.position));
 	}
 	
 	private void AABBvsAABB (AABB A, AABB B){
@@ -31,8 +34,6 @@ public class Manifold{
 		B.updateCentre ();
 		
 		normal = Vector2f.sub (B.centre, A.centre);
-		//position == min
-		//max == max
 		
 		// Вычисление половины ширины вдоль оси x для каждого объекта
 		float aExtentX = A.width / 2f;
@@ -57,29 +58,27 @@ public class Manifold{
 					// Указываем в направлении B, зная, что n указывает в направлении от A к B
 					normal.set (Math.signum (normal.x), 0f);
 					penetration = xOverlap;
-					return;
 				}
 				else{
 					// Указываем в направлении B, зная, что n указывает в направлении от A к B
 					normal.set (0f, Math.signum (normal.y));
 					penetration = yOverlap;
-					return;
 				}
 			}
 		}
 	}
 	
-	private void AABBvsCircle (AABB A, Circle B, boolean revertObjects){
+	private void AABBvsCircle (AABB A, Circle B, boolean areRevertObjects){
 		A.updateCentre ();
 		
 		Vector2f tmpNormal = Vector2f.sub (B.position, A.centre);
-		Vector2f closest = new Vector2f (tmpNormal);  //TODO don't create new object!
+		Vector2f closest = new Vector2f ();
 		
 		float xExtent = A.width / 2;
 		float yExtent = A.height / 2;
 		
-		closest.x = clamp (-xExtent, xExtent, closest.x);
-		closest.y = clamp (-yExtent, yExtent, closest.y);
+		closest.x = clamp (-xExtent, xExtent, tmpNormal.x);
+		closest.y = clamp (-yExtent, yExtent, tmpNormal.y);
 		
 		boolean inside = false;
 		
@@ -101,14 +100,6 @@ public class Manifold{
 		}
 		
 		normal = Vector2f.sub (tmpNormal, closest);
-		if (normal.x == 0 && normal.y == 0){
-			if (Math.abs (closest.x) == xExtent){
-				normal.set (-Math.signum (closest.x) * B.radius, 0f);
-			}
-			else{
-				normal.set (0f, -Math.signum (closest.y) * B.radius);
-			}
-		}
 		float distance = normal.lengthWithoutSqrt ();
 		
 		if (distance > B.radius * B.radius && !inside){
@@ -130,15 +121,9 @@ public class Manifold{
 			if (penetration <= 0){
 				penetration = distance;
 			}
-			/*if (normal.x != 0){
-				penetration = Math.abs (normal.x);
-			}
-			else{
-				penetration = Math.abs (normal.y);
-			}*/
 		}
 		
-		if (revertObjects){
+		if (areRevertObjects){
 			normal.mul (-1f);
 		}
 	}
@@ -153,57 +138,40 @@ public class Manifold{
 	
 	public void initializeCollision (){
 		if (a.shape == Body.Shape.circle && b.shape == Body.Shape.circle){
-			Circle A = (Circle) a;
-			Circle B = (Circle) b;
-			
-			circleVsCircle (A, B);
+			circleVsCircle (circleA, circleB);
 		}
 		else if (a.shape == Body.Shape.AABB && b.shape == Body.Shape.AABB){
-			AABB A = (AABB) a;
-			AABB B = (AABB) b;
-			
-			AABBvsAABB (A, B);
+			AABBvsAABB (aabbA, aabbB);
+		}
+		else if (a.shape == Body.Shape.AABB && b.shape == Body.Shape.circle){
+			AABBvsCircle (aabbA, circleB, false);
 		}
 		else{
-			AABB A;
-			Circle B;
-			if (a.shape == Body.Shape.AABB && b.shape == Body.Shape.circle){
-				A = (AABB) a;
-				B = (Circle) b;
-				AABBvsCircle (A, B, false);
-			}
-			else{
-				A = (AABB) b;
-				B = (Circle) a;
-				AABBvsCircle (A, B, true);
-			}
+			AABBvsCircle (aabbB, circleA, true);
 		}
+		
 	}
 	
 	public boolean isCollision (){
 		if (a.shape == Body.Shape.circle && b.shape == Body.Shape.circle){
-			return Circle.isIntersected ((Circle) a, (Circle) b);
+			circleA = (Circle) a;
+			circleB = (Circle) b;
+			return Circle.isIntersected (circleA, circleB);
 		}
 		else if (a.shape == Body.Shape.AABB && b.shape == Body.Shape.AABB){
-			return AABB.isIntersected ((AABB) a, (AABB) b);
+			aabbA = (AABB) a;
+			aabbB = (AABB) b;
+			return AABB.isIntersected (aabbA, aabbB);
 		}
 		else if (a.shape == Body.Shape.AABB && b.shape == Body.Shape.circle){
-			AABB A = (AABB) a;
-			Circle B = (Circle) b;
-			
-			AABB aabbB = new AABB (B.position.x - B.radius, B.position.y - B.radius, 2f * B.radius, 2f * B.radius,
-								   Body.INFINITY_MASS);
-			
-			return AABB.isIntersected (A, aabbB);
+			aabbA = (AABB) a;
+			circleB = (Circle) b;
+			return AABB.isIntersected (aabbA, circleB);
 		}
 		else if (a.shape == Body.Shape.circle && b.shape == Body.Shape.AABB){
-			AABB A = (AABB) b;
-			Circle B = (Circle) a;
-			
-			AABB aabbB = new AABB (B.position.x - B.radius, B.position.y - B.radius, 2f * B.radius, 2f * B.radius,
-								   Body.INFINITY_MASS);
-			
-			return AABB.isIntersected (A, aabbB);
+			circleA = (Circle) a;
+			aabbB = (AABB) b;
+			return AABB.isIntersected (aabbB, circleA);
 		}
 		return false;
 	}
