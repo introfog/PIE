@@ -77,6 +77,9 @@ public class Vector2f{
 	
 	public void normalize (){
 		float length = (float) Math.sqrt (lengthWithoutSqrt ());
+		if (length == 0f){
+			return;
+		}
 		x /= length;
 		y /= length;
 	}

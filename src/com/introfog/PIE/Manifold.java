@@ -1,6 +1,6 @@
 package com.introfog.PIE;
 
-public class Manifold{ //TODO существует баг, када в статическом объекте в центре появлется другой объект находящийся целиком
+public class Manifold{
 	private final float CORRECT_POSITION_PERCENT = 0.5f;
 	private final float BORDER_SLOP = 1f;
 	
@@ -56,12 +56,12 @@ public class Manifold{ //TODO существует баг, када в стат�
 				// Определяем, по какой из осей проникновение наименьшее
 				if (xOverlap < yOverlap){
 					// Указываем в направлении B, зная, что n указывает в направлении от A к B
-					normal.set (Math.signum (normal.x), 0f);
+					normal.set (MathPIE.signum (normal.x), 0f);
 					penetration = xOverlap;
 				}
 				else{
 					// Указываем в направлении B, зная, что n указывает в направлении от A к B
-					normal.set (0f, Math.signum (normal.y));
+					normal.set (0f, MathPIE.signum (normal.y));
 					penetration = yOverlap;
 				}
 			}
@@ -86,16 +86,10 @@ public class Manifold{ //TODO существует баг, када в стат�
 			inside = true;
 			
 			if (Math.abs (tmpNormal.x) > Math.abs (tmpNormal.y)){
-				closest.x = Math.signum (closest.x) * xExtent;
-				if (closest.x == 0f){
-					closest.x = xExtent;
-				}
+				closest.x = MathPIE.signum (closest.x) * xExtent;
 			}
 			else{
-				closest.y = Math.signum (closest.y) * yExtent;
-				if (closest.y == 0f){
-					closest.y = yExtent;
-				}
+				closest.y = MathPIE.signum (closest.y) * yExtent;
 			}
 		}
 		
