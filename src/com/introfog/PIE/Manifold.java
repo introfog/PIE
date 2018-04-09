@@ -1,9 +1,6 @@
 package com.introfog.PIE;
 
 public class Manifold{
-	private final float CORRECT_POSITION_PERCENT = 0.5f;
-	private final float BORDER_SLOP = 1f;
-	
 	private float penetration;
 	private Vector2f normal;
 	private AABB aabbA;
@@ -109,7 +106,7 @@ public class Manifold{
 		
 		distance = (float) Math.sqrt (distance);
 		
-		penetration = B.radius - distance; //penetration = -5!!!
+		penetration = B.radius - distance;
 		if (inside){
 			normal.mul (-1f);
 			if (penetration <= 0){
@@ -198,12 +195,11 @@ public class Manifold{
 	}
 	
 	public void correctPosition (){
-		if (penetration < BORDER_SLOP){
+		if (penetration < MathPIE.MIN_BORDER_SLOP){
 			return;
 		}
 		
-		Vector2f correction = Vector2f.mul (normal,
-											penetration * CORRECT_POSITION_PERCENT / (a.invertMass + b.invertMass));
+		Vector2f correction = Vector2f.mul (normal,penetration * MathPIE.CORRECT_POSITION_PERCENT / (a.invertMass + b.invertMass));
 		a.position.sub (Vector2f.mul (correction, a.invertMass));
 		b.position.add (Vector2f.mul (correction, b.invertMass));
 	}

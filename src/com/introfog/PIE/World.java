@@ -4,11 +4,6 @@ import java.awt.*;
 import java.util.*;
 
 public class World{
-	private static final Vector2f GRAVITY = new Vector2f (0f, 50f); //9.807f
-	
-	private final float FIXED_DELTA_TIME = 1f / 60f;
-	private final float DEAD_LOOP_BORDER = FIXED_DELTA_TIME * 10f;
-	
 	private int iterations = 1;
 	private float accumulator;
 	private LinkedList <Body> bodies;
@@ -47,6 +42,9 @@ public class World{
 		// Integrate velocities
 		bodies.forEach ((body) -> integrateVelocity (body));
 		
+		// Integrate forces
+		bodies.forEach ((body) -> integrateForces (body));
+		
 		// Correct positions
 		collisions.forEach ((collision) -> collision.correctPosition ());
 		
@@ -60,8 +58,8 @@ public class World{
 			return;
 		}
 		
-		b.velocity.add (b.force, b.invertMass * FIXED_DELTA_TIME);
-		b.velocity.add (GRAVITY, FIXED_DELTA_TIME);
+		b.velocity.add (b.force, b.invertMass * MathPIE.FIXED_DELTA_TIME * 0.5f);
+		b.velocity.add (MathPIE.GRAVITY, MathPIE.FIXED_DELTA_TIME * 0.5f);
 	}
 	
 	private void integrateVelocity (Body b){
@@ -69,7 +67,7 @@ public class World{
 			return;
 		}
 		
-		b.position.add (b.velocity, FIXED_DELTA_TIME);
+		b.position.add (b.velocity, MathPIE.FIXED_DELTA_TIME);
 		
 		integrateForces (b);
 	}
@@ -93,13 +91,13 @@ public class World{
 		
 		accumulator += deltaTime;
 		
-		if (accumulator > DEAD_LOOP_BORDER){ //предотвращение петли смерти
-			accumulator = DEAD_LOOP_BORDER;
+		if (accumulator > MathPIE.DEAD_LOOP_BORDER){ //предотвращение петли смерти
+			accumulator = MathPIE.DEAD_LOOP_BORDER;
 		}
 		
-		while (accumulator > FIXED_DELTA_TIME){
+		while (accumulator > MathPIE.FIXED_DELTA_TIME){
 			step (); //обновление физики всегда происходит через равный промежуток времени
-			accumulator -= FIXED_DELTA_TIME;
+			accumulator -= MathPIE.FIXED_DELTA_TIME;
 		}
 	}
 	

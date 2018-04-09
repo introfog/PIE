@@ -3,7 +3,7 @@ package com.introfog.PIE;
 import java.awt.*;
 
 public abstract class Body{
-	public static final float INFINITY_MASS = 0f;
+	
 	
 	public enum Shape{
 		circle, AABB
@@ -21,7 +21,7 @@ public abstract class Body{
 	public Body (float mass){
 		this.mass = mass;
 		
-		if (mass == INFINITY_MASS){
+		if (mass == MathPIE.INFINITY_MASS){
 			invertMass = 0f;
 		}
 		else{
