@@ -1,4 +1,4 @@
-package com.introfog.PIE.example;
+package com.introfog.PIE;
 
 import java.awt.*;
 

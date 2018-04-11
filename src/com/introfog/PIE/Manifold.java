@@ -12,8 +12,8 @@ public class Manifold{
 	
 	
 	private void circleVsCircle (Circle A, Circle B){
-		normal = Vector2f.sub (B.position, A.position);
-		penetration = A.radius + B.radius - (float) Math.sqrt (Vector2f.distanceWithoutSqrt (B.position, A.position));
+		normal = Vector2f.sub (B.body.position, A.body.position);
+		penetration = A.radius + B.radius - (float) Math.sqrt (Vector2f.distanceWithoutSqrt (B.body.position, A.body.position));
 	}
 	
 	private void AABBvsAABB (AABB A, AABB B){
@@ -58,7 +58,7 @@ public class Manifold{
 	private void AABBvsCircle (AABB A, Circle B, boolean areRevertObjects){
 		A.updateCentre ();
 		
-		Vector2f tmpNormal = Vector2f.sub (B.position, A.centre);
+		Vector2f tmpNormal = Vector2f.sub (B.body.position, A.centre);
 		Vector2f closest = new Vector2f ();
 		
 		float xExtent = A.width / 2;
@@ -85,7 +85,7 @@ public class Manifold{
 		
 		if (distance > B.radius * B.radius && !inside){
 			penetration = 0f;
-			if (B.velocity.x > A.velocity.x){
+			if (B.body.velocity.x > A.body.velocity.x){
 				normal.set (1f, 0f);
 			}
 			else{
@@ -118,13 +118,13 @@ public class Manifold{
 	}
 	
 	public void initializeCollision (){
-		if (a.shape == Body.Shape.circle && b.shape == Body.Shape.circle){
+		if (a.shape.type == Shape.Type.circle && b.shape.type == Shape.Type.circle){
 			circleVsCircle (circleA, circleB);
 		}
-		else if (a.shape == Body.Shape.AABB && b.shape == Body.Shape.AABB){
+		else if (a.shape.type == Shape.Type.AABB && b.shape.type == Shape.Type.AABB){
 			AABBvsAABB (aabbA, aabbB);
 		}
-		else if (a.shape == Body.Shape.AABB && b.shape == Body.Shape.circle){
+		else if (a.shape.type == Shape.Type.AABB && b.shape.type == Shape.Type.circle){
 			AABBvsCircle (aabbA, circleB, false);
 		}
 		else{
@@ -134,24 +134,24 @@ public class Manifold{
 	}
 	
 	public boolean isCollision (){
-		if (a.shape == Body.Shape.circle && b.shape == Body.Shape.circle){
-			circleA = (Circle) a;
-			circleB = (Circle) b;
+		if (a.shape.type == Shape.Type.circle && b.shape.type == Shape.Type.circle){
+			circleA = (Circle) a.shape;
+			circleB = (Circle) b.shape;
 			return Circle.isIntersected (circleA, circleB);
 		}
-		else if (a.shape == Body.Shape.AABB && b.shape == Body.Shape.AABB){
-			aabbA = (AABB) a;
-			aabbB = (AABB) b;
+		else if (a.shape.type == Shape.Type.AABB && b.shape.type == Shape.Type.AABB){
+			aabbA = (AABB) a.shape;
+			aabbB = (AABB) b.shape;
 			return AABB.isIntersected (aabbA, aabbB);
 		}
-		else if (a.shape == Body.Shape.AABB && b.shape == Body.Shape.circle){
-			aabbA = (AABB) a;
-			circleB = (Circle) b;
+		else if (a.shape.type == Shape.Type.AABB && b.shape.type == Shape.Type.circle){
+			aabbA = (AABB) a.shape;
+			circleB = (Circle) b.shape;
 			return AABB.isIntersected (aabbA, circleB);
 		}
-		else if (a.shape == Body.Shape.circle && b.shape == Body.Shape.AABB){
-			circleA = (Circle) a;
-			aabbB = (AABB) b;
+		else if (a.shape.type == Shape.Type.circle && b.shape.type == Shape.Type.AABB){
+			circleA = (Circle) a.shape;
+			aabbB = (AABB) b.shape;
 			return AABB.isIntersected (aabbB, circleA);
 		}
 		return false;

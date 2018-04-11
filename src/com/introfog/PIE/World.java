@@ -102,11 +102,11 @@ public class World{
 	}
 	
 	public void draw (Graphics graphics){
-		bodies.forEach ((body) -> body.draw (graphics));
+		bodies.forEach ((body) -> body.shape.render (graphics));
 	}
 	
-	public void addBody (Body body){
-		bodies.add (body);
+	public void addBody (Shape shape){
+		bodies.add (shape.body);
 	}
 	
 	public int getAmountBodies (){
