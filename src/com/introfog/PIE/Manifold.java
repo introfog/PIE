@@ -11,16 +11,6 @@ public class Manifold{
 	private Body b;
 	
 	
-	private float clamp (float min, float max, float value){
-		if (value < min){
-			return min;
-		}
-		else if (value > max){
-			return max;
-		}
-		return value;
-	}
-	
 	private void circleVsCircle (Circle A, Circle B){
 		normal = Vector2f.sub (B.position, A.position);
 		penetration = A.radius + B.radius - (float) Math.sqrt (Vector2f.distanceWithoutSqrt (B.position, A.position));
@@ -74,8 +64,8 @@ public class Manifold{
 		float xExtent = A.width / 2;
 		float yExtent = A.height / 2;
 		
-		closest.x = clamp (-xExtent, xExtent, tmpNormal.x);
-		closest.y = clamp (-yExtent, yExtent, tmpNormal.y);
+		closest.x = MathPIE.clamp (-xExtent, xExtent, tmpNormal.x);
+		closest.y = MathPIE.clamp (-yExtent, yExtent, tmpNormal.y);
 		
 		boolean inside = false;
 		

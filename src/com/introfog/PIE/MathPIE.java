@@ -17,4 +17,14 @@ public class MathPIE{
 		}
 		return Math.signum (value);
 	}
+	
+	public static float clamp (float min, float max, float value){
+		if (value < min){
+			return min;
+		}
+		else if (value > max){
+			return max;
+		}
+		return value;
+	}
 }

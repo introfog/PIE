@@ -10,7 +10,7 @@ public class World{
 	private LinkedList <Manifold> collisions;
 	
 	
-	private void step (){ //симуляция физики
+	private void step (){ //physic simulation
 		for (int i = 0; i < bodies.size (); i++){
 			Body a = bodies.get (i);
 			for (int j = i + 1; j < bodies.size (); ++j){
@@ -28,27 +28,27 @@ public class World{
 			}
 		}
 		
-		// Integrate forces
-		bodies.forEach ((body) -> integrateForces (body));
+		//Integrate forces
+		bodies.forEach ((body) -> integrateForces (body)); //Hanna modification Euler's method is used!
 		
-		// Initialize collisions
+		//Initialize collisions
 		collisions.forEach ((collision) -> collision.initializeCollision ());
 		
-		// Solve collisions
+		//Solve collisions
 		for (int i = 0; i < iterations; i++){
 			collisions.forEach ((collision) -> collision.solve ());
 		}
 		
-		// Integrate velocities
+		//Integrate velocities
 		bodies.forEach ((body) -> integrateVelocity (body));
 		
-		// Integrate forces
-		bodies.forEach ((body) -> integrateForces (body));
+		//Integrate forces
+		bodies.forEach ((body) -> integrateForces (body)); //Hanna modification Euler's method is used!
 		
-		// Correct positions
+		//Correct positions
 		collisions.forEach ((collision) -> collision.correctPosition ());
 		
-		// Clear all forces
+		//Clear all forces
 		bodies.forEach ((body) -> body.force.set (0f, 0f));
 		collisions.clear ();
 	}

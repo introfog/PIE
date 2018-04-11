@@ -1,22 +1,17 @@
-package com.introfog.PIE;
+package com.introfog.PIE.example;
 
-import java.awt.*;
+import com.introfog.PIE.*;
 
-public abstract class Body{
-	public enum Shape{
-		circle, AABB
-	}
-	
+public class Body{
 	public float mass;
 	public float invertMass;
 	public float restitution;
 	public Vector2f position;
 	public Vector2f force;
 	public Vector2f velocity;
-	public Shape shape;
 	
 	
-	public Body (float mass){
+	public Body (float mass, float positionX, float positionY){
 		this.mass = mass;
 		
 		if (mass == MathPIE.INFINITY_MASS){
@@ -29,7 +24,6 @@ public abstract class Body{
 		restitution = 0.15f;
 		force = new Vector2f (0f, 0f);
 		velocity = new Vector2f (0f, 0f);
+		position = new Vector2f (positionX, positionY);
 	}
-	
-	public abstract void draw (Graphics graphics);
 }
