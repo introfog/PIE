@@ -59,10 +59,23 @@ public class AABB extends Shape{ //Axis Aligned Bounding Box
 	}
 	
 	public static boolean isIntersected (AABB a, Circle b){
-		if (a.body.position.x + a.width < b.body.position.x - b.radius || a.body.position.x > b.body.position.x + b.radius){
-			return false;
+		a.updateCentre ();
+		
+		Vector2f tmpNormal = Vector2f.sub (b.body.position, a.centre);
+		Vector2f closest = new Vector2f ();
+		
+		float xExtent = a.width / 2;
+		float yExtent = a.height / 2;
+		
+		closest.x = MathPIE.clamp (-xExtent, xExtent, tmpNormal.x);
+		closest.y = MathPIE.clamp (-yExtent, yExtent, tmpNormal.y);
+		
+		if (tmpNormal.equals (closest)){
+			return true;
 		}
-		if (a.body.position.y + a.height < b.body.position.y - b.radius || a.body.position.y > b.body.position.y + b.radius){
+		
+		float distance = Vector2f.sub (tmpNormal, closest).lengthWithoutSqrt ();
+		if (distance > b.radius * b.radius){
 			return false;
 		}
 		return true;

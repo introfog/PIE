@@ -113,8 +113,6 @@ public class Manifold{
 	public Manifold (Body a, Body b){
 		this.a = a;
 		this.b = b;
-		
-		normal = new Vector2f ();
 	}
 	
 	public void initializeCollision (){

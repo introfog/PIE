@@ -1,5 +1,7 @@
 package com.introfog.PIE;
 
+import javafx.util.Pair;
+
 import java.awt.*;
 import java.util.*;
 
@@ -7,26 +9,47 @@ public class World{
 	private int iterations = 1;
 	private float accumulator;
 	private LinkedList <Body> bodies;
+	private LinkedList <Pair<Body, Body>> mayBeCollision;
 	private LinkedList <Manifold> collisions;
 	
 	
-	private void step (){ //physic simulation
+	private void broadPhase (){
+		Body a;
+		Body b;
 		for (int i = 0; i < bodies.size (); i++){
-			Body a = bodies.get (i);
-			for (int j = i + 1; j < bodies.size (); ++j){
-				Body b = bodies.get (j);
+			for (int j = i + 1; j < bodies.size (); j++){
+				a = bodies.get (i);
+				b = bodies.get (j);
 				
-				if (a.invertMass == 0 && b.invertMass == 0){
+				if (a.invertMass == 0f && b.invertMass == 0f){
 					continue;
 				}
 				
-				Manifold m = new Manifold (a, b);
+				a.shape.computeAABB ();
+				b.shape.computeAABB ();
 				
-				if (m.isCollision ()){
-					collisions.add (m);
+				if (AABB.isIntersected (a.shape.aabb, b.shape.aabb)){
+					mayBeCollision.add (new Pair <> (a, b));
 				}
 			}
 		}
+		
+		narrowPhase ();
+		mayBeCollision.clear ();
+	}
+	
+	private void narrowPhase (){
+		Manifold manifold;
+		for (int i = 0; i < mayBeCollision.size (); i++){
+			manifold = new Manifold (mayBeCollision.get (i).getKey (), mayBeCollision.get (i).getValue ());
+			if (manifold.isCollision ()){
+				collisions.add (manifold);
+			}
+		}
+	}
+	
+	private void step (){ //physic simulation
+		broadPhase ();
 		
 		//Integrate forces
 		bodies.forEach ((body) -> integrateForces (body)); //Hanna modification Euler's method is used!
@@ -78,6 +101,7 @@ public class World{
 	
 	private World (){
 		bodies = new LinkedList <> ();
+		mayBeCollision = new LinkedList <> ();
 		collisions = new LinkedList <> ();
 	}
 	

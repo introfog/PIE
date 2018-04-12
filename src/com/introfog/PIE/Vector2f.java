@@ -93,6 +93,10 @@ public class Vector2f{
 		return new Vector2f (a.x - b.x, a.y - b.y);
 	}
 	
+	public static Vector2f sub (Vector2f a, float bX, float bY){
+		return new Vector2f (a.x - bX, a.y - bY);
+	}
+	
 	public static float distanceWithoutSqrt (Vector2f a, Vector2f b){
 		return (a.x - b.x) * (a.x - b.x) + (a.y - b.y) * (a.y - b.y);
 	}
