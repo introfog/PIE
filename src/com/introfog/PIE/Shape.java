@@ -7,13 +7,14 @@ public abstract class Shape{
 		circle, AABB, polygon
 	}
 	
-	public Body body;
 	public Type type;
+	public AABB aabb;
+	public Body body;
 	
 	
 	public abstract void render (Graphics graphics);
 	
-	public abstract AABB computeAABB ();
+	public abstract void computeAABB ();
 	
-	public abstract void computeMass ();
+	protected abstract void computeMass ();
 }

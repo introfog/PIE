@@ -84,6 +84,7 @@ public class Vector2f{
 		y /= length;
 	}
 	
+	
 	public static Vector2f mul (Vector2f a, float s){
 		return new Vector2f (a.x * s, a.y * s);
 	}

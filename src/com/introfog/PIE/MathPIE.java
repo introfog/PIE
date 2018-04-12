@@ -8,7 +8,9 @@ public class MathPIE{
 	public static final float CORRECT_POSITION_PERCENT = 0.5f;
 	public static final float MIN_BORDER_SLOP = 1f;
 	
-	public static final float INFINITY_MASS = 0f;
+	public static final float STATIC_BODY_DENSITY = 0f;
+	
+	public static final float PI = 3.141_592f;
 	
 	
 	public static float signum (float value){

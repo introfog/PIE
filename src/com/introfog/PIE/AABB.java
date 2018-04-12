@@ -8,24 +8,43 @@ public class AABB extends Shape{ //Axis Aligned Bounding Box
 	public Vector2f centre;
 	
 	
-	public AABB (float positionX, float positionY, float width, float height, float mass){
-		body = new Body (this, mass, positionX, positionY);
+	public AABB (){
+		body = new Body (this, 0f, 0f);
+		
 		type = Type.AABB;
-		
-		this.width = width;
-		this.height = height;
-		
-		centre = new Vector2f (positionX + width / 2f, positionY + height / 2f);
 	}
 	
-	public void updateCentre (){
-		centre.set (body.position.x + width / 2f, body.position.y + height / 2f);
+	public AABB (float positionX, float positionY, float width, float height, float density, float restitution){
+		body = new Body (this, positionX, positionY, density, restitution);
+		this.width = width;
+		this.height = height;
+		centre = new Vector2f ();
+		
+		computeMass ();
+		computeAABB ();
+		
+		type = Type.AABB;
 	}
 	
 	@Override
 	public void render (Graphics graphics){
 		centre.set (body.position.x + width / 2f, body.position.y + height / 2f);
 		graphics.drawRect ((int) body.position.x, (int) body.position.y, (int) width, (int) height);
+	}
+	
+	@Override
+	public void computeAABB (){
+		aabb = this;
+	}
+	
+	@Override
+	protected void computeMass (){
+		float mass = width * height * body.density;
+		body.invertMass = (mass == 0f) ? 0f : 1f / mass;
+	}
+	
+	public void updateCentre (){
+		centre.set (body.position.x + width / 2f, body.position.y + height / 2f);
 	}
 	
 	
@@ -47,15 +66,5 @@ public class AABB extends Shape{ //Axis Aligned Bounding Box
 			return false;
 		}
 		return true;
-	}
-	
-	@Override
-	public AABB computeAABB (){
-		return null;
-	}
-	
-	@Override
-	public void computeMass (){
-	
 	}
 }
