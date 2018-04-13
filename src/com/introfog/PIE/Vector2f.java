@@ -89,6 +89,10 @@ public class Vector2f{
 		return new Vector2f (a.x * s, a.y * s);
 	}
 	
+	public static Vector2f mul (Vector2f a, Vector2f b){
+		return new Vector2f (a.x * b.x, a.y * b.y);
+	}
+	
 	public static Vector2f sub (Vector2f a, Vector2f b){
 		return new Vector2f (a.x - b.x, a.y - b.y);
 	}

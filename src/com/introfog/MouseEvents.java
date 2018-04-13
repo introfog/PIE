@@ -5,11 +5,10 @@ import com.introfog.PIE.*;
 import java.awt.event.*;
 import java.applet.*;
 
-public class MouseEvents extends Applet implements MouseListener, MouseMotionListener{
+public class MouseEvents extends Applet implements MouseListener{
 	@Override
 	public void init (){
 		addMouseListener (this);
-		addMouseMotionListener (this);
 	}
 	
 	@Override
@@ -45,10 +44,4 @@ public class MouseEvents extends Applet implements MouseListener, MouseMotionLis
 	
 	@Override
 	public void mouseReleased (MouseEvent me){ }
-	
-	@Override
-	public void mouseDragged (MouseEvent me){ }
-	
-	@Override
-	public void mouseMoved (MouseEvent me){ }
 }

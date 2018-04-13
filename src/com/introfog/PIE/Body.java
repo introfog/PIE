@@ -4,6 +4,8 @@ public class Body{
 	public float invertMass;
 	public float restitution;
 	public float density;
+	public float staticFriction;
+	public float dynamicFriction;
 	public Vector2f position;
 	public Vector2f force;
 	public Vector2f velocity;
@@ -15,6 +17,9 @@ public class Body{
 		this.density = density;
 		this.restitution = restitution;
 		
+		staticFriction = 0.1f;
+		dynamicFriction = 0.05f;
+		
 		force = new Vector2f (0f, 0f);
 		velocity = new Vector2f (0f, 0f);
 		position = new Vector2f (positionX, positionY);
@@ -24,6 +29,9 @@ public class Body{
 		this.shape = shape;
 		this.density = MathPIE.STATIC_BODY_DENSITY;
 		this.restitution = 0.4f;
+		
+		staticFriction = 0.1f;
+		dynamicFriction = 0.05f;
 		
 		force = new Vector2f (0f, 0f);
 		velocity = new Vector2f (0f, 0f);

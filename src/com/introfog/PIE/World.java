@@ -9,7 +9,7 @@ public class World{
 	private int iterations = 1;
 	private float accumulator;
 	private LinkedList <Body> bodies;
-	private LinkedList <Pair<Body, Body>> mayBeCollision;
+	private LinkedList <Pair <Body, Body>> mayBeCollision;
 	private LinkedList <Manifold> collisions;
 	
 	

@@ -13,7 +13,8 @@ public class Manifold{
 	
 	private void circleVsCircle (Circle A, Circle B){
 		normal = Vector2f.sub (B.body.position, A.body.position);
-		penetration = A.radius + B.radius - (float) Math.sqrt (Vector2f.distanceWithoutSqrt (B.body.position, A.body.position));
+		penetration = A.radius + B.radius - (float) Math.sqrt (
+				Vector2f.distanceWithoutSqrt (B.body.position, A.body.position));
 	}
 	
 	private void AABBvsAABB (AABB A, AABB B){
@@ -159,7 +160,7 @@ public class Manifold{
 		normal.normalize ();
 		
 		// Вычисляем относительную скорость
-		Vector2f rv = Vector2f.sub (b.velocity, a.velocity);
+		Vector2f rv = Vector2f.sub (b.velocity, a.velocity); //relative v
 		
 		// Вычисляем относительную скорость относительно направления нормали
 		float velAlongNormal = Vector2f.dotProduct (rv, normal);
@@ -180,6 +181,31 @@ public class Manifold{
 		Vector2f impulse = Vector2f.mul (normal, j);
 		a.velocity.sub (Vector2f.mul (impulse, a.invertMass));
 		b.velocity.add (Vector2f.mul (impulse, b.invertMass));
+		
+		
+		
+		//Работа с трением
+		rv = Vector2f.sub (b.velocity, a.velocity);
+		
+		Vector2f t = Vector2f.sub (rv, Vector2f.mul (normal, Vector2f.dotProduct (rv, normal)));
+		t.normalize ();
+		
+		float jt = -Vector2f.dotProduct (rv, t);
+		jt /= a.invertMass + b.invertMass;
+		
+		float Mu = (float) Math.sqrt (a.staticFriction * a.staticFriction + b.staticFriction * b.staticFriction);
+		
+		Vector2f frictionImpulse;
+		if (Math.abs (jt) < j * Mu){
+			frictionImpulse = Vector2f.mul (t, jt);
+		}
+		else{
+			float dynamicFriction = (float) Math.sqrt (a.dynamicFriction * a.dynamicFriction + b.dynamicFriction * b.dynamicFriction);
+			frictionImpulse = Vector2f.mul (t, -j * dynamicFriction);
+		}
+		
+		a.velocity.sub (Vector2f.mul (frictionImpulse, a.invertMass));
+		b.velocity.add (Vector2f.mul (frictionImpulse, b.invertMass));
 	}
 	
 	public void correctPosition (){
@@ -187,7 +213,8 @@ public class Manifold{
 			return;
 		}
 		
-		Vector2f correction = Vector2f.mul (normal,penetration * MathPIE.CORRECT_POSITION_PERCENT / (a.invertMass + b.invertMass));
+		Vector2f correction = Vector2f.mul (normal,
+											penetration * MathPIE.CORRECT_POSITION_PERCENT / (a.invertMass + b.invertMass));
 		a.position.sub (Vector2f.mul (correction, a.invertMass));
 		b.position.add (Vector2f.mul (correction, b.invertMass));
 	}

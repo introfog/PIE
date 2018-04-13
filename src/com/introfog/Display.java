@@ -24,7 +24,7 @@ public class Display extends JPanel implements ActionListener{
 		aabb = new AABB (200f, 450f, 300f, 20f, MathPIE.STATIC_BODY_DENSITY, 0.3f);
 		World.getInstance ().addBody (aabb);
 		
-		World.getInstance ().setIterations (10);
+		World.getInstance ().setIterations (1);
 	}
 	
 	
@@ -32,6 +32,7 @@ public class Display extends JPanel implements ActionListener{
 		Timer timer = new Timer (0, this);
 		timer.start ();
 		addMouseListener (new MouseEvents ());
+		addKeyListener (new KeyEvents ());
 		
 		initializeBodies ();
 	}
