@@ -12,8 +12,11 @@ public class World{
 	private LinkedList <Pair <Body, Body>> mayBeCollision;
 	private LinkedList <Manifold> collisions;
 	
+	private LinkedList<Body> xAxisProjection;
+	private LinkedList<Body> yAxisProjection;
 	
-	private void broadPhase (){
+	
+	private void broadPhase_BruteForce (){ //сложность O(n^2)
 		Body a;
 		Body b;
 		for (int i = 0; i < bodies.size (); i++){
@@ -38,6 +41,21 @@ public class World{
 		mayBeCollision.clear ();
 	}
 	
+	private void broadPhase_SweepAndPrune (){ //сложность O(n^2)
+		xAxisProjection.sort ((a, b) -> {
+			a.shape.computeAABB ();
+			b.shape.computeAABB ();
+			return (int) Math.signum (a.shape.aabb.body.position.x - b.shape.aabb.body.position.x);
+		});
+		yAxisProjection.sort ((a, b) -> {
+			a.shape.computeAABB ();
+			b.shape.computeAABB ();
+			return (int) Math.signum (a.shape.aabb.body.position.y - b.shape.aabb.body.position.y);
+		});
+		
+		
+	}
+	
 	private void narrowPhase (){
 		Manifold manifold;
 		for (int i = 0; i < mayBeCollision.size (); i++){
@@ -49,7 +67,7 @@ public class World{
 	}
 	
 	private void step (){ //physic simulation
-		broadPhase ();
+		broadPhase_BruteForce ();
 		
 		//Integrate forces
 		bodies.forEach ((body) -> integrateForces (body)); //Hanna modification Euler's method is used!
@@ -103,6 +121,9 @@ public class World{
 		bodies = new LinkedList <> ();
 		mayBeCollision = new LinkedList <> ();
 		collisions = new LinkedList <> ();
+		
+		xAxisProjection = new LinkedList <> ();
+		yAxisProjection = new LinkedList <> ();
 	}
 	
 	
@@ -131,6 +152,9 @@ public class World{
 	
 	public void addBody (Shape shape){
 		bodies.add (shape.body);
+		
+		xAxisProjection.add (shape.body);
+		yAxisProjection.add (shape.body);
 	}
 	
 	public int getAmountBodies (){

@@ -1,6 +1,6 @@
 package com.introfog.PIE;
 
-public class Manifold{
+public class Manifold{ //TODO добавить таблицу переходов
 	private float penetration;
 	private Vector2f normal;
 	private AABB aabbA;
@@ -160,7 +160,7 @@ public class Manifold{
 		normal.normalize ();
 		
 		// Вычисляем относительную скорость
-		Vector2f rv = Vector2f.sub (b.velocity, a.velocity); //relative v
+		Vector2f rv = Vector2f.sub (b.velocity, a.velocity); //relativeVelocity
 		
 		// Вычисляем относительную скорость относительно направления нормали
 		float velAlongNormal = Vector2f.dotProduct (rv, normal);
@@ -184,19 +184,28 @@ public class Manifold{
 		
 		
 		
-		//Работа с трением
+		//--------Работа с трением
+		
+		//Перерасчет относительной скорости, после приложения нормального импульса
 		rv = Vector2f.sub (b.velocity, a.velocity);
 		
+		//Вычисялем касательный вектор: tangent = rb - dotProduct (rv, normal) * normal
 		Vector2f t = Vector2f.sub (rv, Vector2f.mul (normal, Vector2f.dotProduct (rv, normal)));
 		t.normalize ();
 		
+		//Вычисляем величину, прилагаемую вдоль вектора трения
 		float jt = -Vector2f.dotProduct (rv, t);
 		jt /= a.invertMass + b.invertMass;
 		
+		//Вычисляем Мю,
 		float Mu = (float) Math.sqrt (a.staticFriction * a.staticFriction + b.staticFriction * b.staticFriction);
+		//Статическое трение - величина, показывающая сколько нужно приложить энергии что бы свдинуть тела, т.е. это
+		//порог, если энергия ниже, то тела покоятся, если выше, то они сдвинулись
+		//Динамическое трение - трение в обычном понимании, когда тела труться друг об друга, они теряют часть своей
+		//энергии друг об друга
 		
 		Vector2f frictionImpulse;
-		if (Math.abs (jt) < j * Mu){
+		if (Math.abs (jt) < j * Mu){ //Закон Амонтона — Кулона (если велечина j слишком маленькая, то тела должны покояться)
 			frictionImpulse = Vector2f.mul (t, jt);
 		}
 		else{
@@ -204,6 +213,7 @@ public class Manifold{
 			frictionImpulse = Vector2f.mul (t, -j * dynamicFriction);
 		}
 		
+		//Пркладываем
 		a.velocity.sub (Vector2f.mul (frictionImpulse, a.invertMass));
 		b.velocity.add (Vector2f.mul (frictionImpulse, b.invertMass));
 	}

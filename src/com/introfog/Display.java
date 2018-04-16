@@ -32,7 +32,6 @@ public class Display extends JPanel implements ActionListener{
 		Timer timer = new Timer (0, this);
 		timer.start ();
 		addMouseListener (new MouseEvents ());
-		addKeyListener (new KeyEvents ());
 		
 		initializeBodies ();
 	}
