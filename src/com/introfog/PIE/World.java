@@ -41,7 +41,7 @@ public class World{
 		mayBeCollision.clear ();
 	}
 	
-	private void broadPhase_SweepAndPrune (){ //сложность O(n^2)
+	private void broadPhase_SweepAndPrune (){
 		xAxisProjection.sort ((a, b) -> {
 			a.shape.computeAABB ();
 			b.shape.computeAABB ();

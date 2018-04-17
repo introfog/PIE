@@ -5,6 +5,7 @@ import com.introfog.PIE.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.*;
 
 import javax.swing.JPanel;
 import javax.swing.Timer;
@@ -13,6 +14,15 @@ public class Display extends JPanel implements ActionListener{
 	private boolean isFirstUpdate = true;
 	private float deltaTime;
 	private long previousTime = 0L;
+	
+	private float TIMER = 0.2f;
+	private float timer = TIMER;
+	private AABB aabb;
+	private Circle circle;
+	private float SIZE = 10f;
+	private float currYNewBody = 100f;
+	private float currXNewBody = 0f;
+	private PrintWriter out;
 	
 	
 	private void initializeBodies (){
@@ -34,6 +44,13 @@ public class Display extends JPanel implements ActionListener{
 		addMouseListener (new MouseEvents ());
 		
 		initializeBodies ();
+		
+		try{
+			out = new PrintWriter (new FileWriter (".\\tests\\Broad phase\\bruteForce.txt"));
+		}
+		catch (IOException e){
+			System.out.println ("Error with new FileWriter");
+		}
 	}
 	
 	public void paint (Graphics g){
@@ -55,6 +72,30 @@ public class Display extends JPanel implements ActionListener{
 		g.drawString ("FPS: " + (int) (1 / deltaTime), 2, 12);
 		g.drawString ("Bodies: " + World.getInstance ().getAmountBodies (), 2, 24);
 		g.drawString ("Version: 0.1.0 without rotation & friction", 2, 36);
+		
+		if (timer <= 0){
+			timer = TIMER;
+			if (currXNewBody * (SIZE + 1f) + SIZE >= (float) Main.WINDOW_WIDTH){
+				currXNewBody = 0f;
+				currYNewBody += SIZE + 1f;
+			}
+			
+			if (World.getInstance ().getAmountBodies () % 2 == 0){
+				aabb = new AABB (currXNewBody * (SIZE + 1f), currYNewBody, SIZE, SIZE, 0.4f, 0.5f);
+				World.getInstance ().addBody (aabb);
+				float dt = deltaTime * 100000;
+				dt = Math.round (dt);
+				dt /= 100000;
+				out.println ("Amount of bodies: " + World.getInstance ().getAmountBodies () + " deltaTime: " + dt);
+				out.flush ();
+			}
+			else{
+				circle = new Circle (SIZE / 2f, currXNewBody * (SIZE + 1f) + SIZE / 2f, currYNewBody + SIZE / 2f, 0.4f, 0.5f);
+				World.getInstance ().addBody (circle);
+			}
+			currXNewBody++;
+		}
+		timer -= deltaTime;
 		
 		World.getInstance ().update (deltaTime);
 		World.getInstance ().draw (g);
