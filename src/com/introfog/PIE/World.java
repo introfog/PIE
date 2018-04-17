@@ -14,6 +14,8 @@ public class World{
 	
 	private LinkedList<Body> xAxisProjection;
 	private LinkedList<Body> yAxisProjection;
+	private LinkedList<Body> activeList;
+	private LinkedList<Pair<Body, Body>> xAxisMayBeCollision;
 	
 	
 	private void broadPhase_BruteForce (){ //сложность O(n^2)
@@ -36,24 +38,47 @@ public class World{
 				}
 			}
 		}
-		
-		narrowPhase ();
-		mayBeCollision.clear ();
 	}
 	
-	private void broadPhase_SweepAndPrune (){
-		xAxisProjection.sort ((a, b) -> {
-			a.shape.computeAABB ();
-			b.shape.computeAABB ();
-			return (int) Math.signum (a.shape.aabb.body.position.x - b.shape.aabb.body.position.x);
-		});
-		yAxisProjection.sort ((a, b) -> {
-			a.shape.computeAABB ();
-			b.shape.computeAABB ();
-			return (int) Math.signum (a.shape.aabb.body.position.y - b.shape.aabb.body.position.y);
+	private void broadPhase_PartlySweepAndPrune (){ //частиный SAP, ищем возможные пересечения по оси Х, а потом bruteForce
+		bodies.forEach ((body) -> body.shape.computeAABB ());
+		xAxisProjection.sort ((a, b) -> (int) (a.shape.aabb.body.position.x - b.shape.aabb.body.position.x));
+		
+		activeList.add (xAxisProjection.getFirst ());
+		float currEnd = xAxisProjection.getFirst ().shape.aabb.body.position.x + xAxisProjection.getFirst ().shape.aabb.width;
+		
+		for (int i = 1; i < xAxisProjection.size (); i++){
+			if (xAxisProjection.get (i).shape.aabb.body.position.x <= currEnd){
+				activeList.add (xAxisProjection.get (i));
+			}
+			else{
+				Body first = activeList.removeFirst ();
+				activeList.forEach ((body) -> xAxisMayBeCollision.add (new Pair <> (first, body)));
+				if (!activeList.isEmpty ()){
+					i--;
+				}
+				else{
+					activeList.add (xAxisProjection.get (i));
+				}
+				currEnd = activeList.getFirst ().shape.aabb.body.position.x + activeList.getFirst ().shape.aabb.width;
+			}
+		}
+		if (!activeList.isEmpty ()){
+			int size = activeList.size ();
+			for (int i = 0; i < size; i++){
+				Body first = activeList.removeFirst ();
+				activeList.forEach ((body) -> xAxisMayBeCollision.add (new Pair <> (first, body)));
+			}
+		}
+		
+		xAxisMayBeCollision.forEach ((pair) -> {
+			if (AABB.isIntersected (pair.getKey ().shape.aabb, pair.getValue ().shape.aabb)){
+				mayBeCollision.add (pair);
+			}
 		});
 		
-		
+		xAxisMayBeCollision.clear ();
+		activeList.clear ();
 	}
 	
 	private void narrowPhase (){
@@ -68,6 +93,9 @@ public class World{
 	
 	private void step (){ //physic simulation
 		broadPhase_BruteForce ();
+		//broadPhase_PartlySweepAndPrune ();
+		narrowPhase ();
+		mayBeCollision.clear ();
 		
 		//Integrate forces
 		bodies.forEach ((body) -> integrateForces (body)); //Hanna modification Euler's method is used!
@@ -124,6 +152,8 @@ public class World{
 		
 		xAxisProjection = new LinkedList <> ();
 		yAxisProjection = new LinkedList <> ();
+		activeList =  new LinkedList <> ();
+		xAxisMayBeCollision =  new LinkedList <> ();
 	}
 	
 	

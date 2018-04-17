@@ -27,12 +27,15 @@ public class Display extends JPanel implements ActionListener{
 	
 	private void initializeBodies (){
 		Circle circle;
-		circle = new Circle (40f, 240f, 350f, MathPIE.STATIC_BODY_DENSITY, 0.3f);
+		circle = new Circle (40f, 220f, 350f, MathPIE.STATIC_BODY_DENSITY, 0.3f);
 		World.getInstance ().addBody (circle);
 		
 		AABB aabb;
 		aabb = new AABB (200f, 450f, 300f, 20f, MathPIE.STATIC_BODY_DENSITY, 0.3f);
 		World.getInstance ().addBody (aabb);
+		
+		/*circle = new Circle (30f, 400f, 200f, 0.4f, 0.5f);
+		World.getInstance ().addBody (circle);*/
 		
 		World.getInstance ().setIterations (1);
 	}
