@@ -8,6 +8,8 @@ public class Main {
 	
 	
 	public static void main(String[] args) {
+		System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
+		
 		JFrame frame = new JFrame("Demo PIE");
 		frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 		frame.setSize (WINDOW_WIDTH, WINDOW_HEIGHT);
