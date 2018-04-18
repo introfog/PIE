@@ -15,7 +15,6 @@ public class World{
 	private LinkedList<Body> xAxisProjection;
 	private LinkedList<Body> yAxisProjection;
 	private LinkedList<Body> activeList;
-	private LinkedList<Pair<Body, Body>> xAxisMayBeCollision;
 	
 	
 	private void broadPhase_BruteForce (){ //сложность O(n^2)
@@ -40,9 +39,10 @@ public class World{
 		}
 	}
 	
-	private void broadPhase_PartlySweepAndPrune (){ //частиный SAP, ищем возможные пересечения по оси Х, а потом bruteForce
+	private void broadPhase_PartlySweepAndPrune (){ //Лучший случай O(n*logn) или O(k*n), в худщем O(n^2) частиный SAP, ищем возможные пересечения по оси Х, а потом bruteForce
 		bodies.forEach ((body) -> body.shape.computeAABB ());
 		xAxisProjection.sort ((a, b) -> (int) (a.shape.aabb.body.position.x - b.shape.aabb.body.position.x));
+		//TODO использовать сортировку вставкой (эффективна когда почти отсортирован список)
 		
 		activeList.add (xAxisProjection.getFirst ());
 		float currEnd = xAxisProjection.getFirst ().shape.aabb.body.position.x + xAxisProjection.getFirst ().shape.aabb.width;
@@ -53,7 +53,11 @@ public class World{
 			}
 			else{
 				Body first = activeList.removeFirst ();
-				activeList.forEach ((body) -> xAxisMayBeCollision.add (new Pair <> (first, body)));
+				activeList.forEach ((body) -> {
+					if (AABB.isIntersected (first.shape.aabb, body.shape.aabb)){
+						mayBeCollision.add (new Pair <> (first, body));
+					}
+				});
 				if (!activeList.isEmpty ()){
 					i--;
 				}
@@ -67,17 +71,14 @@ public class World{
 			int size = activeList.size ();
 			for (int i = 0; i < size; i++){
 				Body first = activeList.removeFirst ();
-				activeList.forEach ((body) -> xAxisMayBeCollision.add (new Pair <> (first, body)));
+				activeList.forEach ((body) -> {
+					if (AABB.isIntersected (first.shape.aabb, body.shape.aabb)){
+						mayBeCollision.add (new Pair <> (first, body));
+					}
+				});
 			}
 		}
 		
-		xAxisMayBeCollision.forEach ((pair) -> {
-			if (AABB.isIntersected (pair.getKey ().shape.aabb, pair.getValue ().shape.aabb)){
-				mayBeCollision.add (pair);
-			}
-		});
-		
-		xAxisMayBeCollision.clear ();
 		activeList.clear ();
 	}
 	
@@ -92,8 +93,8 @@ public class World{
 	}
 	
 	private void step (){ //physic simulation
-		broadPhase_BruteForce ();
-		//broadPhase_PartlySweepAndPrune ();
+		//broadPhase_BruteForce ();
+		broadPhase_PartlySweepAndPrune ();
 		narrowPhase ();
 		mayBeCollision.clear ();
 		
@@ -153,7 +154,6 @@ public class World{
 		xAxisProjection = new LinkedList <> ();
 		yAxisProjection = new LinkedList <> ();
 		activeList =  new LinkedList <> ();
-		xAxisMayBeCollision =  new LinkedList <> ();
 	}
 	
 	

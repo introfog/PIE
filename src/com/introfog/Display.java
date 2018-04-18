@@ -15,7 +15,7 @@ public class Display extends JPanel implements ActionListener{
 	private float deltaTime;
 	private long previousTime = 0L;
 	
-	private float TIMER = 0.2f;
+	private float TIMER = 0.1f;
 	private float timer = TIMER;
 	private AABB aabb;
 	private Circle circle;
@@ -49,7 +49,7 @@ public class Display extends JPanel implements ActionListener{
 		initializeBodies ();
 		
 		try{
-			out = new PrintWriter (new FileWriter (".\\tests\\Broad phase\\bruteForce.txt"));
+			out = new PrintWriter (new FileWriter (".\\tests\\Test something.txt"));
 		}
 		catch (IOException e){
 			System.out.println ("Error with new FileWriter");
