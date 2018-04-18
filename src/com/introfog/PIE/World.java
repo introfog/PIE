@@ -12,9 +12,10 @@ public class World{
 	private LinkedList <Pair <Body, Body>> mayBeCollision;
 	private LinkedList <Manifold> collisions;
 	
-	private LinkedList<Body> xAxisProjection;
-	private LinkedList<Body> yAxisProjection;
-	private LinkedList<Body> activeList;
+	private LinkedList <Body> xAxisProjection;
+	private LinkedList <Body> yAxisProjection;
+	private LinkedList <Body> activeList;
+	private int CURRENT_AXIS = 0;
 	
 	
 	private void broadPhase_BruteForce (){ //сложность O(n^2)
@@ -39,7 +40,8 @@ public class World{
 		}
 	}
 	
-	private void broadPhase_PartlySweepAndPrune (){ //Лучший случай O(n*logn) или O(k*n), в худщем O(n^2) частиный SAP, ищем возможные пересечения по оси Х, а потом bruteForce
+	private void broadPhase_MyRealisationSweepAndPrune (){ //Лучший случай O(n*logn) или O(k*n), в худщем O(n^2), ищем
+		// возможные пересечения по оси Х, а потом bruteForce
 		bodies.forEach ((body) -> body.shape.computeAABB ());
 		xAxisProjection.sort ((a, b) -> (int) (a.shape.aabb.body.position.x - b.shape.aabb.body.position.x));
 		//TODO использовать сортировку вставкой (эффективна когда почти отсортирован список)
@@ -82,6 +84,68 @@ public class World{
 		activeList.clear ();
 	}
 	
+	private void broadPhase_SweepAndPrune (){
+		//Лучший случай O(n*logn) или O(k*n), в худщем O(n^2), ищем возможные
+		// пересечения по текущей оси, а потом bruteForce. Каждый раз через десперсию выбираем следующую ось
+		bodies.forEach ((body) -> body.shape.computeAABB ());
+		//CURRENT_AXIS = 0;
+		
+		if (CURRENT_AXIS == 0){
+			xAxisProjection.sort ((a, b) -> (int) (a.shape.aabb.body.position.x - b.shape.aabb.body.position.x));
+		}
+		else{
+			yAxisProjection.sort ((a, b) -> (int) (a.shape.aabb.body.position.y - b.shape.aabb.body.position.y));
+		}
+		//TODO использовать сортировку вставкой (эффективна когда почти отсортирован список)
+		
+		Vector2f p = new Vector2f ();
+		Vector2f s = new Vector2f ();
+		Vector2f s2 = new Vector2f ();
+		float numBodies = bodies.size ();
+		
+		AABB currAABB;
+		for (int i = 0; i < bodies.size (); i++){
+			if (CURRENT_AXIS == 0){
+				currAABB = xAxisProjection.get (i).shape.aabb;
+			}
+			else{
+				currAABB = yAxisProjection.get (i).shape.aabb;
+			}
+			
+			p.x = (currAABB.body.position.x + currAABB.width / 2f) / numBodies;
+			p.y = (currAABB.body.position.y + currAABB.height / 2f) / numBodies;
+			
+			s.add (p);
+			p.x *= p.x * numBodies;
+			p.y *= p.y * numBodies;
+			s2.add (p);
+			
+			for (int j = i + 1; j < bodies.size (); j++){
+				if (CURRENT_AXIS == 0 && xAxisProjection.get (j).shape.aabb.body.position.x > currAABB.body.position.x + currAABB.width){
+					break;
+				}
+				else if (yAxisProjection.get (j).shape.aabb.body.position.y > currAABB.body.position.y + currAABB.height){
+					break;
+				}
+				
+				if (CURRENT_AXIS == 0 && AABB.isIntersected (xAxisProjection.get (j).shape.aabb, currAABB)){
+					mayBeCollision.add (new Pair <> (xAxisProjection.get (j), xAxisProjection.get (i)));
+				}
+				else if (AABB.isIntersected (yAxisProjection.get (j).shape.aabb, currAABB)){
+					mayBeCollision.add (new Pair <> (yAxisProjection.get (j), yAxisProjection.get (i)));
+				}
+			}
+		}
+		
+		s.x *= s.x; //с помощью дисперсии выбираем следуюущую ось (ищем ось, по которой координаты объектов больше
+		s.y *= s.y; //всего различаются)
+		Vector2f v = Vector2f.sub (s2, s);
+		CURRENT_AXIS = 0;
+		if (v.y > v.x){
+			CURRENT_AXIS = 1;
+		}
+	}
+	
 	private void narrowPhase (){
 		Manifold manifold;
 		for (int i = 0; i < mayBeCollision.size (); i++){
@@ -92,9 +156,10 @@ public class World{
 		}
 	}
 	
-	private void step (){ //physic simulation
+	private void step (){
 		//broadPhase_BruteForce ();
-		broadPhase_PartlySweepAndPrune ();
+		//broadPhase_MyRealisationSweepAndPrune ();
+		broadPhase_SweepAndPrune ();
 		narrowPhase ();
 		mayBeCollision.clear ();
 		
@@ -153,7 +218,7 @@ public class World{
 		
 		xAxisProjection = new LinkedList <> ();
 		yAxisProjection = new LinkedList <> ();
-		activeList =  new LinkedList <> ();
+		activeList = new LinkedList <> ();
 	}
 	
 	
