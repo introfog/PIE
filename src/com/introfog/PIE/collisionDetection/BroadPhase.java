@@ -3,7 +3,7 @@ package com.introfog.PIE.collisionDetection;
 import com.introfog.PIE.*;
 import javafx.util.Pair;
 
-import java.util.LinkedList;
+import java.util.*;
 
 public class BroadPhase{
 	private LinkedList <Body> bodies;
@@ -21,6 +21,7 @@ public class BroadPhase{
 	
 	//for spatial hashing method
 	private float averageMaxBodiesSize = 0f;
+	private SpatialHash <Body> spatialHash;
 	
 	
 	public BroadPhase (LinkedList <Body> bodies){
@@ -71,6 +72,7 @@ public class BroadPhase{
 				Body first = activeList.removeFirst ();
 				activeList.forEach ((body) -> {
 					if (AABB.isIntersected (first.shape.aabb, body.shape.aabb)){
+						//TODO сделать проверку на случай если два объекта месконечной массы (статичные)
 						mayBeCollision.add (new Pair <> (first, body));
 					}
 				});
@@ -89,6 +91,7 @@ public class BroadPhase{
 				Body first = activeList.removeFirst ();
 				activeList.forEach ((body) -> {
 					if (AABB.isIntersected (first.shape.aabb, body.shape.aabb)){
+						//TODO сделать проверку на случай если два объекта месконечной массы (статичные)
 						mayBeCollision.add (new Pair <> (first, body));
 					}
 				});
@@ -144,6 +147,7 @@ public class BroadPhase{
 				}
 				
 				if (CURRENT_AXIS == 0 && AABB.isIntersected (xAxisProjection.get (j).shape.aabb, currAABB)){
+					//TODO сделать проверку на случай если два объекта месконечной массы (статичные)
 					mayBeCollision.add (new Pair <> (xAxisProjection.get (j), xAxisProjection.get (i)));
 				}
 				else if (AABB.isIntersected (yAxisProjection.get (j).shape.aabb, currAABB)){
@@ -162,7 +166,24 @@ public class BroadPhase{
 	}
 	
 	public void spatialHashing (LinkedList <Pair <Body, Body>> mayBeCollision){
-	
+		spatialHash = new SpatialHash <> ((int) averageMaxBodiesSize);
+		
+		bodies.forEach ((body) -> {
+			body.shape.computeAABB ();
+			spatialHash.Insert (body.shape.aabb.body.position, body);
+		});
+		
+		for (int i = 0; i < bodies.size (); i++){
+			LinkedList <Body> list = spatialHash.QueryPosition (bodies.get (i).shape.aabb.body.position);
+			for (int j = 0; j < list.size (); j++){
+				if (list.get (j) != bodies.get (i) && list.get (j).position.x + 0.000123f < bodies.get (i).position.x){
+					if (list.get (j).invertMass == 0f && bodies.get (i).invertMass == 0){
+						continue;
+					}
+					mayBeCollision.add (new Pair <> (list.get (j), bodies.get (i)));
+				}
+			}
+		}
 	}
 	
 	public void addBody (Shape shape){

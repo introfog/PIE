@@ -40,6 +40,32 @@ public class Display extends JPanel implements ActionListener{
 		World.getInstance ().setIterations (1);
 	}
 	
+	private void generateBodies (){
+		if (timer <= 0){
+			timer = TIMER;
+			if (currXNewBody * (SIZE + 1f) + SIZE >= (float) Main.WINDOW_WIDTH){
+				currXNewBody = 0f;
+				currYNewBody += SIZE + 1f;
+			}
+			
+			if (World.getInstance ().getAmountBodies () % 2 == 0){
+				aabb = new AABB (currXNewBody * (SIZE + 1f), currYNewBody, SIZE, SIZE, 0.4f, 0.5f);
+				World.getInstance ().addBody (aabb);
+				float dt = deltaTime * 100000;
+				dt = Math.round (dt);
+				dt /= 100000;
+				out.println ("Amount of bodies: " + World.getInstance ().getAmountBodies () + " deltaTime: " + dt);
+				out.flush ();
+			}
+			else{
+				circle = new Circle (SIZE / 2f, currXNewBody * (SIZE + 1f) + SIZE / 2f, currYNewBody + SIZE / 2f, 0.4f, 0.5f);
+				World.getInstance ().addBody (circle);
+			}
+			currXNewBody++;
+		}
+		timer -= deltaTime;
+	}
+	
 	
 	public Display (){
 		Timer timer = new Timer (0, this);
@@ -76,29 +102,7 @@ public class Display extends JPanel implements ActionListener{
 		g.drawString ("Bodies: " + World.getInstance ().getAmountBodies (), 2, 24);
 		g.drawString ("Version: 0.1.0 without rotation & friction", 2, 36);
 		
-		if (timer <= 0){
-			timer = TIMER;
-			if (currXNewBody * (SIZE + 1f) + SIZE >= (float) Main.WINDOW_WIDTH){
-				currXNewBody = 0f;
-				currYNewBody += SIZE + 1f;
-			}
-			
-			if (World.getInstance ().getAmountBodies () % 2 == 0){
-				aabb = new AABB (currXNewBody * (SIZE + 1f), currYNewBody, SIZE, SIZE, 0.4f, 0.5f);
-				World.getInstance ().addBody (aabb);
-				float dt = deltaTime * 100000;
-				dt = Math.round (dt);
-				dt /= 100000;
-				out.println ("Amount of bodies: " + World.getInstance ().getAmountBodies () + " deltaTime: " + dt);
-				out.flush ();
-			}
-			else{
-				circle = new Circle (SIZE / 2f, currXNewBody * (SIZE + 1f) + SIZE / 2f, currYNewBody + SIZE / 2f, 0.4f, 0.5f);
-				World.getInstance ().addBody (circle);
-			}
-			currXNewBody++;
-		}
-		timer -= deltaTime;
+		generateBodies ();
 		
 		World.getInstance ().update (deltaTime);
 		World.getInstance ().draw (g);

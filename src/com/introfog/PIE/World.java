@@ -17,17 +17,21 @@ public class World{
 	
 	private void narrowPhase (){
 		mayBeCollision.forEach ((collision) -> {
-			Manifold manifold = new Manifold (collision.getKey (), collision.getValue ());
-			if (manifold.isCollision ()){
-				collisions.add (manifold);
+			if (collision.getKey ().invertMass != 0f || collision.getValue ().invertMass != 0f){
+				Manifold manifold = new Manifold (collision.getKey (), collision.getValue ());
+				if (manifold.isCollision ()){
+					collisions.add (manifold);
+				}
 			}
 		});
 	}
 	
 	private void step (){
 		//broadPhase.bruteForce (mayBeCollision);
-		broadPhase.myRealisationSweepAndPrune (mayBeCollision);
-		//broadPhase.sweepAndPrune (mayBeCollision);
+		//broadPhase.myRealisationSweepAndPrune (mayBeCollision);
+		broadPhase.sweepAndPrune (mayBeCollision);
+		//broadPhase.spatialHashing (mayBeCollision);
+		
 		
 		narrowPhase ();
 		mayBeCollision.clear ();
