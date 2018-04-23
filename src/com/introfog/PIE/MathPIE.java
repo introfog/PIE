@@ -6,7 +6,7 @@ public class MathPIE{
 	public static final float DEAD_LOOP_BORDER = FIXED_DELTA_TIME * 20f;
 	
 	public static final float CORRECT_POSITION_PERCENT = 0.5f;
-	public static final float MIN_BORDER_SLOP = 1f;
+	public static final float MIN_BORDER_SLOP = 0.1f;
 	
 	public static final float STATIC_BODY_DENSITY = 0f;
 	

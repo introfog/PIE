@@ -1,5 +1,6 @@
-package com.introfog.PIE;
+package com.introfog.PIE.collisionDetection;
 
+import com.introfog.PIE.*;
 import javafx.util.Pair;
 
 import java.util.LinkedList;
@@ -17,6 +18,9 @@ public class BroadPhase{
 	private Vector2f p = new Vector2f ();
 	private Vector2f s = new Vector2f ();
 	private Vector2f s2 = new Vector2f ();
+	
+	//for spatial hashing method
+	private float averageMaxBodiesSize = 0f;
 	
 	
 	public BroadPhase (LinkedList <Body> bodies){
@@ -157,8 +161,17 @@ public class BroadPhase{
 		}
 	}
 	
+	public void spatialHashing (LinkedList <Pair <Body, Body>> mayBeCollision){
+	
+	}
+	
 	public void addBody (Shape shape){
 		xAxisProjection.add (shape.body);
 		yAxisProjection.add (shape.body);
+		
+		shape.computeAABB (); //after bodies.add (shape); in class World
+		averageMaxBodiesSize *= (bodies.size () - 1);
+		averageMaxBodiesSize += Math.max (shape.aabb.width, shape.aabb.height);
+		averageMaxBodiesSize /= bodies.size ();
 	}
 }

@@ -1,5 +1,6 @@
 package com.introfog.PIE;
 
+import com.introfog.PIE.collisionDetection.BroadPhase;
 import javafx.util.Pair;
 
 import java.awt.*;
@@ -15,18 +16,17 @@ public class World{
 	
 	
 	private void narrowPhase (){
-		Manifold manifold;
-		for (int i = 0; i < mayBeCollision.size (); i++){
-			manifold = new Manifold (mayBeCollision.get (i).getKey (), mayBeCollision.get (i).getValue ());
+		mayBeCollision.forEach ((collision) -> {
+			Manifold manifold = new Manifold (collision.getKey (), collision.getValue ());
 			if (manifold.isCollision ()){
 				collisions.add (manifold);
 			}
-		}
+		});
 	}
 	
 	private void step (){
-		broadPhase.bruteForce (mayBeCollision);
-		//broadPhase.myRealisationSweepAndPrune (mayBeCollision);
+		//broadPhase.bruteForce (mayBeCollision);
+		broadPhase.myRealisationSweepAndPrune (mayBeCollision);
 		//broadPhase.sweepAndPrune (mayBeCollision);
 		
 		narrowPhase ();
