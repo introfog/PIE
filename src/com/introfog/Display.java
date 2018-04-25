@@ -102,7 +102,7 @@ public class Display extends JPanel implements ActionListener{
 		g.drawString ("Bodies: " + World.getInstance ().getAmountBodies (), 2, 24);
 		g.drawString ("Version: 0.1.0 without rotation & friction", 2, 36);
 		
-		generateBodies ();
+		//generateBodies ();
 		
 		World.getInstance ().update (deltaTime);
 		World.getInstance ().draw (g);

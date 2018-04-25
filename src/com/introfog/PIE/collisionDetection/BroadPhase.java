@@ -21,7 +21,7 @@ public class BroadPhase{
 	
 	//for spatial hashing method
 	private float averageMaxBodiesSize = 0f;
-	private SpatialHash <Body> spatialHash;
+	private SpatialHash spatialHash;
 	
 	
 	public BroadPhase (LinkedList <Body> bodies){
@@ -166,24 +166,21 @@ public class BroadPhase{
 	}
 	
 	public void spatialHashing (LinkedList <Pair <Body, Body>> mayBeCollision){
-		spatialHash = new SpatialHash <> ((int) averageMaxBodiesSize);
+		if (bodies.size () > 4){
+			System.out.println ();
+		}
 		
-		bodies.forEach ((body) -> {
-			body.shape.computeAABB ();
-			spatialHash.Insert (body.shape.aabb.body.position, body);
-		});
+		spatialHash = new SpatialHash ((int) averageMaxBodiesSize);
 		
-		for (int i = 0; i < bodies.size (); i++){
-			LinkedList <Body> list = spatialHash.QueryPosition (bodies.get (i).shape.aabb.body.position);
-			for (int j = 0; j < list.size (); j++){
-				if (list.get (j) != bodies.get (i) && list.get (j).position.x + 0.000123f < bodies.get (i).position.x){
-					if (list.get (j).invertMass == 0f && bodies.get (i).invertMass == 0){
-						continue;
-					}
-					mayBeCollision.add (new Pair <> (list.get (j), bodies.get (i)));
+		bodies.forEach ((body) -> spatialHash.Insert (body));
+		
+		spatialHash.ComputeCollisions ().forEach ((list) -> {
+			for (int i = 0; i < list.size (); i++){
+				for (int j = i + 1; j < list.size (); j++){
+					mayBeCollision.add (new Pair <> (list.get (i), list.get (j)));
 				}
 			}
-		}
+		});
 	}
 	
 	public void addBody (Shape shape){
