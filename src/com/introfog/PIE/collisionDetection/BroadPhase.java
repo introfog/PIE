@@ -166,21 +166,11 @@ public class BroadPhase{
 	}
 	
 	public void spatialHashing (LinkedList <Pair <Body, Body>> mayBeCollision){
-		if (bodies.size () > 4){
-			System.out.println ();
-		}
-		
-		spatialHash = new SpatialHash ((int) averageMaxBodiesSize);
+		spatialHash = new SpatialHash ((int) averageMaxBodiesSize * 2);
 		
 		bodies.forEach ((body) -> spatialHash.Insert (body));
 		
-		spatialHash.ComputeCollisions ().forEach ((list) -> {
-			for (int i = 0; i < list.size (); i++){
-				for (int j = i + 1; j < list.size (); j++){
-					mayBeCollision.add (new Pair <> (list.get (i), list.get (j)));
-				}
-			}
-		});
+		spatialHash.ComputeCollisions ().forEach ((pair) -> mayBeCollision.add (pair));
 	}
 	
 	public void addBody (Shape shape){

@@ -29,8 +29,8 @@ public class World{
 	private void step (){
 		//broadPhase.bruteForce (mayBeCollision);
 		//broadPhase.myRealisationSweepAndPrune (mayBeCollision);
-		broadPhase.sweepAndPrune (mayBeCollision);
-		//broadPhase.spatialHashing (mayBeCollision);
+		//broadPhase.sweepAndPrune (mayBeCollision);
+		broadPhase.spatialHashing (mayBeCollision);
 		
 		
 		narrowPhase ();

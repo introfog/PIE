@@ -37,4 +37,9 @@ public class Body{
 		velocity = new Vector2f (0f, 0f);
 		position = new Vector2f (positionX, positionY);
 	}
+	
+	@Override
+	public boolean equals (Object obj){
+		return this == obj;
+	}
 }

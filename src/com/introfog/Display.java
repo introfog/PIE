@@ -20,7 +20,9 @@ public class Display extends JPanel implements ActionListener{
 	private AABB aabb;
 	private Circle circle;
 	private float SIZE = 10f;
-	private float currYNewBody = 100f;
+	
+	private float START_Y_GENERATE_BODY = 100f;
+	private float currYNewBody = START_Y_GENERATE_BODY;
 	private float currXNewBody = 0f;
 	private PrintWriter out;
 	
@@ -41,6 +43,10 @@ public class Display extends JPanel implements ActionListener{
 	}
 	
 	private void generateBodies (){
+		if (currYNewBody > (float) Main.WINDOW_HEIGHT - SIZE){
+			currYNewBody = START_Y_GENERATE_BODY;
+		}
+		
 		if (timer <= 0){
 			timer = TIMER;
 			if (currXNewBody * (SIZE + 1f) + SIZE >= (float) Main.WINDOW_WIDTH){
@@ -102,7 +108,7 @@ public class Display extends JPanel implements ActionListener{
 		g.drawString ("Bodies: " + World.getInstance ().getAmountBodies (), 2, 24);
 		g.drawString ("Version: 0.1.0 without rotation & friction", 2, 36);
 		
-		//generateBodies ();
+		generateBodies ();
 		
 		World.getInstance ().update (deltaTime);
 		World.getInstance ().draw (g);

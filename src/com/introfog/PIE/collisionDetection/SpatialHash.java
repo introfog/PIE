@@ -1,6 +1,7 @@
 package com.introfog.PIE.collisionDetection;
 
 import com.introfog.PIE.*;
+import javafx.util.Pair;
 
 import java.util.*;
 
@@ -8,7 +9,7 @@ public class SpatialHash{
 	private int cellSize;
 	private HashMap <Integer, LinkedList <Body>> dict;
 	private HashMap <Body, LinkedList <Integer>> objects;
-	private LinkedList <LinkedList <Body>> collisions;
+	LinkedHashSet <Pair <Body, Body>> collisionPairSet;
 	
 	private static final int BIG_ENOUGH_INT = 16 * 1024;
 	private static final double BIG_ENOUGH_FLOOR = BIG_ENOUGH_INT + 0.0000;
@@ -26,7 +27,7 @@ public class SpatialHash{
 		this.cellSize = cellSize;
 		dict = new HashMap <> ();
 		objects = new HashMap <> ();
-		collisions = new LinkedList <> ();
+		collisionPairSet = new LinkedHashSet <> ();
 	}
 	
 	public void Insert (Body body){
@@ -69,9 +70,15 @@ public class SpatialHash{
 		Insert (body);
 	}
 	
-	public LinkedList <LinkedList <Body>> ComputeCollisions (){
-		collisions.clear ();
-		dict.forEach ((cell, list) -> collisions.add (new LinkedList <> (list)));
-		return collisions;
+	public LinkedHashSet <Pair <Body, Body>> ComputeCollisions (){
+		collisionPairSet.clear ();
+		dict.forEach ((cell, list) -> {
+			for (int i = 0; i < list.size (); i++){
+				for (int j = i + 1; j < list.size (); j++){
+					collisionPairSet.add (new Pair <> (list.get (i), list.get (j)));
+				}
+			}
+		});
+		return collisionPairSet;
 	}
 }
