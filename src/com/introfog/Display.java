@@ -1,6 +1,7 @@
 package com.introfog;
 
 import com.introfog.PIE.*;
+import com.introfog.PIE.collisionDetection.BroadPhase;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -60,7 +61,8 @@ public class Display extends JPanel implements ActionListener{
 				float dt = deltaTime * 100000;
 				dt = Math.round (dt);
 				dt /= 100000;
-				out.println ("Amount of bodies: " + World.getInstance ().getAmountBodies () + " deltaTime: " + dt);
+				out.print ("Bodies: " + World.getInstance ().getAmountBodies () + "\tdt: " + dt);
+				out.println ("\tMay be collision bodies: " + World.getInstance ().amountMayBeCollisionBodies + "\tIntersects oper.:" + BroadPhase.INTERSECTED_COUNTER);
 				out.flush ();
 			}
 			else{

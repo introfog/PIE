@@ -6,6 +6,7 @@ import javafx.util.Pair;
 import java.util.*;
 
 public class BroadPhase{
+	public static int INTERSECTED_COUNTER = 0;
 	private LinkedList <Body> bodies;
 	
 	//for my realisation sweep and prune method
@@ -34,7 +35,10 @@ public class BroadPhase{
 		spatialHash = new SpatialHash ();
 	}
 	
-	public void bruteForce (LinkedList <Pair <Body, Body>> mayBeCollision){ //сложность O(n^2)
+	public void bruteForce (LinkedList <Pair <Body, Body>> mayBeCollision){
+		//сложность O(n^2), каждый объект с каждым проверяем
+		
+		INTERSECTED_COUNTER = 0;
 		Body a;
 		Body b;
 		for (int i = 0; i < bodies.size (); i++){
@@ -42,13 +46,10 @@ public class BroadPhase{
 				a = bodies.get (i);
 				b = bodies.get (j);
 				
-				if (a.invertMass == 0f && b.invertMass == 0f){
-					continue;
-				}
-				
 				a.shape.computeAABB ();
 				b.shape.computeAABB ();
 				
+				INTERSECTED_COUNTER++;
 				if (AABB.isIntersected (a.shape.aabb, b.shape.aabb)){
 					mayBeCollision.add (new Pair <> (a, b));
 				}
@@ -59,6 +60,8 @@ public class BroadPhase{
 	public void sweepAndPruneMyRealisation (LinkedList <Pair <Body, Body>> mayBeCollision){
 		//Лучший случай O(n*logn) или O(k*n), в худщем O(n^2), ищем
 		// возможные пересечения по оси Х, а потом bruteForce
+		
+		INTERSECTED_COUNTER = 0;
 		bodies.forEach ((body) -> body.shape.computeAABB ());
 		xAxisProjection.sort ((a, b) -> (int) (a.shape.aabb.body.position.x - b.shape.aabb.body.position.x));
 		//TODO использовать сортировку вставкой (эффективна когда почти отсортирован список)
@@ -73,8 +76,8 @@ public class BroadPhase{
 			else{
 				Body first = activeList.removeFirst ();
 				activeList.forEach ((body) -> {
+					INTERSECTED_COUNTER++;
 					if (AABB.isIntersected (first.shape.aabb, body.shape.aabb)){
-						//TODO сделать проверку на случай если два объекта месконечной массы (статичные)
 						mayBeCollision.add (new Pair <> (first, body));
 					}
 				});
@@ -92,8 +95,8 @@ public class BroadPhase{
 			for (int i = 0; i < size; i++){
 				Body first = activeList.removeFirst ();
 				activeList.forEach ((body) -> {
+					INTERSECTED_COUNTER++;
 					if (AABB.isIntersected (first.shape.aabb, body.shape.aabb)){
-						//TODO сделать проверку на случай если два объекта месконечной массы (статичные)
 						mayBeCollision.add (new Pair <> (first, body));
 					}
 				});
@@ -106,6 +109,8 @@ public class BroadPhase{
 	public void sweepAndPrune (LinkedList <Pair <Body, Body>> mayBeCollision){
 		//Лучший случай O(n*logn) или O(k*n), в худщем O(n^2), ищем возможные
 		// пересечения по текущей оси, а потом bruteForce. Каждый раз через десперсию выбираем следующую ось
+		
+		INTERSECTED_COUNTER = 0;
 		bodies.forEach ((body) -> body.shape.computeAABB ());
 		
 		if (CURRENT_AXIS == 0){
@@ -139,17 +144,15 @@ public class BroadPhase{
 			s2.add (p);
 			
 			for (int j = i + 1; j < bodies.size (); j++){
-				if (CURRENT_AXIS == 0 && xAxisProjection.get (
-						j).shape.aabb.body.position.x > currAABB.body.position.x + currAABB.width){
+				if (CURRENT_AXIS == 0 && xAxisProjection.get (j).shape.aabb.body.position.x > currAABB.body.position.x + currAABB.width){
 					break;
 				}
-				else if (yAxisProjection.get (
-						j).shape.aabb.body.position.y > currAABB.body.position.y + currAABB.height){
+				else if (yAxisProjection.get (j).shape.aabb.body.position.y > currAABB.body.position.y + currAABB.height){
 					break;
 				}
 				
+				INTERSECTED_COUNTER++;
 				if (CURRENT_AXIS == 0 && AABB.isIntersected (xAxisProjection.get (j).shape.aabb, currAABB)){
-					//TODO сделать проверку на случай если два объекта месконечной массы (статичные)
 					mayBeCollision.add (new Pair <> (xAxisProjection.get (j), xAxisProjection.get (i)));
 				}
 				else if (AABB.isIntersected (yAxisProjection.get (j).shape.aabb, currAABB)){
@@ -158,8 +161,10 @@ public class BroadPhase{
 			}
 		}
 		
-		s.x *= s.x; //с помощью дисперсии выбираем следуюущую ось (ищем ось, по которой координаты объектов больше
-		s.y *= s.y; //всего различаются)
+		//с помощью дисперсии выбираем следуюущую ось (ищем ось, по которой координаты объектов больше всего различаются)
+		//что бы меньше проверок делать и сводить алогритм к  O(k*n)
+		s.x *= s.x;
+		s.y *= s.y;
 		s2.sub (s);
 		CURRENT_AXIS = 0;
 		if (s.y > s.x){
@@ -168,6 +173,10 @@ public class BroadPhase{
 	}
 	
 	public void spatialHashing (LinkedList <Pair <Body, Body>> mayBeCollision){
+		//сложность O(n) если минимальный и максимальный размер объектов не сильно отличаются, но если очень сильно,
+		//то сложность близиться к O(n^2)
+		
+		INTERSECTED_COUNTER = 0;
 		spatialHash.setCellSize ((int) averageMaxBodiesSize * 2);
 		spatialHash.clear ();
 		

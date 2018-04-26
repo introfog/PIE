@@ -56,7 +56,10 @@ public class SpatialHash{
 		}
 	}
 	
-	public void optimizedInsert (Body body){ //работает быстрее чем insert2
+	public void optimizedInsert (Body body){
+		//работает быстрее чем insert
+		//делим AABB на ячейки, пришлось увиличить размер AABB на целую клетку, что бы не проверять дополнительно
+		//лежит ли остаток AABB в новой ячейке.
 		body.shape.computeAABB ();
 		AABB aabb = body.shape.aabb;
 		float currX = aabb.body.position.x;
@@ -64,6 +67,7 @@ public class SpatialHash{
 		int key;
 		while (currX <= aabb.body.position.x + aabb.width + cellSize){
 			while (currY <= aabb.body.position.y + aabb.height + cellSize){
+				BroadPhase.INTERSECTED_COUNTER++;
 				key = GenerateKey (currX, currY);
 				
 				if (cells.containsKey (key)){
@@ -95,10 +99,13 @@ public class SpatialHash{
 	}
 	
 	public LinkedHashSet <Pair <Body, Body>> computeCollisions (){
+		//использую LinkedHashSet что бы избежать повторяющихся пар, это не очень быстро
+		//TODO возможно есть более легкий способ избежать повтора пар кроме как использовать LinkedHashSet (какое-нить лексикографическое сравнение)
 		collisionPairSet.clear ();
 		cells.forEach ((cell, list) -> {
 			for (int i = 0; i < list.size (); i++){
 				for (int j = i + 1; j < list.size (); j++){
+					BroadPhase.INTERSECTED_COUNTER++;
 					collisionPairSet.add (new Pair <> (list.get (i), list.get (j)));
 				}
 			}
