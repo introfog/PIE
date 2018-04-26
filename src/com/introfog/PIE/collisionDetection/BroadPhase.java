@@ -30,6 +30,8 @@ public class BroadPhase{
 		xAxisProjection = new LinkedList <> ();
 		yAxisProjection = new LinkedList <> ();
 		activeList = new LinkedList <> ();
+		
+		spatialHash = new SpatialHash ();
 	}
 	
 	public void bruteForce (LinkedList <Pair <Body, Body>> mayBeCollision){ //сложность O(n^2)
@@ -54,7 +56,7 @@ public class BroadPhase{
 		}
 	}
 	
-	public void myRealisationSweepAndPrune (LinkedList <Pair <Body, Body>> mayBeCollision){
+	public void sweepAndPruneMyRealisation (LinkedList <Pair <Body, Body>> mayBeCollision){
 		//Лучший случай O(n*logn) или O(k*n), в худщем O(n^2), ищем
 		// возможные пересечения по оси Х, а потом bruteForce
 		bodies.forEach ((body) -> body.shape.computeAABB ());
@@ -166,11 +168,12 @@ public class BroadPhase{
 	}
 	
 	public void spatialHashing (LinkedList <Pair <Body, Body>> mayBeCollision){
-		spatialHash = new SpatialHash ((int) averageMaxBodiesSize * 2);
+		spatialHash.setCellSize ((int) averageMaxBodiesSize * 2);
+		spatialHash.clear ();
 		
-		bodies.forEach ((body) -> spatialHash.Insert (body));
+		bodies.forEach ((body) -> spatialHash.optimizedInsert (body));
 		
-		spatialHash.ComputeCollisions ().forEach ((pair) -> mayBeCollision.add (pair));
+		spatialHash.computeCollisions ().forEach ((pair) -> mayBeCollision.add (pair));
 	}
 	
 	public void addBody (Shape shape){

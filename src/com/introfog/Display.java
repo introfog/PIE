@@ -15,7 +15,7 @@ public class Display extends JPanel implements ActionListener{
 	private float deltaTime;
 	private long previousTime = 0L;
 	
-	private float TIMER = 0.1f;
+	private float TIMER = 0.05f;
 	private float timer = TIMER;
 	private AABB aabb;
 	private Circle circle;
@@ -43,7 +43,7 @@ public class Display extends JPanel implements ActionListener{
 	}
 	
 	private void generateBodies (){
-		if (currYNewBody > (float) Main.WINDOW_HEIGHT - SIZE){
+		if (currYNewBody > (float) Main.WINDOW_HEIGHT - 3 * SIZE){
 			currYNewBody = START_Y_GENERATE_BODY;
 		}
 		

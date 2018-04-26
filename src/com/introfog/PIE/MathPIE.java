@@ -12,6 +12,12 @@ public class MathPIE{
 	
 	public static final float PI = 3.141_592f;
 	
+	public static final int BIG_ENOUGH_INT = 16 * 1024;
+	public static final double BIG_ENOUGH_FLOOR = BIG_ENOUGH_INT + 0.0000;
+	public static int fastFloor (float f){
+		return (int) (f + BIG_ENOUGH_FLOOR) - BIG_ENOUGH_INT;
+	}
+	
 	
 	public static float signum (float value){
 		if (value == 0f){
