@@ -43,7 +43,7 @@ public class Display extends JPanel implements ActionListener{
 		World.getInstance ().setIterations (1);
 	}
 	
-	private void generateBodies (){
+	private void testProductivity (){
 		if (currYNewBody > (float) Main.WINDOW_HEIGHT - 3 * SIZE){
 			currYNewBody = START_Y_GENERATE_BODY;
 		}
@@ -62,14 +62,26 @@ public class Display extends JPanel implements ActionListener{
 				dt = Math.round (dt);
 				dt /= 100000;
 				out.print ("Bodies: " + World.getInstance ().getAmountBodies () + "\tdt: " + dt);
-				out.println ("\tMay be collision bodies: " + World.getInstance ().amountMayBeCollisionBodies + "\tIntersects oper.:" + BroadPhase.INTERSECTED_COUNTER);
+				out.println (
+						"\tMay be collision bodies: " + World.getInstance ().amountMayBeCollisionBodies + "\tIntersects oper.:" + BroadPhase.INTERSECTED_COUNTER);
 				out.flush ();
 			}
 			else{
-				circle = new Circle (SIZE / 2f, currXNewBody * (SIZE + 1f) + SIZE / 2f, currYNewBody + SIZE / 2f, 0.4f, 0.5f);
+				circle = new Circle (SIZE / 2f, currXNewBody * (SIZE + 1f) + SIZE / 2f, currYNewBody + SIZE / 2f, 0.4f,
+									 0.5f);
 				World.getInstance ().addBody (circle);
 			}
 			currXNewBody++;
+		}
+		timer -= deltaTime;
+	}
+	
+	private void testBodiesPenetration (){
+		if (timer <= 0){
+			timer = TIMER * 10f;
+			
+			aabb = new AABB (400f, currYNewBody, SIZE, SIZE, 0.4f, 0.5f);
+			World.getInstance ().addBody (aabb);
 		}
 		timer -= deltaTime;
 	}
@@ -103,14 +115,15 @@ public class Display extends JPanel implements ActionListener{
 		
 		
 		g.setColor (Color.WHITE);
-		g.fillRect (0,0, this.getWidth (), this.getHeight ());
+		g.fillRect (0, 0, this.getWidth (), this.getHeight ());
 		g.setColor (Color.BLACK);
 		
 		g.drawString ("FPS: " + (int) (1 / deltaTime), 2, 12);
 		g.drawString ("Bodies: " + World.getInstance ().getAmountBodies (), 2, 24);
 		g.drawString ("Version: 0.1.0 without rotation & friction", 2, 36);
 		
-		generateBodies ();
+		testProductivity ();
+		//testBodiesPenetration ();
 		
 		World.getInstance ().update (deltaTime);
 		World.getInstance ().draw (g);

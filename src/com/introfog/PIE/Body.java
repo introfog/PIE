@@ -6,6 +6,10 @@ public class Body{
 	public float density;
 	public float staticFriction;
 	public float dynamicFriction;
+	/*public float orientation; // радианы
+	public float angularVelocity;
+	public float torque; //крутящий момент
+	public float invertInertia;*/
 	public Vector2f position;
 	public Vector2f force;
 	public Vector2f velocity;

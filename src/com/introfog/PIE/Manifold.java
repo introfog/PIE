@@ -44,12 +44,12 @@ public class Manifold{ //TODO добавить таблицу переходов
 				// Определяем, по какой из осей проникновение наименьшее
 				if (xOverlap < yOverlap){
 					// Указываем в направлении B, зная, что n указывает в направлении от A к B
-					normal.set (MathPIE.signum (normal.x), 0f);
+					normal.set (MathPIE.signumWithoutZero (normal.x), 0f);
 					penetration = xOverlap;
 				}
 				else{
 					// Указываем в направлении B, зная, что n указывает в направлении от A к B
-					normal.set (0f, MathPIE.signum (normal.y));
+					normal.set (0f, MathPIE.signumWithoutZero (normal.y));
 					penetration = yOverlap;
 				}
 			}
@@ -74,10 +74,10 @@ public class Manifold{ //TODO добавить таблицу переходов
 			inside = true;
 			
 			if (Math.abs (tmpNormal.x) > Math.abs (tmpNormal.y)){
-				closest.x = MathPIE.signum (closest.x) * xExtent;
+				closest.x = MathPIE.signumWithoutZero (closest.x) * xExtent;
 			}
 			else{
-				closest.y = MathPIE.signum (closest.y) * yExtent;
+				closest.y = MathPIE.signumWithoutZero (closest.y) * yExtent;
 			}
 		}
 		

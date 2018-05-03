@@ -7,7 +7,6 @@ import java.awt.*;
 import java.util.*;
 
 public class World{
-	private boolean reverseNarrowPhase = false;
 	private int iterations = 1;
 	private float accumulator;
 	private LinkedList <Body> bodies;
@@ -20,27 +19,15 @@ public class World{
 	
 	private void narrowPhase (){
 		amountMayBeCollisionBodies = mayBeCollision.size ();
-		if (reverseNarrowPhase){
-			mayBeCollision.forEach ((collision) -> {
-				if (collision.getKey ().invertMass != 0f || collision.getValue ().invertMass != 0f){
-					Manifold manifold = new Manifold (collision.getKey (), collision.getValue ());
-					if (manifold.isCollision ()){
-						collisions.add (manifold);
-					}
-				}
-			});
-		}
-		else{
-			for (int i = mayBeCollision.size () - 1; i > -1; i--){
-				if (mayBeCollision.get (i).getKey ().invertMass != 0 || mayBeCollision.get (i).getValue ().invertMass != 0){
-					Manifold manifold = new Manifold (mayBeCollision.get (i).getKey (), mayBeCollision.get (i).getValue ());
-					if (manifold.isCollision ()){
-						collisions.add (manifold);
-					}
+		
+		mayBeCollision.forEach ((collision) -> {
+			if (collision.getKey ().invertMass != 0f || collision.getValue ().invertMass != 0f){
+				Manifold manifold = new Manifold (collision.getKey (), collision.getValue ());
+				if (manifold.isCollision ()){
+					collisions.add (manifold);
 				}
 			}
-		}
-		reverseNarrowPhase = !reverseNarrowPhase;
+		});
 	}
 	
 	private void step (){

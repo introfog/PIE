@@ -182,7 +182,12 @@ public class BroadPhase{
 		
 		bodies.forEach ((body) -> spatialHash.optimizedInsert (body));
 		
-		spatialHash.computeCollisions ().forEach ((pair) -> mayBeCollision.add (pair));
+		spatialHash.computeCollisions ().forEach ((pair) -> {
+			BroadPhase.INTERSECTED_COUNTER++;
+			if (AABB.isIntersected (pair.getKey ().shape.aabb, pair.getValue ().shape.aabb)){
+				mayBeCollision.add (pair);
+			}
+		});
 	}
 	
 	public void addBody (Shape shape){

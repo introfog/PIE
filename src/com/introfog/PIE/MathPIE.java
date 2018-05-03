@@ -19,7 +19,7 @@ public class MathPIE{
 	}
 	
 	
-	public static float signum (float value){
+	public static float signumWithoutZero (float value){
 		if (value == 0f){
 			return 1;
 		}
