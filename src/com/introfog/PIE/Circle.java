@@ -19,7 +19,7 @@ public class Circle extends Shape{
 	
 	@Override
 	public void render (Graphics graphics){
-		graphics.drawOval ((int) body.position.x, (int) body.position.y, 1, 1);
+		graphics.drawLine ((int) body.position.x, (int) body.position.y, (int) body.position.x, (int) body.position.y);
 		graphics.drawOval ((int) (body.position.x - radius), (int) (body.position.y - radius), (int) radius * 2, (int) radius * 2);
 	}
 	
@@ -29,6 +29,9 @@ public class Circle extends Shape{
 		aabb.width = 2f * radius;
 		aabb.height = 2f * radius;
 	}
+	
+	@Override
+	public void setOrientation (float radian){ }
 	
 	@Override
 	protected void computeMass (){

@@ -1,6 +1,7 @@
 package com.introfog;
 
 import com.introfog.PIE.*;
+import com.introfog.PIE.Polygon;
 import com.introfog.PIE.collisionDetection.BroadPhase;
 
 import java.awt.*;
@@ -31,16 +32,20 @@ public class Display extends JPanel implements ActionListener{
 	private void initializeBodies (){
 		Circle circle;
 		circle = new Circle (40f, 220f, 350f, MathPIE.STATIC_BODY_DENSITY, 0.3f);
-		World.getInstance ().addBody (circle);
+		World.getInstance ().addShape (circle);
 		
 		AABB aabb;
 		aabb = new AABB (200f, 450f, 300f, 20f, MathPIE.STATIC_BODY_DENSITY, 0.3f);
-		World.getInstance ().addBody (aabb);
+		World.getInstance ().addShape (aabb);
 		
 		/*circle = new Circle (30f, 400f, 200f, 0.4f, 0.5f);
 		World.getInstance ().addBody (circle);*/
 		
 		World.getInstance ().setIterations (1);
+		
+		Vector2f[] vertices = {new Vector2f (20f, -20f), new Vector2f (40f, 20f), new Vector2f (0f, 60f), new Vector2f (-60f, 40f), new Vector2f (-40f, 0f)};
+		Polygon polygon = new Polygon (1f, 1f, 100f, 40f, vertices);
+		World.getInstance ().addShape (polygon);
 	}
 	
 	private void testProductivity (){
@@ -57,7 +62,7 @@ public class Display extends JPanel implements ActionListener{
 			
 			if (World.getInstance ().getAmountBodies () % 2 == 0){
 				aabb = new AABB (currXNewBody * (SIZE + 1f), currYNewBody, SIZE, SIZE, 0.4f, 0.5f);
-				World.getInstance ().addBody (aabb);
+				World.getInstance ().addShape (aabb);
 				float dt = deltaTime * 100000;
 				dt = Math.round (dt);
 				dt /= 100000;
@@ -69,7 +74,7 @@ public class Display extends JPanel implements ActionListener{
 			else{
 				circle = new Circle (SIZE / 2f, currXNewBody * (SIZE + 1f) + SIZE / 2f, currYNewBody + SIZE / 2f, 0.4f,
 									 0.5f);
-				World.getInstance ().addBody (circle);
+				World.getInstance ().addShape (circle);
 			}
 			currXNewBody++;
 		}
@@ -81,7 +86,7 @@ public class Display extends JPanel implements ActionListener{
 			timer = TIMER * 10f;
 			
 			aabb = new AABB (400f, currYNewBody, SIZE, SIZE, 0.4f, 0.5f);
-			World.getInstance ().addBody (aabb);
+			World.getInstance ().addShape (aabb);
 		}
 		timer -= deltaTime;
 	}
@@ -122,7 +127,7 @@ public class Display extends JPanel implements ActionListener{
 		g.drawString ("Bodies: " + World.getInstance ().getAmountBodies (), 2, 24);
 		g.drawString ("Version: 0.1.0 without rotation & friction", 2, 36);
 		
-		testProductivity ();
+		//testProductivity ();
 		//testBodiesPenetration ();
 		
 		World.getInstance ().update (deltaTime);

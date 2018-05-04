@@ -29,7 +29,7 @@ public class MouseEvents extends Applet implements MouseListener{
 			Circle circle;
 			float rand = (float) Math.random ();
 			circle = new Circle (rand * 20f + 5f, mouseX, mouseY,  0.4f, 0.5f);
-			World.getInstance ().addBody (circle);
+			World.getInstance ().addShape (circle);
 		}
 		else if (me.getButton () == MouseEvent.BUTTON3){
 			AABB aabb;
@@ -38,7 +38,7 @@ public class MouseEvents extends Applet implements MouseListener{
 			rand = (float) Math.random ();
 			float width = rand * 80f + 20f;
 			aabb = new AABB (mouseX - width / 2f, mouseY - height / 2, width, height, 0.4f, 0.5f);
-			World.getInstance ().addBody (aabb);
+			World.getInstance ().addShape (aabb);
 		}
 	}
 	

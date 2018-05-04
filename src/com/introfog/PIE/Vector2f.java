@@ -108,4 +108,14 @@ public class Vector2f{
 	public static float dotProduct (Vector2f a, Vector2f b){
 		return a.x * b.x + a.y * b.y;
 	}
+	
+	public static Vector2f[] arrayOf (int length){
+		Vector2f[] array = new Vector2f[length];
+		
+		for (int i = 0; i < length; i++){
+			array[i] = new Vector2f ();
+		}
+		
+		return array;
+	}
 }

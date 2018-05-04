@@ -72,6 +72,7 @@ public class World{
 		
 		b.velocity.add (b.force, b.invertMass * MathPIE.FIXED_DELTA_TIME * 0.5f);
 		b.velocity.add (MathPIE.GRAVITY, MathPIE.FIXED_DELTA_TIME * 0.5f);
+		b.angularVelocity += b.torque * b.invertInertia * MathPIE.FIXED_DELTA_TIME * 0.5f;
 	}
 	
 	private void integrateVelocity (Body b){
@@ -80,6 +81,8 @@ public class World{
 		}
 		
 		b.position.add (b.velocity, MathPIE.FIXED_DELTA_TIME);
+		b.orientation += b.angularVelocity * MathPIE.FIXED_DELTA_TIME;
+		b.setOrientation (b.orientation);
 		
 		integrateForces (b);
 	}
@@ -119,7 +122,7 @@ public class World{
 		bodies.forEach ((body) -> body.shape.render (graphics));
 	}
 	
-	public void addBody (Shape shape){
+	public void addShape (Shape shape){
 		bodies.add (shape.body);
 		broadPhase.addBody (shape);
 	}

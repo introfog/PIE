@@ -38,9 +38,13 @@ public class AABB extends Shape{ //Axis Aligned Bounding Box
 	}
 	
 	@Override
+	public void setOrientation (float radian){ }
+	
+	@Override
 	protected void computeMass (){
 		float mass = width * height * body.density;
 		body.invertMass = (mass == 0f) ? 0f : 1f / mass;
+		System.out.println (body.invertMass);
 	}
 	
 	public void updateCentre (){

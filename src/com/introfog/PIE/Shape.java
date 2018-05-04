@@ -16,5 +16,7 @@ public abstract class Shape{
 	
 	public abstract void computeAABB ();
 	
+	public abstract void setOrientation (float radian);
+	
 	protected abstract void computeMass ();
 }

@@ -10,6 +10,8 @@ public class MathPIE{
 	
 	public static final float STATIC_BODY_DENSITY = 0f;
 	
+	public static final int MAX_POLY_VERTEX_COUNT = 64;
+	
 	public static final float PI = 3.141_592f;
 	
 	public static final int BIG_ENOUGH_INT = 16 * 1024;

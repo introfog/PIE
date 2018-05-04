@@ -6,10 +6,10 @@ public class Body{
 	public float density;
 	public float staticFriction;
 	public float dynamicFriction;
-	/*public float orientation; // радианы
+	public float orientation; // радианы
 	public float angularVelocity;
 	public float torque; //крутящий момент
-	public float invertInertia;*/
+	public float invertInertia;
 	public Vector2f position;
 	public Vector2f force;
 	public Vector2f velocity;
@@ -40,6 +40,11 @@ public class Body{
 		force = new Vector2f (0f, 0f);
 		velocity = new Vector2f (0f, 0f);
 		position = new Vector2f (positionX, positionY);
+	}
+	
+	public void setOrientation (float radian){
+		orientation = radian;
+		shape.setOrientation (radian);
 	}
 	
 	@Override
