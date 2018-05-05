@@ -37,6 +37,9 @@ public class Circle extends Shape{
 	protected void computeMass (){
 		float mass = MathPIE.PI * radius * radius * body.density;
 		body.invertMass = (mass == 0f) ? 0f : 1f / mass;
+		
+		float inertia = radius * radius / body.invertMass;
+		body.invertInertia = (inertia != 0.0f) ? 1.0f / inertia : 0.0f;
 	}
 	
 	

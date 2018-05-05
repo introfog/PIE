@@ -44,7 +44,6 @@ public class AABB extends Shape{ //Axis Aligned Bounding Box
 	protected void computeMass (){
 		float mass = width * height * body.density;
 		body.invertMass = (mass == 0f) ? 0f : 1f / mass;
-		System.out.println (body.invertMass);
 	}
 	
 	public void updateCentre (){
