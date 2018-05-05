@@ -57,14 +57,13 @@ public class Polygon extends Shape{
 	
 	@Override
 	protected void computeMass (){
-		// Calculate centroid and moment of inertia
 		float area = 0.0f;
 		float I = 0.0f;
 		final float k_inv3 = 1.0f / 3.0f;
 		
 		for (int i = 0; i < vertexCount; ++i)
 		{
-			// Triangle vertices, third vertex implied as (0, 0)
+			//Разбиваем выпуклый многоугольник на треугольники, у которых одна из точек (0, 0)
 			Vector2f p1 = vertices[i];
 			Vector2f p2 = vertices[(i + 1) % vertexCount];
 			

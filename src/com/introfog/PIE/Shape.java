@@ -4,7 +4,7 @@ import java.awt.*;
 
 public abstract class Shape{
 	public enum Type{
-		circle, AABB, polygon
+		circle, polygon
 	}
 	
 	public Type type;
