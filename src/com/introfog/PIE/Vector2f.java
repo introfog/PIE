@@ -109,6 +109,10 @@ public class Vector2f{
 		return a.x * b.x + a.y * b.y;
 	}
 	
+	public static float crossProduct (Vector2f a, Vector2f b){
+		return a.x * b.y - a.y * b.x;
+	}
+	
 	public static Vector2f[] arrayOf (int length){
 		Vector2f[] array = new Vector2f[length];
 		

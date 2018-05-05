@@ -18,11 +18,19 @@ public class Polygon extends Shape{
 		}
 		aabb = new AABB ();
 		
-		body.invertMass = 0.001f;
-		//computeMass ();
+		computeMass ();
 		//computeAABB ();
 		
 		type = Type.polygon;
+	}
+	
+	public static Polygon generateRectangle (float centerX, float centerY, float width, float height, float density, float restitution){
+		Vector2f[] vertices = {
+				new Vector2f (-width / 2f, - height / 2f),
+				new Vector2f (width / 2f, -height / 2f),
+				new Vector2f (width / 2f, height / 2f),
+				new Vector2f (-width / 2f, height / 2f)};
+		return new Polygon (density, restitution, centerX, centerY, vertices);
 	}
 	
 	@Override
@@ -48,5 +56,31 @@ public class Polygon extends Shape{
 	public void setOrientation (float radian){ }
 	
 	@Override
-	protected void computeMass (){ }
+	protected void computeMass (){
+		// Calculate centroid and moment of inertia
+		float area = 0.0f;
+		float I = 0.0f;
+		final float k_inv3 = 1.0f / 3.0f;
+		
+		for (int i = 0; i < vertexCount; ++i)
+		{
+			// Triangle vertices, third vertex implied as (0, 0)
+			Vector2f p1 = vertices[i];
+			Vector2f p2 = vertices[(i + 1) % vertexCount];
+			
+			float D = Vector2f.crossProduct ( p1, p2 );
+			float triangleArea = 0.5f * D;
+			
+			area += triangleArea;
+			
+			float intx2 = p1.x * p1.x + p2.x * p1.x + p2.x * p2.x;
+			float inty2 = p1.y * p1.y + p2.y * p1.y + p2.y * p2.y;
+			I += (0.25f * k_inv3 * D) * (intx2 + inty2);
+		}
+		
+		float mass = body.density * area;
+		body.invertMass = (mass != 0.0f) ? 1.0f / mass : 0.0f;
+		float inertia = I * body.density;
+		body.invertInertia = (inertia != 0.0f) ? 1.0f / inertia : 0.0f;
+	}
 }

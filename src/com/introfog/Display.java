@@ -36,16 +36,22 @@ public class Display extends JPanel implements ActionListener{
 		
 		AABB aabb;
 		aabb = new AABB (200f, 450f, 300f, 20f, MathPIE.STATIC_BODY_DENSITY, 0.3f);
-		World.getInstance ().addShape (aabb);
+		//World.getInstance ().addShape (aabb);
 		
 		/*circle = new Circle (30f, 400f, 200f, 0.4f, 0.5f);
 		World.getInstance ().addBody (circle);*/
 		
 		World.getInstance ().setIterations (1);
 		
-		Vector2f[] vertices = {new Vector2f (20f, -20f), new Vector2f (40f, 20f), new Vector2f (0f, 60f), new Vector2f (-60f, 40f), new Vector2f (-40f, 0f)};
-		Polygon polygon = new Polygon (1f, 1f, 100f, 40f, vertices);
-		World.getInstance ().addShape (polygon);
+		//Vector2f[] vertices = {new Vector2f (20f, -20f), new Vector2f (40f, 20f), new Vector2f (0f, 60f), new Vector2f (-60f, 40f), new Vector2f (-40f, 0f)};
+		//Polygon polygon = new Polygon (0.4f, 0.3f, 100f, 40f, vertices);
+		//World.getInstance ().addShape (polygon);
+		
+		Polygon rectangle = Polygon.generateRectangle (30f, 30f, 60f, 60f, 0.4f, 0.3f);
+		World.getInstance ().addShape (rectangle);
+		
+		aabb = new AABB (0f, 0f, 60f, 60f, 0.4f, 0.3f);
+		World.getInstance ().addShape (aabb);
 	}
 	
 	private void testProductivity (){
