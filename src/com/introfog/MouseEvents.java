@@ -32,13 +32,13 @@ public class MouseEvents extends Applet implements MouseListener{
 			World.getInstance ().addShape (circle);
 		}
 		else if (me.getButton () == MouseEvent.BUTTON3){
-			AABB aabb;
+			Polygon rectangle;
 			float rand = (float) Math.random ();
 			float height = rand * 80f + 20f;
 			rand = (float) Math.random ();
 			float width = rand * 80f + 20f;
-			aabb = new AABB (mouseX - width / 2f, mouseY - height / 2, width, height, 0.4f, 0.5f);
-			World.getInstance ().addShape (aabb);
+			rectangle = Polygon.generateRectangle (mouseX, mouseY, width, height, 0.4f, 0.5f);
+			World.getInstance ().addShape (rectangle);
 		}
 	}
 	

@@ -19,7 +19,7 @@ public class Display extends JPanel implements ActionListener{
 	
 	private float TIMER = 0.05f;
 	private float timer = TIMER;
-	private AABB aabb;
+	private Polygon rectangle;
 	private Circle circle;
 	private float SIZE = 10f;
 	
@@ -34,10 +34,6 @@ public class Display extends JPanel implements ActionListener{
 		circle = new Circle (40f, 220f, 350f, MathPIE.STATIC_BODY_DENSITY, 0.3f);
 		World.getInstance ().addShape (circle);
 		
-		AABB aabb;
-		aabb = new AABB (200f, 450f, 300f, 20f, MathPIE.STATIC_BODY_DENSITY, 0.3f);
-		//World.getInstance ().addShape (aabb);
-		
 		/*circle = new Circle (30f, 400f, 200f, 0.4f, 0.5f);
 		World.getInstance ().addBody (circle);*/
 		
@@ -49,9 +45,6 @@ public class Display extends JPanel implements ActionListener{
 		
 		Polygon rectangle = Polygon.generateRectangle (30f, 30f, 60f, 60f, 0.4f, 0.3f);
 		World.getInstance ().addShape (rectangle);
-		
-		aabb = new AABB (0f, 0f, 60f, 60f, 0.4f, 0.3f);
-		World.getInstance ().addShape (aabb);
 	}
 	
 	private void testProductivity (){
@@ -67,8 +60,9 @@ public class Display extends JPanel implements ActionListener{
 			}
 			
 			if (World.getInstance ().getAmountBodies () % 2 == 0){
-				aabb = new AABB (currXNewBody * (SIZE + 1f), currYNewBody, SIZE, SIZE, 0.4f, 0.5f);
-				World.getInstance ().addShape (aabb);
+				rectangle = Polygon.generateRectangle (currXNewBody * (SIZE + 1f) + SIZE / 2f, currYNewBody + SIZE / 2f, SIZE / 2f, SIZE / 2f, 0.4f,
+													   0.5f);
+				World.getInstance ().addShape (rectangle);
 				float dt = deltaTime * 100000;
 				dt = Math.round (dt);
 				dt /= 100000;
@@ -91,8 +85,8 @@ public class Display extends JPanel implements ActionListener{
 		if (timer <= 0){
 			timer = TIMER * 10f;
 			
-			aabb = new AABB (400f, currYNewBody, SIZE, SIZE, 0.4f, 0.5f);
-			World.getInstance ().addShape (aabb);
+			rectangle = Polygon.generateRectangle (400f, currYNewBody, SIZE, SIZE, 0.4f, 0.5f);
+			World.getInstance ().addShape (rectangle);
 		}
 		timer -= deltaTime;
 	}

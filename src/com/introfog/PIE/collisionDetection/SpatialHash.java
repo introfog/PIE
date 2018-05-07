@@ -31,11 +31,11 @@ public class SpatialHash{
 		body.shape.computeAABB ();
 		AABB aabb = body.shape.aabb;
 		int key;
-		int cellX = MathPIE.fastFloor ((aabb.body.position.x + aabb.width) / cellSize) - MathPIE.fastFloor (aabb.body.position.x / cellSize);
-		int cellY = MathPIE.fastFloor ((aabb.body.position.y + aabb.height) / cellSize) - MathPIE.fastFloor (aabb.body.position.y / cellSize);
+		int cellX = MathPIE.fastFloor (aabb.max.x / cellSize) - MathPIE.fastFloor (aabb.min.x / cellSize);
+		int cellY = MathPIE.fastFloor (aabb.max.y / cellSize) - MathPIE.fastFloor (aabb.min.y / cellSize);
 		for (int i = 0; i <= cellX; i++){
 			for (int j = 0; j <= cellY; j++){
-				key = GenerateKey (aabb.body.position.x + i * cellSize, aabb.body.position.y + j * cellSize);
+				key = GenerateKey (aabb.min.x + i * cellSize, aabb.min.y + j * cellSize);
 				
 				if (cells.containsKey (key)){
 					cells.get (key).add (body);
@@ -62,11 +62,11 @@ public class SpatialHash{
 		//лежит ли остаток AABB в новой ячейке.
 		body.shape.computeAABB ();
 		AABB aabb = body.shape.aabb;
-		float currX = aabb.body.position.x;
-		float currY = aabb.body.position.y;
+		float currX = aabb.min.x;
+		float currY = aabb.min.y;
 		int key;
-		while (currX <= aabb.body.position.x + aabb.width + cellSize){
-			while (currY <= aabb.body.position.y + aabb.height + cellSize){
+		while (currX <= aabb.max.x + cellSize){
+			while (currY <= aabb.max.y + cellSize){
 				key = GenerateKey (currX, currY);
 				
 				if (cells.containsKey (key)){
@@ -87,7 +87,7 @@ public class SpatialHash{
 				
 				currY += cellSize;
 			}
-			currY = aabb.body.position.y;
+			currY = aabb.min.y;
 			currX += cellSize;
 		}
 	}

@@ -63,14 +63,14 @@ public class BroadPhase{
 		
 		INTERSECTED_COUNTER = 0;
 		bodies.forEach ((body) -> body.shape.computeAABB ());
-		xAxisProjection.sort ((a, b) -> (int) (a.shape.aabb.body.position.x - b.shape.aabb.body.position.x));
+		xAxisProjection.sort ((a, b) -> (int) (a.shape.aabb.min.x - b.shape.aabb.min.x));
 		//TODO использовать сортировку вставкой (эффективна когда почти отсортирован список)
 		
 		activeList.add (xAxisProjection.getFirst ());
-		float currEnd = xAxisProjection.getFirst ().shape.aabb.body.position.x + xAxisProjection.getFirst ().shape.aabb.width;
+		float currEnd = xAxisProjection.getFirst ().shape.aabb.max.x;
 		
 		for (int i = 1; i < xAxisProjection.size (); i++){
-			if (xAxisProjection.get (i).shape.aabb.body.position.x <= currEnd){
+			if (xAxisProjection.get (i).shape.aabb.min.x <= currEnd){
 				activeList.add (xAxisProjection.get (i));
 			}
 			else{
@@ -87,7 +87,7 @@ public class BroadPhase{
 				else{
 					activeList.add (xAxisProjection.get (i));
 				}
-				currEnd = activeList.getFirst ().shape.aabb.body.position.x + activeList.getFirst ().shape.aabb.width;
+				currEnd = activeList.getFirst ().shape.aabb.max.x;
 			}
 		}
 		if (!activeList.isEmpty ()){
@@ -114,10 +114,10 @@ public class BroadPhase{
 		bodies.forEach ((body) -> body.shape.computeAABB ());
 		
 		if (CURRENT_AXIS == 0){
-			xAxisProjection.sort ((a, b) -> (int) (a.shape.aabb.body.position.x - b.shape.aabb.body.position.x));
+			xAxisProjection.sort ((a, b) -> (int) (a.shape.aabb.min.x - b.shape.aabb.min.x));
 		}
 		else{
-			yAxisProjection.sort ((a, b) -> (int) (a.shape.aabb.body.position.y - b.shape.aabb.body.position.y));
+			yAxisProjection.sort ((a, b) -> (int) (a.shape.aabb.min.y - b.shape.aabb.min.y));
 		}
 		//TODO использовать сортировку вставкой (эффективна когда почти отсортирован список)
 		
@@ -135,8 +135,8 @@ public class BroadPhase{
 				currAABB = yAxisProjection.get (i).shape.aabb;
 			}
 			
-			p.x = (currAABB.body.position.x + currAABB.width / 2f) / numBodies;
-			p.y = (currAABB.body.position.y + currAABB.height / 2f) / numBodies;
+			p.x = (currAABB.min.x / 2f + currAABB.max.x / 2f) / numBodies;
+			p.y = (currAABB.min.y / 2f + currAABB.max.y / 2f) / numBodies;
 			
 			s.add (p);
 			p.x *= p.x * numBodies;
@@ -144,10 +144,10 @@ public class BroadPhase{
 			s2.add (p);
 			
 			for (int j = i + 1; j < bodies.size (); j++){
-				if (CURRENT_AXIS == 0 && xAxisProjection.get (j).shape.aabb.body.position.x > currAABB.body.position.x + currAABB.width){
+				if (CURRENT_AXIS == 0 && xAxisProjection.get (j).shape.aabb.min.x > currAABB.max.x){
 					break;
 				}
-				else if (yAxisProjection.get (j).shape.aabb.body.position.y > currAABB.body.position.y + currAABB.height){
+				else if (yAxisProjection.get (j).shape.aabb.min.y > currAABB.max.y){
 					break;
 				}
 				
@@ -196,7 +196,7 @@ public class BroadPhase{
 		
 		shape.computeAABB (); //after bodies.add (shape); in class World
 		averageMaxBodiesSize *= (bodies.size () - 1);
-		averageMaxBodiesSize += Math.max (shape.aabb.width, shape.aabb.height);
+		averageMaxBodiesSize += Math.max (shape.aabb.max.x - shape.aabb.min.x, shape.aabb.max.y - shape.aabb.min.y);
 		averageMaxBodiesSize /= bodies.size ();
 	}
 }

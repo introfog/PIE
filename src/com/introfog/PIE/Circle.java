@@ -25,9 +25,8 @@ public class Circle extends Shape{
 	
 	@Override
 	public void computeAABB (){
-		aabb.body.position.set (body.position.x - radius, body.position.y - radius);
-		aabb.width = 2f * radius;
-		aabb.height = 2f * radius;
+		aabb.min.set (body.position.x - radius, body.position.y - radius);
+		aabb.max.set (body.position.x + radius, body.position.y + radius);
 	}
 	
 	@Override
