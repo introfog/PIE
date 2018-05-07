@@ -43,8 +43,8 @@ public class Display extends JPanel implements ActionListener{
 		//Polygon polygon = new Polygon (0.4f, 0.3f, 100f, 40f, vertices);
 		//World.getInstance ().addShape (polygon);
 		
-		Polygon rectangle = Polygon.generateRectangle (30f, 30f, 60f, 60f, 0.4f, 0.3f);
-		World.getInstance ().addShape (rectangle);
+		//Polygon rectangle = Polygon.generateRectangle (30f, 30f, 60f, 60f, 0.4f, 0.3f);
+		//World.getInstance ().addShape (rectangle);
 	}
 	
 	private void testProductivity (){

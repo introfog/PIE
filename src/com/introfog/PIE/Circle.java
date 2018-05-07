@@ -40,11 +40,4 @@ public class Circle extends Shape{
 		float inertia = radius * radius / body.invertMass;
 		body.invertInertia = (inertia != 0.0f) ? 1.0f / inertia : 0.0f;
 	}
-	
-	
-	public static boolean isIntersected (Circle a, Circle b){
-		float sumRadius = a.radius + b.radius;
-		sumRadius *= sumRadius;
-		return sumRadius > Vector2f.distanceWithoutSqrt (a.body.position, b.body.position);
-	}
 }

@@ -23,9 +23,7 @@ public class World{
 		mayBeCollision.forEach ((collision) -> {
 			if (collision.getKey ().invertMass != 0f || collision.getValue ().invertMass != 0f){
 				Manifold manifold = new Manifold (collision.getKey (), collision.getValue ());
-				if (manifold.isCollision ()){
-					collisions.add (manifold);
-				}
+				collisions.add (manifold);
 			}
 		});
 	}
@@ -48,7 +46,11 @@ public class World{
 		
 		//Solve collisions
 		for (int i = 0; i < iterations; i++){
-			collisions.forEach ((collision) -> collision.solve ());
+			collisions.forEach ((collision) -> {
+				if (collision.areBodiesCollision){
+					collision.solve ();
+				}
+			});
 		}
 		
 		//Integrate velocities
