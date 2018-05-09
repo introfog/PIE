@@ -1,6 +1,7 @@
 package com.introfog.PIE;
 
 import com.introfog.PIE.collisions.Collisions;
+import com.introfog.PIE.math.*;
 
 public class Manifold{
 	public boolean areBodiesCollision = true;

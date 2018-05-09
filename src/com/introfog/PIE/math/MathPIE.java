@@ -1,4 +1,4 @@
-package com.introfog.PIE;
+package com.introfog.PIE.math;
 
 public class MathPIE{
 	public static final Vector2f GRAVITY = new Vector2f (0f, 50f); //9.807f

@@ -1,5 +1,7 @@
 package com.introfog.PIE;
 
+import com.introfog.PIE.math.MathPIE;
+
 import java.awt.*;
 
 public class Circle extends Shape{
@@ -9,7 +11,6 @@ public class Circle extends Shape{
 	public Circle (float radius, float centreX, float centreY, float density, float restitution){
 		body = new Body (this, centreX, centreY, density, restitution);
 		this.radius = radius;
-		aabb = new AABB ();
 		
 		computeMass ();
 		computeAABB ();
@@ -19,6 +20,9 @@ public class Circle extends Shape{
 	
 	@Override
 	public void render (Graphics graphics){
+		graphics.setColor (Color.GRAY);
+		graphics.drawRect ((int) aabb.min.x, (int) aabb.min.y, (int) (aabb.max.x - aabb.min.x), (int) (aabb.max.y - aabb.min.y));
+		graphics.setColor (Color.RED);
 		graphics.drawLine ((int) body.position.x, (int) body.position.y, (int) body.position.x, (int) body.position.y);
 		graphics.drawOval ((int) (body.position.x - radius), (int) (body.position.y - radius), (int) radius * 2, (int) radius * 2);
 	}
@@ -28,9 +32,6 @@ public class Circle extends Shape{
 		aabb.min.set (body.position.x - radius, body.position.y - radius);
 		aabb.max.set (body.position.x + radius, body.position.y + radius);
 	}
-	
-	@Override
-	public void setOrientation (float radian){ }
 	
 	@Override
 	protected void computeMass (){

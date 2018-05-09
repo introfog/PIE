@@ -1,5 +1,7 @@
 package com.introfog.PIE;
 
+import com.introfog.PIE.math.Mat22;
+
 import java.awt.*;
 
 public abstract class Shape{
@@ -9,14 +11,24 @@ public abstract class Shape{
 	
 	public Type type;
 	public AABB aabb;
+	public Mat22 rotateMatrix;
 	public Body body;
 	
+	
+	public Shape (){
+		aabb = new AABB ();
+		rotateMatrix = new Mat22 ();
+		rotateMatrix.setAngle (0f);
+	}
+	
+	public void setOrientation (float radian){
+		body.orientation = radian;
+		rotateMatrix.setAngle (radian);
+	}
 	
 	public abstract void render (Graphics graphics);
 	
 	public abstract void computeAABB ();
-	
-	public abstract void setOrientation (float radian);
 	
 	protected abstract void computeMass ();
 }

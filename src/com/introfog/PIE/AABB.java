@@ -1,5 +1,7 @@
 package com.introfog.PIE;
 
+import com.introfog.PIE.math.Vector2f;
+
 public class AABB{ //Axis Aligned Bounding Box
 	public Vector2f min;
 	public Vector2f max;

@@ -1,4 +1,4 @@
-package com.introfog.PIE;
+package com.introfog.PIE.math;
 
 public class Vector2f{
 	public float x;

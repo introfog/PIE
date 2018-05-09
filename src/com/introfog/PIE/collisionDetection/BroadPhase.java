@@ -1,6 +1,7 @@
 package com.introfog.PIE.collisionDetection;
 
 import com.introfog.PIE.*;
+import com.introfog.PIE.math.Vector2f;
 import javafx.util.Pair;
 
 import java.util.*;

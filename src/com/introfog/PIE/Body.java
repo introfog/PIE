@@ -1,5 +1,7 @@
 package com.introfog.PIE;
 
+import com.introfog.PIE.math.*;
+
 public class Body{
 	public float invertMass;
 	public float restitution;

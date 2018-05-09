@@ -1,5 +1,7 @@
 package com.introfog.PIE;
 
+import com.introfog.PIE.math.*;
+
 import java.awt.*;
 
 public class Polygon extends Shape{
@@ -16,7 +18,6 @@ public class Polygon extends Shape{
 		for (int i = 0; i < vertexCount; i++){
 			this.vertices[i].set (vertices[i]);
 		}
-		aabb = new AABB ();
 		
 		computeMass ();
 		//computeAABB ();
@@ -35,11 +36,17 @@ public class Polygon extends Shape{
 	
 	@Override
 	public void render (Graphics graphics){
+		graphics.setColor (Color.GRAY);
+		graphics.drawRect ((int) aabb.min.x, (int) aabb.min.y, (int) (aabb.max.x - aabb.min.x), (int) (aabb.max.y - aabb.min.y));
+		graphics.setColor (Color.BLUE);
+		
 		for (int i = 0; i < vertexCount; i++){
 			Vector2f v = new Vector2f (vertices[i]);
+			rotateMatrix.mul (v, v);
 			v.add (body.position);
 			
 			Vector2f v2 = new Vector2f (vertices[(i + 1) % vertexCount]);
+			rotateMatrix.mul (v2, v2);
 			v2.add (body.position);
 			graphics.drawLine ((int) v.x, (int) v.y, (int) v2.x, (int) v2.y);
 		}
@@ -49,11 +56,29 @@ public class Polygon extends Shape{
 	
 	@Override
 	public void computeAABB (){
-	
+		aabb.min.x = Float.MAX_VALUE;
+		aabb.min.y = Float.MAX_VALUE;
+		
+		aabb.max.x = Float.MIN_VALUE;
+		aabb.max.y = Float.MIN_VALUE;
+		for (int i = 0; i < vertexCount; i++){
+			if (vertices[i].x < aabb.min.x){
+				aabb.min.x = vertices[i].x;
+			}
+			if (vertices[i].y < aabb.min.y){
+				aabb.min.y = vertices[i].y;
+			}
+			if (vertices[i].x > aabb.max.x){
+				aabb.max.x = vertices[i].x;
+			}
+			if (vertices[i].y > aabb.max.y){
+				aabb.max.y = vertices[i].y;
+			}
+		}
+		
+		aabb.min.add (body.position);
+		aabb.max.add (body.position);
 	}
-	
-	@Override
-	public void setOrientation (float radian){ }
 	
 	@Override
 	protected void computeMass (){

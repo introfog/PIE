@@ -1,6 +1,7 @@
 package com.introfog.PIE.collisions;
 
 import com.introfog.PIE.*;
+import com.introfog.PIE.math.Vector2f;
 
 public class CollisionCircleCircle implements CollisionCallback{
 	public static final CollisionCircleCircle instance = new CollisionCircleCircle ();

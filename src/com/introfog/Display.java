@@ -3,6 +3,7 @@ package com.introfog;
 import com.introfog.PIE.*;
 import com.introfog.PIE.Polygon;
 import com.introfog.PIE.collisionDetection.BroadPhase;
+import com.introfog.PIE.math.*;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -39,12 +40,12 @@ public class Display extends JPanel implements ActionListener{
 		
 		World.getInstance ().setIterations (1);
 		
-		//Vector2f[] vertices = {new Vector2f (20f, -20f), new Vector2f (40f, 20f), new Vector2f (0f, 60f), new Vector2f (-60f, 40f), new Vector2f (-40f, 0f)};
-		//Polygon polygon = new Polygon (0.4f, 0.3f, 100f, 40f, vertices);
-		//World.getInstance ().addShape (polygon);
+		Vector2f[] vertices = {new Vector2f (20f, -20f), new Vector2f (40f, 20f), new Vector2f (0f, 60f), new Vector2f (-60f, 40f), new Vector2f (-40f, 0f)};
+		Polygon polygon = new Polygon (MathPIE.STATIC_BODY_DENSITY, 0.3f, 200f, 100f, vertices);
+		World.getInstance ().addShape (polygon);
 		
-		//Polygon rectangle = Polygon.generateRectangle (30f, 30f, 60f, 60f, 0.4f, 0.3f);
-		//World.getInstance ().addShape (rectangle);
+		rectangle = Polygon.generateRectangle (600f, 150f, 80f, 60f, MathPIE.STATIC_BODY_DENSITY, 0.3f);
+		World.getInstance ().addShape (rectangle);
 	}
 	
 	private void testProductivity (){
@@ -129,6 +130,8 @@ public class Display extends JPanel implements ActionListener{
 		
 		//testProductivity ();
 		//testBodiesPenetration ();
+		
+		rectangle.setOrientation (rectangle.body.orientation + 0.01f);
 		
 		World.getInstance ().update (deltaTime);
 		World.getInstance ().draw (g);
