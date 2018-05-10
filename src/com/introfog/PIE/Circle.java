@@ -20,8 +20,7 @@ public class Circle extends Shape{
 	
 	@Override
 	public void render (Graphics graphics){
-		graphics.setColor (Color.GRAY);
-		graphics.drawRect ((int) aabb.min.x, (int) aabb.min.y, (int) (aabb.max.x - aabb.min.x), (int) (aabb.max.y - aabb.min.y));
+		renderAABB (graphics);
 		graphics.setColor (Color.RED);
 		graphics.drawLine ((int) body.position.x, (int) body.position.y, (int) body.position.x, (int) body.position.y);
 		graphics.drawOval ((int) (body.position.x - radius), (int) (body.position.y - radius), (int) radius * 2, (int) radius * 2);
@@ -40,5 +39,11 @@ public class Circle extends Shape{
 		
 		float inertia = radius * radius / body.invertMass;
 		body.invertInertia = (inertia != 0.0f) ? 1.0f / inertia : 0.0f;
+	}
+	
+	@Override
+	protected void renderAABB (Graphics graphics){
+		graphics.setColor (Color.GRAY);
+		graphics.drawRect ((int) aabb.min.x, (int) aabb.min.y, (int) (aabb.max.x - aabb.min.x), (int) (aabb.max.y - aabb.min.y));
 	}
 }

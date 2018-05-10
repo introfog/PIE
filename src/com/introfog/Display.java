@@ -131,7 +131,7 @@ public class Display extends JPanel implements ActionListener{
 		//testProductivity ();
 		//testBodiesPenetration ();
 		
-		rectangle.setOrientation (rectangle.body.orientation + 0.01f);
+		rectangle.setOrientation (rectangle.body.orientation + 0.001f);
 		
 		World.getInstance ().update (deltaTime);
 		World.getInstance ().draw (g);

@@ -31,22 +31,14 @@ public class Body{
 		position = new Vector2f (positionX, positionY);
 	}
 	
-	public Body (Shape shape, float positionX, float positionY){
-		this.shape = shape;
-		this.density = MathPIE.STATIC_BODY_DENSITY;
-		this.restitution = 0.4f;
-		
-		staticFriction = 0.1f;
-		dynamicFriction = 0.05f;
-		
-		force = new Vector2f (0f, 0f);
-		velocity = new Vector2f (0f, 0f);
-		position = new Vector2f (positionX, positionY);
-	}
-	
 	public void setOrientation (float radian){
 		orientation = radian;
 		shape.setOrientation (radian);
+	}
+	
+	public void applyImpulse (Vector2f impulse, Vector2f contactVector){
+		velocity.add (impulse, invertMass);
+		angularVelocity += invertInertia * Vector2f.crossProduct (contactVector, impulse);
 	}
 	
 	@Override

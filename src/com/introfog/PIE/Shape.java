@@ -31,4 +31,6 @@ public abstract class Shape{
 	public abstract void computeAABB ();
 	
 	protected abstract void computeMass ();
+	
+	protected abstract void renderAABB (Graphics graphics);
 }

@@ -42,6 +42,10 @@ public class Manifold{
 	}
 	
 	public void solve (){
+		if (!areBodiesCollision){
+			return;
+		}
+		
 		normal.normalize ();
 		
 		// Вычисляем относительную скорость

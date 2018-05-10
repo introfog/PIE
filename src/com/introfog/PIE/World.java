@@ -47,11 +47,7 @@ public class World{
 		
 		//Solve collisions
 		for (int i = 0; i < iterations; i++){
-			collisions.forEach ((collision) -> {
-				if (collision.areBodiesCollision){
-					collision.solve ();
-				}
-			});
+			collisions.forEach ((collision) -> collision.solve ());
 		}
 		
 		//Integrate velocities

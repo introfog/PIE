@@ -9,6 +9,9 @@ public class Polygon extends Shape{
 	public Vector2f[] vertices = Vector2f.arrayOf (MathPIE.MAX_POLY_VERTEX_COUNT);
 	public Vector2f[] normals = Vector2f.arrayOf (MathPIE.MAX_POLY_VERTEX_COUNT);
 	
+	private Vector2f tmpV = new Vector2f ();
+	private Vector2f tmpV2 = new Vector2f ();
+	
 	
 	public Polygon (float density, float restitution, float centreX, float centreY, Vector2f... vertices){
 		body = new Body (this, centreX, centreY, density, restitution);
@@ -20,35 +23,33 @@ public class Polygon extends Shape{
 		}
 		
 		computeMass ();
-		//computeAABB ();
+		computeAABB ();
 		
 		type = Type.polygon;
 	}
 	
-	public static Polygon generateRectangle (float centerX, float centerY, float width, float height, float density, float restitution){
-		Vector2f[] vertices = {
-				new Vector2f (-width / 2f, - height / 2f),
-				new Vector2f (width / 2f, -height / 2f),
-				new Vector2f (width / 2f, height / 2f),
-				new Vector2f (-width / 2f, height / 2f)};
+	public static Polygon generateRectangle (float centerX, float centerY, float width, float height, float density,
+											 float restitution){
+		Vector2f[] vertices = {new Vector2f (-width / 2f, -height / 2f), new Vector2f (width / 2f,
+																					   -height / 2f), new Vector2f (
+				width / 2f, height / 2f), new Vector2f (-width / 2f, height / 2f)};
 		return new Polygon (density, restitution, centerX, centerY, vertices);
 	}
 	
 	@Override
 	public void render (Graphics graphics){
-		graphics.setColor (Color.GRAY);
-		graphics.drawRect ((int) aabb.min.x, (int) aabb.min.y, (int) (aabb.max.x - aabb.min.x), (int) (aabb.max.y - aabb.min.y));
+		renderAABB (graphics);
 		graphics.setColor (Color.BLUE);
 		
 		for (int i = 0; i < vertexCount; i++){
-			Vector2f v = new Vector2f (vertices[i]);
-			rotateMatrix.mul (v, v);
-			v.add (body.position);
+			tmpV.set (vertices[i]);
+			rotateMatrix.mul (tmpV, tmpV);
+			tmpV.add (body.position);
 			
-			Vector2f v2 = new Vector2f (vertices[(i + 1) % vertexCount]);
-			rotateMatrix.mul (v2, v2);
-			v2.add (body.position);
-			graphics.drawLine ((int) v.x, (int) v.y, (int) v2.x, (int) v2.y);
+			tmpV2.set (vertices[(i + 1) % vertexCount]);
+			rotateMatrix.mul (tmpV2, tmpV2);
+			tmpV2.add (body.position);
+			graphics.drawLine ((int) tmpV.x, (int) tmpV.y, (int) tmpV2.x, (int) tmpV2.y);
 		}
 		
 		graphics.drawLine ((int) body.position.x, (int) body.position.y, (int) body.position.x, (int) body.position.y);
@@ -62,17 +63,19 @@ public class Polygon extends Shape{
 		aabb.max.x = Float.MIN_VALUE;
 		aabb.max.y = Float.MIN_VALUE;
 		for (int i = 0; i < vertexCount; i++){
-			if (vertices[i].x < aabb.min.x){
-				aabb.min.x = vertices[i].x;
+			tmpV.set (vertices[i]);
+			rotateMatrix.mul (tmpV, tmpV);
+			if (tmpV.x < aabb.min.x){
+				aabb.min.x = tmpV.x;
 			}
-			if (vertices[i].y < aabb.min.y){
-				aabb.min.y = vertices[i].y;
+			if (tmpV.y < aabb.min.y){
+				aabb.min.y = tmpV.y;
 			}
-			if (vertices[i].x > aabb.max.x){
-				aabb.max.x = vertices[i].x;
+			if (tmpV.x > aabb.max.x){
+				aabb.max.x = tmpV.x;
 			}
-			if (vertices[i].y > aabb.max.y){
-				aabb.max.y = vertices[i].y;
+			if (tmpV.y > aabb.max.y){
+				aabb.max.y = tmpV.y;
 			}
 		}
 		
@@ -82,17 +85,16 @@ public class Polygon extends Shape{
 	
 	@Override
 	protected void computeMass (){
-		float area = 0.0f;
-		float I = 0.0f;
-		final float k_inv3 = 1.0f / 3.0f;
+		float area = 0f;
+		float I = 0f;
+		final float k_inv3 = 1f / 3f;
 		
-		for (int i = 0; i < vertexCount; ++i)
-		{
+		for (int i = 0; i < vertexCount; ++i){
 			//Разбиваем выпуклый многоугольник на треугольники, у которых одна из точек (0, 0)
 			Vector2f p1 = vertices[i];
 			Vector2f p2 = vertices[(i + 1) % vertexCount];
 			
-			float D = Vector2f.crossProduct ( p1, p2 );
+			float D = Vector2f.crossProduct (p1, p2);
 			float triangleArea = 0.5f * D;
 			
 			area += triangleArea;
@@ -103,8 +105,15 @@ public class Polygon extends Shape{
 		}
 		
 		float mass = body.density * area;
-		body.invertMass = (mass != 0.0f) ? 1.0f / mass : 0.0f;
+		body.invertMass = (mass != 0f) ? 1f / mass : 0f;
 		float inertia = I * body.density;
-		body.invertInertia = (inertia != 0.0f) ? 1.0f / inertia : 0.0f;
+		body.invertInertia = (inertia != 0f) ? 1f / inertia : 0f;
+	}
+	
+	@Override
+	protected void renderAABB (Graphics graphics){
+		graphics.setColor (Color.GRAY);
+		graphics.drawRect ((int) aabb.min.x, (int) aabb.min.y, (int) (aabb.max.x - aabb.min.x),
+						   (int) (aabb.max.y - aabb.min.y));
 	}
 }

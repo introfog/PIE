@@ -5,8 +5,7 @@ import com.introfog.PIE.math.Vector2f;
 
 public class CollisionCircleCircle implements CollisionCallback{
 	public static final CollisionCircleCircle instance = new CollisionCircleCircle ();
-	
-	private float distanceWithoutSqrt;
+	private static float distanceWithoutSqrt;
 	
 	
 	private boolean areIntersected (Circle a, Circle b){
