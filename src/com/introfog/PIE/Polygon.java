@@ -112,6 +112,7 @@ public class Polygon extends Shape{
 	
 	@Override
 	protected void renderAABB (Graphics graphics){
+		computeAABB ();
 		graphics.setColor (Color.GRAY);
 		graphics.drawRect ((int) aabb.min.x, (int) aabb.min.y, (int) (aabb.max.x - aabb.min.x),
 						   (int) (aabb.max.y - aabb.min.y));

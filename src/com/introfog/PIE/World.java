@@ -24,9 +24,14 @@ public class World{
 		mayBeCollision.forEach ((collision) -> {
 			if (collision.getKey ().invertMass != 0f || collision.getValue ().invertMass != 0f){
 				Manifold manifold = new Manifold (collision.getKey (), collision.getValue ());
-				collisions.add (manifold);
+				manifold.initializeCollision ();
+				if (manifold.areBodiesCollision){
+					collisions.add (manifold);
+				}
 			}
 		});
+		
+		mayBeCollision.clear ();
 	}
 	
 	private void step (){
@@ -36,14 +41,10 @@ public class World{
 		broadPhase.spatialHashing (mayBeCollision);
 		
 		narrowPhase ();
-		mayBeCollision.clear ();
 		
 		
 		//Integrate forces
 		bodies.forEach ((body) -> integrateForces (body)); //Hanna modification Euler's method is used!
-		
-		//Initialize collisions
-		collisions.forEach ((collision) -> collision.initializeCollision ());
 		
 		//Solve collisions
 		for (int i = 0; i < iterations; i++){

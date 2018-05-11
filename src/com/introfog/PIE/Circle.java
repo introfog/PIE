@@ -23,6 +23,9 @@ public class Circle extends Shape{
 		renderAABB (graphics);
 		graphics.setColor (Color.RED);
 		graphics.drawLine ((int) body.position.x, (int) body.position.y, (int) body.position.x, (int) body.position.y);
+		graphics.drawLine ((int) body.position.x, (int) body.position.y,
+						   (int) (body.position.x + radius * Math.cos (body.orientation)),
+						   (int) (body.position.y + radius * Math.sin (body.orientation)));
 		graphics.drawOval ((int) (body.position.x - radius), (int) (body.position.y - radius), (int) radius * 2, (int) radius * 2);
 	}
 	
@@ -43,6 +46,7 @@ public class Circle extends Shape{
 	
 	@Override
 	protected void renderAABB (Graphics graphics){
+		computeAABB ();
 		graphics.setColor (Color.GRAY);
 		graphics.drawRect ((int) aabb.min.x, (int) aabb.min.y, (int) (aabb.max.x - aabb.min.x), (int) (aabb.max.y - aabb.min.y));
 	}
