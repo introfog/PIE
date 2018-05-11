@@ -118,6 +118,13 @@ public class Vector2f{
 		return a.x * b.y - a.y * b.x;
 	}
 	
+	public static Vector2f crossProduct (float a, Vector2f v){
+		Vector2f result = new Vector2f ();
+		result.x = v.y * -a;
+		result.y = v.x * a;
+		return result;
+	}
+	
 	public static Vector2f[] arrayOf (int length){
 		Vector2f[] array = new Vector2f[length];
 		

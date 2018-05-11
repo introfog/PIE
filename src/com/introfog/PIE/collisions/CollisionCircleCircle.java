@@ -28,11 +28,18 @@ public class CollisionCircleCircle implements CollisionCallback{
 			return;
 		}
 		
+		manifold.contactCount = 1;
 		manifold.penetration = A.radius + B.radius - (float) Math.sqrt (distanceWithoutSqrt);
+		// m->contacts[0] = m->normal * A->radius + a->position;
+		manifold.normal.normalize ();
+		manifold.contacts[0].set (manifold.normal);
+		manifold.contacts[0].mul (A.radius);
+		manifold.contacts[0].add (A.body.position);
 		
 		if (distanceWithoutSqrt == 0){
 			manifold.normal.set (1f, 0f);
 			manifold.penetration = A.radius;
+			manifold.contacts[0].set (A.body.position);
 		}
 	}
 }

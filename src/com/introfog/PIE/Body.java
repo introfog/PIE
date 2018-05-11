@@ -25,6 +25,7 @@ public class Body{
 		
 		staticFriction = 0.1f;
 		dynamicFriction = 0.05f;
+		torque = 0f;
 		
 		force = new Vector2f (0f, 0f);
 		velocity = new Vector2f (0f, 0f);
