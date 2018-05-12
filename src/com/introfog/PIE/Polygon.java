@@ -12,7 +12,7 @@ public class Polygon extends Shape{
 	private Vector2f tmpV = new Vector2f ();
 	private Vector2f tmpV2 = new Vector2f ();
 	
-	
+	//TODO у меня правильно создаётся фигура, если ее вершина расставлять последовательно по часовой стрелке т.к. берется левая нормаль
 	public Polygon (float density, float restitution, float centreX, float centreY, Vector2f... vertices){
 		body = new Body (this, centreX, centreY, density, restitution);
 		aabb = new AABB ();
@@ -26,8 +26,7 @@ public class Polygon extends Shape{
 			tmpV.set (vertices[(i + 1) % vertexCount]);
 			tmpV.sub (vertices[i]);
 			
-			// Calculate normal with 2D cross product between vector and scalar
-			normals[i].set (tmpV.y, -tmpV.x);
+			normals[i].set (tmpV.y, -tmpV.x); //берем левую нормаль
 			normals[i].normalize ();
 		}
 		
