@@ -44,6 +44,12 @@ public class Manifold{
 	}
 	
 	public void solve (){
+		if (MathPIE.equal (a.invertMass + b.invertMass, 0f)){
+			a.velocity.set (0f, 0f);
+			b.velocity.set (0f, 0f);
+			return;
+		}
+		
 		normal.normalize ();
 		
 		for (int i = 0; i < contactCount; i++){
@@ -104,6 +110,9 @@ public class Manifold{
 			
 			//TODO добавить в MthPIE метод equal который будет проверять числа с точностью
 			//если jt очень маленько то не применять и делать return
+			if (MathPIE.equal (jt, 0f)){
+				return;
+			}
 			
 			//Вычисляем Мю,
 			float Mu = (float) Math.sqrt (a.staticFriction * a.staticFriction + b.staticFriction * b.staticFriction);

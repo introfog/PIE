@@ -35,8 +35,8 @@ public class Display extends JPanel implements ActionListener{
 		circle = new Circle (40f, 220f, 350f, MathPIE.STATIC_BODY_DENSITY, 0.3f);
 		World.getInstance ().addShape (circle);
 		
-		/*circle = new Circle (30f, 400f, 200f, 0.4f, 0.5f);
-		World.getInstance ().addBody (circle);*/
+		circle = new Circle (30f, 300f, 300f, MathPIE.STATIC_BODY_DENSITY, 0.5f);
+		World.getInstance ().addShape (circle);
 		
 		World.getInstance ().setIterations (1);
 		
@@ -126,7 +126,7 @@ public class Display extends JPanel implements ActionListener{
 		
 		g.drawString ("FPS: " + (int) (1 / deltaTime), 2, 12);
 		g.drawString ("Bodies: " + World.getInstance ().getAmountBodies (), 2, 24);
-		g.drawString ("Version: 0.1.0 without rotation & friction", 2, 36);
+		g.drawString ("Version: 0.2.0 without some collision", 2, 36);
 		
 		//testProductivity ();
 		//testBodiesPenetration ();

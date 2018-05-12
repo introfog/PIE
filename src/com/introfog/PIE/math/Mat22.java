@@ -29,4 +29,13 @@ public class Mat22{
 		mul (vec, result);
 		return result;
 	}
+	
+	public static Mat22 transpose (Mat22 in){
+		Mat22 out = new Mat22 ();
+		out.m00 = in.m00;
+		out.m01 = in.m10;
+		out.m10 = in.m01;
+		out.m11 = in.m11;
+		return out;
+	}
 }

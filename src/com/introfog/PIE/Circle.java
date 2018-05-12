@@ -20,7 +20,9 @@ public class Circle extends Shape{
 	
 	@Override
 	public void render (Graphics graphics){
-		renderAABB (graphics);
+		if (World.getInstance ().onDebugDraw){
+			renderAABB (graphics);
+		}
 		graphics.setColor (Color.RED);
 		graphics.drawLine ((int) body.position.x, (int) body.position.y, (int) body.position.x, (int) body.position.y);
 		graphics.drawLine ((int) body.position.x, (int) body.position.y,

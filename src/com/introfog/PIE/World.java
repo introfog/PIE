@@ -15,6 +15,7 @@ public class World{
 	private LinkedList <Manifold> collisions;
 	private BroadPhase broadPhase;
 	
+	public boolean onDebugDraw = true;
 	public int amountMayBeCollisionBodies = 0;
 	
 	

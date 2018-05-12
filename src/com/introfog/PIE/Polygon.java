@@ -22,6 +22,15 @@ public class Polygon extends Shape{
 			this.vertices[i].set (vertices[i]);
 		}
 		
+		for (int i = 0; i < vertexCount; ++i){
+			tmpV.set (vertices[(i + 1) % vertexCount]);
+			tmpV.sub (vertices[i]);
+			
+			// Calculate normal with 2D cross product between vector and scalar
+			normals[i].set (tmpV.y, -tmpV.x);
+			normals[i].normalize ();
+		}
+		
 		computeMass ();
 		computeAABB ();
 		
@@ -30,15 +39,19 @@ public class Polygon extends Shape{
 	
 	public static Polygon generateRectangle (float centerX, float centerY, float width, float height, float density,
 											 float restitution){
-		Vector2f[] vertices = {new Vector2f (-width / 2f, -height / 2f), new Vector2f (width / 2f,
-																					   -height / 2f), new Vector2f (
-				width / 2f, height / 2f), new Vector2f (-width / 2f, height / 2f)};
+		Vector2f[] vertices = new Vector2f[4];
+		vertices[0] = new Vector2f (-width / 2f, -height / 2f);
+		vertices[1] = new Vector2f (width / 2f, -height / 2f);
+		vertices[2] = new Vector2f (width / 2f, height / 2f);
+		vertices[3] = new Vector2f (-width / 2f, height / 2f);
 		return new Polygon (density, restitution, centerX, centerY, vertices);
 	}
 	
 	@Override
 	public void render (Graphics graphics){
-		renderAABB (graphics);
+		if (World.getInstance ().onDebugDraw){
+			renderAABB (graphics);
+		}
 		graphics.setColor (Color.BLUE);
 		
 		for (int i = 0; i < vertexCount; i++){

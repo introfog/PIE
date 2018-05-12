@@ -13,13 +13,19 @@ public class MathPIE{
 	public static final int MAX_POLY_VERTEX_COUNT = 64;
 	
 	public static final float PI = 3.141_592f;
+	public static final float EPSILON = 0.0001f;
 	
 	public static final int BIG_ENOUGH_INT = 16 * 1024;
 	public static final double BIG_ENOUGH_FLOOR = BIG_ENOUGH_INT + 0.0000;
+	
 	public static int fastFloor (float f){
 		return (int) (f + BIG_ENOUGH_FLOOR) - BIG_ENOUGH_INT;
 	}
 	
+	
+	public static boolean equal (float a, float b){
+		return Math.abs (a - b) <= EPSILON;
+	}
 	
 	public static float signumWithoutZero (float value){
 		if (value == 0f){
