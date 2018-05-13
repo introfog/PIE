@@ -20,6 +20,8 @@ public class CollisionCirclePolygon implements CollisionCallback{
 		
 		//Ищем ближайшее ребро полигона к центру окружности, проецируя центр на каждую нормаль ребра полигона
 		float separation = Float.MIN_VALUE;
+		float separationIfCircleInPolygon = Float.MAX_VALUE;
+		int indexFaceNormalIfCircleInPolygon = 0;
 		int indexFaceNormal = 0;
 		float dotProduct;
 		Vector2f projection = new Vector2f ();
@@ -43,6 +45,10 @@ public class CollisionCirclePolygon implements CollisionCallback{
 				separation = dotProduct;
 				indexFaceNormal = i;
 			}
+			if (Math.abs (dotProduct) < separationIfCircleInPolygon){
+				separationIfCircleInPolygon = Math.abs (dotProduct);
+				indexFaceNormalIfCircleInPolygon = i;
+			}
 		}
 		
 		//если max скалярное произведение меньше 0, то значит центр круга внутри полигона
@@ -51,7 +57,7 @@ public class CollisionCirclePolygon implements CollisionCallback{
 			// m->contacts[0] = m->normal * A->radius + a->position;
 			
 			manifold.contactCount = 1;
-			B.rotateMatrix.mul (B.normals[indexFaceNormal], manifold.normal);
+			B.rotateMatrix.mul (B.normals[indexFaceNormalIfCircleInPolygon], manifold.normal);
 			manifold.normal.negative ();
 			
 			manifold.contacts[0].set (manifold.normal);
@@ -63,8 +69,8 @@ public class CollisionCirclePolygon implements CollisionCallback{
 		
 		//Мы нашли ближайшее ребро к центру окржуности, и центр круга лежит снаружи полигона
 		//Теперь определяем область Вороного
-		Vector2f v1 = B.vertices[indexFaceNormal];
-		Vector2f v2 = B.vertices[(indexFaceNormal + 1) % B.vertexCount];
+		Vector2f v1 = new Vector2f (B.vertices[indexFaceNormal]);
+		Vector2f v2 = new Vector2f (B.vertices[(indexFaceNormal + 1) % B.vertexCount]);
 		
 		float dot1 = Vector2f.dotProduct (Vector2f.sub (centerA, v1), Vector2f.sub (v2, v1));
 		float dot2 = Vector2f.dotProduct (Vector2f.sub (centerA, v2), Vector2f.sub (v1, v2));

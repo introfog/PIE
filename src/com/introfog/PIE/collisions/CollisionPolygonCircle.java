@@ -8,5 +8,13 @@ public class CollisionPolygonCircle implements CollisionCallback{
 	
 	
 	@Override
-	public void handleCollision (Manifold manifold){ }
+	public void handleCollision (Manifold manifold){
+		manifold.circleA = manifold.circleB;
+		manifold.polygonB = manifold.polygonA;
+		CollisionCirclePolygon.instance.handleCollision (manifold);
+		
+		if (manifold.contactCount > 0){
+			manifold.normal.negative ();
+		}
+	}
 }

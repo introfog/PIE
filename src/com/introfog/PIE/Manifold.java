@@ -40,6 +40,7 @@ public class Manifold{
 			polygonB = (Polygon) b.shape;
 		}
 		
+		normal = new Vector2f ();
 		Collisions.table[a.shape.type.ordinal ()][b.shape.type.ordinal ()].handleCollision (this);
 	}
 	
@@ -108,7 +109,6 @@ public class Manifold{
 			jt /= invertMassSum;
 			jt /= contactCount;
 			
-			//TODO добавить в MthPIE метод equal который будет проверять числа с точностью
 			//если jt очень маленько то не применять и делать return
 			if (MathPIE.equal (jt, 0f)){
 				return;

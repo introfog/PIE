@@ -45,7 +45,7 @@ public class Display extends JPanel implements ActionListener{
 		World.getInstance ().addShape (polygon);
 		
 		rectangle = Polygon.generateRectangle (600f, 150f, 80f, 60f, MathPIE.STATIC_BODY_DENSITY, 0.3f);
-		World.getInstance ().addShape (rectangle);
+		//World.getInstance ().addShape (rectangle);
 	}
 	
 	private void testProductivity (){
@@ -131,7 +131,7 @@ public class Display extends JPanel implements ActionListener{
 		//testProductivity ();
 		//testBodiesPenetration ();
 		
-		rectangle.setOrientation (rectangle.body.orientation + 0.001f);
+		//rectangle.setOrientation (rectangle.body.orientation + 0.001f);
 		
 		World.getInstance ().update (deltaTime);
 		World.getInstance ().draw (g);
