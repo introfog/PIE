@@ -84,8 +84,6 @@ public class World{
 		b.position.add (b.velocity, MathPIE.FIXED_DELTA_TIME);
 		b.orientation += b.angularVelocity * MathPIE.FIXED_DELTA_TIME;
 		b.setOrientation (b.orientation);
-		
-		integrateForces (b);
 	}
 	
 	private static class WorldHolder{

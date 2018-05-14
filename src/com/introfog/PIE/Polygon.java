@@ -64,6 +64,18 @@ public class Polygon extends Shape{
 			graphics.drawLine ((int) tmpV.x, (int) tmpV.y, (int) tmpV2.x, (int) tmpV2.y);
 		}
 		
+		graphics.setColor (Color.RED);
+		tmpV.set (10f, 0f);
+		rotateMatrix.mul (tmpV, tmpV);
+		tmpV.add (body.position);
+		graphics.drawLine ((int) body.position.x, (int) body.position.y, (int) tmpV.x, (int) tmpV.y);
+		graphics.setColor (Color.GREEN);
+		tmpV.set (0f, 10f);
+		rotateMatrix.mul (tmpV, tmpV);
+		tmpV.add (body.position);
+		graphics.drawLine ((int) body.position.x, (int) body.position.y, (int) tmpV.x, (int) tmpV.y);
+		
+		
 		graphics.drawLine ((int) body.position.x, (int) body.position.y, (int) body.position.x, (int) body.position.y);
 	}
 	
