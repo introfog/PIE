@@ -16,10 +16,10 @@ public class CollisionCirclePolygon implements CollisionCallback{
 		// center = B->u.Transpose( ) * (center - b->position);
 		Vector2f centerA = new Vector2f (A.body.position);
 		centerA.sub (B.body.position);
-		B.rotateMatrix.mul (centerA, centerA);
+		B.rotateMatrix.transposeMul (centerA, centerA);
 		
 		//Ищем ближайшее ребро полигона к центру окружности, проецируя центр на каждую нормаль ребра полигона
-		float separation = Float.MIN_VALUE;
+		float separation = -Float.MAX_VALUE;
 		float separationIfCircleInPolygon = Float.MAX_VALUE;
 		int indexFaceNormalIfCircleInPolygon = 0;
 		int indexFaceNormal = 0;
@@ -74,13 +74,15 @@ public class CollisionCirclePolygon implements CollisionCallback{
 		
 		float dot1 = Vector2f.dotProduct (Vector2f.sub (centerA, v1), Vector2f.sub (v2, v1));
 		float dot2 = Vector2f.dotProduct (Vector2f.sub (centerA, v2), Vector2f.sub (v1, v2));
-		manifold.penetration = A.radius - (float) Math.sqrt (realProjection.lengthWithoutSqrt ());
+		
 		
 		if (dot1 <= 0f){ //ближе к первой вершине
 			if (Vector2f.distanceWithoutSqrt (centerA, v1) > A.radius * A.radius){
 				manifold.areBodiesCollision = false;
 				return;
 			}
+			
+			manifold.penetration = A.radius - (float) Math.sqrt (Vector2f.distanceWithoutSqrt (centerA, v1));
 			
 			manifold.contactCount = 1;
 			// Vec2 n = v1 - center;
@@ -98,10 +100,12 @@ public class CollisionCirclePolygon implements CollisionCallback{
 			manifold.contacts[0].set (v1);
 		}
 		else if (dot2 <= 0f){ //ближе ко второй вершине
-			if (Vector2f.distanceWithoutSqrt (centerA, v1) > A.radius * A.radius){
+			if (Vector2f.distanceWithoutSqrt (centerA, v2) > A.radius * A.radius){
 				manifold.areBodiesCollision = false;
 				return;
 			}
+			
+			manifold.penetration = A.radius - (float) Math.sqrt (Vector2f.distanceWithoutSqrt (centerA, v2));
 			
 			manifold.contactCount = 1;
 			// Vec2 n = v2 - center;
@@ -125,6 +129,8 @@ public class CollisionCirclePolygon implements CollisionCallback{
 				manifold.areBodiesCollision = false;
 				return;
 			}
+			
+			manifold.penetration = A.radius - (float) Math.sqrt (realProjection.lengthWithoutSqrt ());
 			
 			manifold.contactCount = 1;
 			// n = B->u * n;

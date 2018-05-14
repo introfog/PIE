@@ -30,12 +30,12 @@ public class Mat22{
 		return result;
 	}
 	
-	public static Mat22 transpose (Mat22 in){
-		Mat22 out = new Mat22 ();
-		out.m00 = in.m00;
-		out.m01 = in.m10;
-		out.m10 = in.m01;
-		out.m11 = in.m11;
-		return out;
+	public void transposeMul (Vector2f in, Vector2f out){
+	transposeMul (in.x, in.y, out);
+	}
+	
+	public void transposeMul (float x, float y, Vector2f out){
+		out.x = m00 * x + m10 * y;
+		out.y = m01 * x + m11 * y;
 	}
 }
