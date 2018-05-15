@@ -38,7 +38,7 @@ public class MouseEvents extends Applet implements MouseListener{
 			rand = (float) Math.random ();
 			float width = rand * 80f + 20f;
 			rectangle = Polygon.generateRectangle (mouseX, mouseY, width, height, 0.4f, 0.5f);
-			rectangle.setOrientation ((float) Math.PI / 6f);
+			//rectangle.setOrientation ((float) Math.PI / 6f);
 			World.getInstance ().addShape (rectangle);
 		}
 	}

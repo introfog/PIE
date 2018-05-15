@@ -4,11 +4,11 @@ import com.introfog.PIE.collisions.Collisions;
 import com.introfog.PIE.math.*;
 
 public class Manifold{
-	public boolean areBodiesCollision = true;
+	public boolean areBodiesCollision;
 	public float penetration;
 	public Vector2f normal;
 	public int contactCount = 0;
-	public Vector2f[] contacts = {new Vector2f (), new Vector2f ()};
+	public Vector2f[] contacts;
 	public Polygon polygonA;
 	public Polygon polygonB;
 	public Circle circleA;
@@ -20,6 +20,10 @@ public class Manifold{
 	public Manifold (Body a, Body b){
 		this.a = a;
 		this.b = b;
+		
+		areBodiesCollision = true;
+		normal = new Vector2f ();
+		contacts = Vector2f.arrayOf (2);
 	}
 	
 	public void initializeCollision (){
@@ -40,7 +44,7 @@ public class Manifold{
 			polygonB = (Polygon) b.shape;
 		}
 		
-		normal = new Vector2f ();
+		
 		Collisions.table[a.shape.type.ordinal ()][b.shape.type.ordinal ()].handleCollision (this);
 	}
 	
@@ -142,6 +146,10 @@ public class Manifold{
 	public void correctPosition (){
 		if (penetration < MathPIE.MIN_BORDER_SLOP){
 			return;
+		}
+		
+		if (penetration < 0f){
+			System.out.println ("ERROR! Penetration < 0!");
 		}
 		
 		Vector2f correction = Vector2f.mul (normal,

@@ -13,6 +13,7 @@ public class Polygon extends Shape{
 	private Vector2f tmpV2 = new Vector2f ();
 	
 	//TODO у меня правильно создаётся фигура, если ее вершина расставлять последовательно по часовой стрелке т.к. берется левая нормаль
+	//TODO реализовать поиск минимальной выпуклой оболочки (например алгоритм Грэхема)
 	public Polygon (float density, float restitution, float centreX, float centreY, Vector2f... vertices){
 		body = new Body (this, centreX, centreY, density, restitution);
 		aabb = new AABB ();
@@ -44,6 +45,23 @@ public class Polygon extends Shape{
 		vertices[2] = new Vector2f (width / 2f, height / 2f);
 		vertices[3] = new Vector2f (-width / 2f, height / 2f);
 		return new Polygon (density, restitution, centerX, centerY, vertices);
+	}
+	
+	public Vector2f getSupport (Vector2f dir){
+		float bestProjection = -Float.MAX_VALUE;
+		Vector2f bestVertex = null;
+		
+		for (int i = 0; i < vertexCount; ++i){
+			Vector2f v = vertices[i];
+			float projection = Vector2f.dotProduct (v, dir);
+			
+			if (projection > bestProjection){
+				bestVertex = v;
+				bestProjection = projection;
+			}
+		}
+		
+		return bestVertex;
 	}
 	
 	@Override

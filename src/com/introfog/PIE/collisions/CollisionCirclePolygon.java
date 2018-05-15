@@ -45,6 +45,9 @@ public class CollisionCirclePolygon implements CollisionCallback{
 				separation = dotProduct;
 				indexFaceNormal = i;
 			}
+			//сохраняем ближайшее ребро к центру окружности, наслучай если центр внутри полигона,
+			//обычное dotProduct > separation даёт не правильный ответ, т.к. все производные отрицательные,
+			//а нам нужно меньшее по модулю
 			if (Math.abs (dotProduct) < separationIfCircleInPolygon){
 				separationIfCircleInPolygon = Math.abs (dotProduct);
 				indexFaceNormalIfCircleInPolygon = i;
@@ -68,7 +71,7 @@ public class CollisionCirclePolygon implements CollisionCallback{
 		}
 		
 		//Мы нашли ближайшее ребро к центру окржуности, и центр круга лежит снаружи полигона
-		//Теперь определяем область Вороного
+		//Теперь определяем область Вороного в которой находится центр круга относительно ближайшего ребра полигона
 		Vector2f v1 = new Vector2f (B.vertices[indexFaceNormal]);
 		Vector2f v2 = new Vector2f (B.vertices[(indexFaceNormal + 1) % B.vertexCount]);
 		
@@ -124,11 +127,6 @@ public class CollisionCirclePolygon implements CollisionCallback{
 		}
 		else{ //ближе к лицевой стороне
 			Vector2f n = new Vector2f (B.normals[indexFaceNormal]);
-			
-			if (Vector2f.dotProduct (Vector2f.sub (centerA, v1), n) > A.radius){
-				manifold.areBodiesCollision = false;
-				return;
-			}
 			
 			manifold.penetration = A.radius - (float) Math.sqrt (realProjection.lengthWithoutSqrt ());
 			
