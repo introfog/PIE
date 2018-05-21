@@ -57,7 +57,11 @@ public class Manifold{
 		
 		normal.normalize ();
 		
+		System.out.println ("-----------------Collision:");
+		System.out.println ("Normal: " + normal);
+		System.out.println ("Penetration: " + penetration);
 		for (int i = 0; i < contactCount; i++){
+			System.out.println ("Contact[" + i + "] = " + contacts[i]);
 			//Вычисляем точки контанка относителньо центров
 			Vector2f radA = Vector2f.sub (contacts[i], a.position);
 			Vector2f radB = Vector2f.sub (contacts[i], b.position);
