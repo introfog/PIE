@@ -6,6 +6,7 @@ import com.introfog.PIE.math.*;
 public class Manifold{
 	public boolean areBodiesCollision;
 	public float penetration;
+	public float e;
 	public Vector2f normal;
 	public int contactCount = 0;
 	public Vector2f[] contacts;
@@ -46,6 +47,36 @@ public class Manifold{
 		
 		
 		Collisions.table[a.shape.type.ordinal ()][b.shape.type.ordinal ()].handleCollision (this);
+		
+		
+		// Вычисляем упругость
+		e = Math.min (a.restitution, b.restitution);
+		
+		
+		for (int i = 0; i < contactCount; ++i){
+			// Calculate radii from COM to contact
+			// Vec2 ra = contacts[i] - A->position;
+			// Vec2 rb = contacts[i] - B->position;
+			Vector2f radA = Vector2f.sub (contacts[i], a.position);
+			Vector2f radB = Vector2f.sub (contacts[i], b.position);
+			
+			// Vec2 rv = B->velocity + Cross( B->angularVelocity, rb ) -
+			// A->velocity - Cross( A->angularVelocity, ra );
+			// Вычисляем относительную скорость
+			// Vec2 rv = B->velocity + Cross( B->angularVelocity, rb ) -
+			// A->velocity - Cross( A->angularVelocity, ra );
+			Vector2f rv = Vector2f.sub (b.velocity, a.velocity); //relativeVelocity
+			rv.add (Vector2f.crossProduct (b.angularVelocity, radB));
+			rv.sub (Vector2f.crossProduct (a.angularVelocity, radA));
+			
+			//Определите, следует ли нам выполнять столкновение с остановкой или нет
+			//Идея заключается в том, что единственное, что движет этим объектом, - это гравитация,
+			//то столкновение должно выполняться без какой-либо реституции
+			// if(rv.LenSqr( ) < (dt * gravity).LenSqr( ) + EPSILON)
+			if (rv.lengthWithoutSqrt () < MathPIE.RESTING){
+				e = 0.0f;
+			}
+		}
 	}
 	
 	public void solve (){
@@ -82,8 +113,6 @@ public class Manifold{
 				return;
 			}
 			
-			// Вычисляем упругость
-			float e = Math.min (a.restitution, b.restitution);
 			
 			float raCrossN = Vector2f.crossProduct (radA, normal);
 			float rbCrossN = Vector2f.crossProduct (radB, normal);
@@ -99,7 +128,6 @@ public class Manifold{
 			b.applyImpulse (impulse, radB);
 			impulse.negative ();
 			a.applyImpulse (impulse, radA);
-			
 			
 			//--------Работа с трением
 			
@@ -139,7 +167,6 @@ public class Manifold{
 						a.dynamicFriction * a.dynamicFriction + b.dynamicFriction * b.dynamicFriction);
 				frictionImpulse = Vector2f.mul (t, -j * dynamicFriction);
 			}
-			
 			//Пркладываем
 			b.applyImpulse (frictionImpulse, radB);
 			frictionImpulse.negative ();

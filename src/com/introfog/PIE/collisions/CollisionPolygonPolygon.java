@@ -28,12 +28,12 @@ public class CollisionPolygonPolygon implements CollisionCallback{
 		
 		searchContactVertices (A, B, contactVertices);
 		if (contactCounter > 0){
-			searchNormalAndPenetration (A,false);
+			searchNormalAndPenetration (A, false);
 			return;
 		}
 		searchContactVertices (B, A, contactVertices);
 		if (contactCounter > 0){
-			searchNormalAndPenetration (B,true);
+			searchNormalAndPenetration (B, true);
 			return;
 		}
 		
@@ -44,6 +44,7 @@ public class CollisionPolygonPolygon implements CollisionCallback{
 		//Выпускаем луч паралельный оси Х вправо, через точку возбудителя, если луч пересек нечетное число ребер то точка внутри полигона
 		//коэфициенты прямой ax + by + c = 0
 		//т.к. прямая паралельна оси Х, то уравнение примет вид y - y0 = 0, где y0 = координате у проверяемой точки
+		//Время работы O(n)
 		float y1, y2;
 		float x1, x2;
 		int counterIntersectsEdges;
@@ -80,54 +81,49 @@ public class CollisionPolygonPolygon implements CollisionCallback{
 	}
 	
 	private void searchNormalAndPenetration (Polygon prey, boolean reverse){
-		//TODO на текущем тесте, не правильно находиться ближайшее ребро!!
-		//ищем ближайшее ребро к точке
-		float minPenetration = Float.MAX_VALUE;
-		float currPenetration;
-		float x1, x2;
-		float y1, y2;
-		int indexNearEdge = -1;
-		for (int i = 0; i < contactCounter; i++){
-			for (int j = 0; j < prey.vertexCount; j++){
-				x1 = prey.vertices[(j + 1) % prey.vertexCount].x;
-				y1 = prey.vertices[(j + 1) % prey.vertexCount].y;
-				x2 = prey.vertices[j].x;
-				y2 = prey.vertices[j].y;
+		//Ищем ближайшее ребро полигона к точки контакта, проецируя точку на каждую нормаль ребра полигона
+		float separation = Float.MAX_VALUE;
+		int indexFace = 0;
+		float dotProduct;
+		
+		for (int k = 0; k < contactCounter; k++){
+			for (int i = 0; i < prey.vertexCount; i++){
+				tmpV.set (contactVertices[k]);
+				tmpV.sub (prey.vertices[i]);
+				dotProduct = Vector2f.dotProduct (prey.normals[i], tmpV);
 				
-				currPenetration = (y1 - y2) * contactVertices[i].x + (x2 - x1) * contactVertices[i].y;
-				currPenetration += (x1 * y2 - x2 * y1);
-				currPenetration /= (float) Math.sqrt ((x2 - x1) * (x2 - x1) + (y1 - y2) * (y1 - y2));
-				currPenetration = Math.abs (currPenetration);
-				if (currPenetration < minPenetration){
-					minPenetration = currPenetration;
-					indexNearEdge = j;
+				//сохраняем ближайшее ребро к центру окружности, наслучай если центр внутри полигона,
+				//обычное dotProduct > separation даёт не правильный ответ, т.к. все производные отрицательные,
+				//а нам нужно меньшее по модулю
+				if (Math.abs (dotProduct) < separation){
+					separation = Math.abs (dotProduct);
+					indexFace = i;
 				}
 			}
 			
-			manifold.contacts[i].set (contactVertices[i]); //восстанавливаем координаты точки касания в мировые кординаты
-			prey.rotateMatrix.mul (manifold.contacts[i], manifold.contacts[i]);
-			manifold.contacts[i].add (prey.body.position);
+			manifold.contacts[k].set (contactVertices[k]); //восстанавливаем координаты точки касания в мировые кординаты
+			prey.rotateMatrix.mul (manifold.contacts[k], manifold.contacts[k]);
+			manifold.contacts[k].add (prey.body.position);
 		}
 		
-		manifold.contactCount = contactCounter;
+		// m->normal = -(prey->u * prey->m_normals[faceNormal]);
+		// m->contacts[0] = m->normal * A->radius + a->position;
 		
-		manifold.normal.set (prey.normals[indexNearEdge]);
+		manifold.contactCount = contactCounter;
+		prey.rotateMatrix.mul (prey.normals[indexFace], manifold.normal);
 		if (reverse){
 			manifold.normal.negative ();
 		}
+		float a;
+		float b;
+		float c;
+		a = prey.vertices[(indexFace + 1) % prey.vertexCount].y - prey.vertices[indexFace].y;
+		b = prey.vertices[indexFace].x - prey.vertices[(indexFace + 1) % prey.vertexCount].x;
+		c = prey.vertices[(indexFace + 1) % prey.vertexCount].x * prey.vertices[indexFace].y;
+		c -= prey.vertices[indexFace].x * prey.vertices[(indexFace + 1) % prey.vertexCount].y;
 		
-		manifold.penetration = minPenetration;
-		
-//		float x1 = prey.vertices[(indexNearEdge + 1) % prey.vertexCount].x;
-//		float y1 = prey.vertices[(indexNearEdge + 1) % prey.vertexCount].y;
-//
-//		float x2 = prey.vertices[indexNearEdge].x;
-//		float y2 = prey.vertices[indexNearEdge].y;
-//
-//		float a = (y2 - y1);
-//		float b = (x1 - x2);
-//		float c = (x2 * y1 - x1 * y2);
-//		manifold.penetration = Math.abs (a * contactVertices[0].x + b * contactVertices[0].y + c) / (float) Math.sqrt (a * a + b * b);
+		manifold.penetration = Math.abs (a * contactVertices[0].x + b * contactVertices[0].y + c);
+		manifold.penetration /= Math.sqrt (a * a + b * b);
 	}
 }
 

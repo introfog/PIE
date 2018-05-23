@@ -14,6 +14,7 @@ public class MathPIE{
 	
 	public static final float PI = 3.141_592f;
 	public static final float EPSILON = 0.0001f;
+	public static final float RESTING = Vector2f.mul (GRAVITY, FIXED_DELTA_TIME).lengthWithoutSqrt () + EPSILON;
 	
 	public static final int BIG_ENOUGH_INT = 16 * 1024;
 	public static final double BIG_ENOUGH_FLOOR = BIG_ENOUGH_INT + 0.0000;
