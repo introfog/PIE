@@ -28,6 +28,13 @@ public class Manifold{
 	}
 	
 	public void initializeCollision (){
+		if (MathPIE.equal (a.invertMass + b.invertMass, 0f)){
+			a.velocity.set (0f, 0f);
+			b.velocity.set (0f, 0f);
+			areBodiesCollision = false;
+			return;
+		}
+		
 		if (a.shape.type == Shape.Type.circle && b.shape.type == Shape.Type.circle){
 			circleA = (Circle) a.shape;
 			circleB = (Circle) b.shape;
@@ -48,10 +55,8 @@ public class Manifold{
 		
 		Collisions.table[a.shape.type.ordinal ()][b.shape.type.ordinal ()].handleCollision (this);
 		
-		
 		// Вычисляем упругость
 		e = Math.min (a.restitution, b.restitution);
-		
 		
 		for (int i = 0; i < contactCount; ++i){
 			// Calculate radii from COM to contact
@@ -69,7 +74,7 @@ public class Manifold{
 			rv.add (Vector2f.crossProduct (b.angularVelocity, radB));
 			rv.sub (Vector2f.crossProduct (a.angularVelocity, radA));
 			
-			//Определите, следует ли нам выполнять столкновение с остановкой или нет
+			//Определяем, следует ли нам выполнять столкновение с остановкой или нет
 			//Идея заключается в том, что единственное, что движет этим объектом, - это гравитация,
 			//то столкновение должно выполняться без какой-либо реституции
 			// if(rv.LenSqr( ) < (dt * gravity).LenSqr( ) + EPSILON)
@@ -80,19 +85,9 @@ public class Manifold{
 	}
 	
 	public void solve (){
-		if (MathPIE.equal (a.invertMass + b.invertMass, 0f)){
-			a.velocity.set (0f, 0f);
-			b.velocity.set (0f, 0f);
-			return;
-		}
-		
 		normal.normalize ();
 		
-		System.out.println ("-----------------Collision:");
-		System.out.println ("Normal: " + normal);
-		System.out.println ("Penetration: " + penetration);
 		for (int i = 0; i < contactCount; i++){
-			System.out.println ("Contact[" + i + "] = " + contacts[i]);
 			//Вычисляем точки контанка относителньо центров
 			Vector2f radA = Vector2f.sub (contacts[i], a.position);
 			Vector2f radB = Vector2f.sub (contacts[i], b.position);

@@ -49,14 +49,14 @@ public class Polygon extends Shape{
 	
 	public Vector2f getSupport (Vector2f dir){
 		float bestProjection = -Float.MAX_VALUE;
-		Vector2f bestVertex = null;
+		Vector2f bestVertex = new Vector2f ();
 		
 		for (int i = 0; i < vertexCount; ++i){
 			Vector2f v = vertices[i];
 			float projection = Vector2f.dotProduct (v, dir);
 			
 			if (projection > bestProjection){
-				bestVertex = v;
+				bestVertex.set (v);
 				bestProjection = projection;
 			}
 		}

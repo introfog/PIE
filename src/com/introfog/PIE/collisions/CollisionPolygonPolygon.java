@@ -6,124 +6,279 @@ import com.introfog.PIE.math.*;
 public class CollisionPolygonPolygon implements CollisionCallback{
 	public static final CollisionPolygonPolygon instance = new CollisionPolygonPolygon ();
 	
-	private int counter = 0;
-	private int contactCounter;
-	private Vector2f tmpV = new Vector2f ();
-	private Vector2f[] contactVertices;
-	private Manifold manifold;
-	
 	@Override
 	public void handleCollision (Manifold manifold){
-		counter++;
-		if (counter == 2){
-			System.out.println ();
-		}
-		
-		this.manifold = manifold;
 		Polygon A = manifold.polygonA;
 		Polygon B = manifold.polygonB;
 		
-		contactVertices = Vector2f.arrayOf (2); //точки, которые лежат внутри полигона
-		contactCounter = 0;
-		
-		searchContactVertices (A, B, contactVertices);
-		if (contactCounter > 0){
-			searchNormalAndPenetration (A, false);
-			return;
-		}
-		searchContactVertices (B, A, contactVertices);
-		if (contactCounter > 0){
-			searchNormalAndPenetration (B, true);
+		// Check for a separating axis with A's face planes
+		int[] faceA = {0};
+		float penetrationA = findAxisLeastPenetration (faceA, A, B);
+		if (penetrationA >= 0.0f){
+			manifold.areBodiesCollision = false;
 			return;
 		}
 		
-		manifold.areBodiesCollision = false;
-	}
-	
-	private void searchContactVertices (Polygon prey, Polygon provocative, Vector2f[] contactVertices){
-		//Выпускаем луч паралельный оси Х вправо, через точку возбудителя, если луч пересек нечетное число ребер то точка внутри полигона
-		//коэфициенты прямой ax + by + c = 0
-		//т.к. прямая паралельна оси Х, то уравнение примет вид y - y0 = 0, где y0 = координате у проверяемой точки
-		//Время работы O(n)
-		float y1, y2;
-		float x1, x2;
-		int counterIntersectsEdges;
-		float coordinateIntersectsX;
-		for (int i = 0; i < provocative.vertexCount; i++){
-			tmpV.set (provocative.vertices[i]); //преобразовали координаты вершины провокатора в координаты жертвы
-			provocative.rotateMatrix.mul (tmpV, tmpV);
-			tmpV.add (provocative.body.position);
-			tmpV.sub (prey.body.position);
-			prey.rotateMatrix.transposeMul (tmpV, tmpV);
-			counterIntersectsEdges = 0;
-			
-			for (int j = 0; j < prey.vertexCount; j++){ //ищем пересечения с прямой, но у нас луч напралвенный вправо, поэтому проверяем что бы точка персечения лежала справа
-				y1 = prey.vertices[(j + 1) % prey.vertexCount].y;
-				y2 = prey.vertices[j].y;
-				x1 = prey.vertices[(j + 1) % prey.vertexCount].x;
-				x2 = prey.vertices[j].x;
-				
-				//находим точку пересечения искомой прямой y - y0 = 0 и прямой, проходящей через 2 точки (координаты prey)
-				coordinateIntersectsX = -((x1 * y2 - x2 * y1) + (x2 - x1) * tmpV.y) / (y1 - y2);
-				if (((tmpV.y - y1) * (tmpV.y - y2) < 0) && tmpV.x < coordinateIntersectsX){
-					counterIntersectsEdges++;
-				}
-			}
-			
-			if (counterIntersectsEdges % 2 == 1){
-				contactVertices[contactCounter++].set (tmpV);
-				
-				if (contactCounter == 2){
-					return;
-				}
-			}
-		}
-	}
-	
-	private void searchNormalAndPenetration (Polygon prey, boolean reverse){
-		//Ищем ближайшее ребро полигона к точки контакта, проецируя точку на каждую нормаль ребра полигона
-		float separation = Float.MAX_VALUE;
-		int indexFace = 0;
-		float dotProduct;
-		
-		for (int k = 0; k < contactCounter; k++){
-			for (int i = 0; i < prey.vertexCount; i++){
-				tmpV.set (contactVertices[k]);
-				tmpV.sub (prey.vertices[i]);
-				dotProduct = Vector2f.dotProduct (prey.normals[i], tmpV);
-				
-				//сохраняем ближайшее ребро к центру окружности, наслучай если центр внутри полигона,
-				//обычное dotProduct > separation даёт не правильный ответ, т.к. все производные отрицательные,
-				//а нам нужно меньшее по модулю
-				if (Math.abs (dotProduct) < separation){
-					separation = Math.abs (dotProduct);
-					indexFace = i;
-				}
-			}
-			
-			manifold.contacts[k].set (contactVertices[k]); //восстанавливаем координаты точки касания в мировые кординаты
-			prey.rotateMatrix.mul (manifold.contacts[k], manifold.contacts[k]);
-			manifold.contacts[k].add (prey.body.position);
+		// Check for a separating axis with B's face planes
+		int[] faceB = {0};
+		float penetrationB = findAxisLeastPenetration (faceB, B, A);
+		if (penetrationB >= 0.0f){
+			manifold.areBodiesCollision = false;
+			return;
 		}
 		
-		// m->normal = -(prey->u * prey->m_normals[faceNormal]);
-		// m->contacts[0] = m->normal * A->radius + a->position;
+		int referenceIndex;
+		boolean flip; // Always point from a to b
 		
-		manifold.contactCount = contactCounter;
-		prey.rotateMatrix.mul (prey.normals[indexFace], manifold.normal);
-		if (reverse){
+		Polygon RefPoly; // Reference (ссылка)
+		Polygon IncPoly; // Incident (падающий)
+		
+		// Determine which shape contains reference face
+		if (MathPIE.gt (penetrationA, penetrationB)){
+			RefPoly = A;
+			IncPoly = B; //падающий объект B
+			referenceIndex = faceA[0];
+			flip = false;
+		}
+		else{
+			RefPoly = B;
+			IncPoly = A;
+			referenceIndex = faceB[0];
+			flip = true;
+		}
+		
+		// World space incident face
+		Vector2f[] incidentFace = Vector2f.arrayOf (2);
+		
+		findIncidentFace (incidentFace, RefPoly, IncPoly, referenceIndex);
+		
+		// y
+		// ^ .n ^
+		// +---c ------posPlane--
+		// x < | i |\
+		// +---+ c-----negPlane--
+		// \ v
+		// r
+		//
+		// r : reference face
+		// i : incident poly
+		// c : clipped point
+		// n : incident normal
+		
+		// Setup reference face vertices
+		Vector2f v1 = RefPoly.vertices[referenceIndex];
+		referenceIndex = referenceIndex + 1 == RefPoly.vertexCount ? 0 : referenceIndex + 1;
+		Vector2f v2 = RefPoly.vertices[referenceIndex];
+		
+		// Transform vertices to world space
+		// v1 = RefPoly->u * v1 + RefPoly->body->position;
+		// v2 = RefPoly->u * v2 + RefPoly->body->position;
+		RefPoly.rotateMatrix.mul (v1, v1);
+		v1.add (RefPoly.body.position);
+		RefPoly.rotateMatrix.mul (v2, v2);
+		v2.add (RefPoly.body.position);
+		
+		// Calculate reference face side normal in world space
+		// Vec2 sidePlaneNormal = (v2 - v1);
+		// sidePlaneNormal.Normalize( );
+		Vector2f sidePlaneNormal = Vector2f.sub (v2, v1);
+		sidePlaneNormal.normalize ();
+		
+		// Orthogonalize
+		// Vec2 refFaceNormal( sidePlaneNormal.y, -sidePlaneNormal.x );
+		Vector2f refFaceNormal = new Vector2f (sidePlaneNormal.y, -sidePlaneNormal.x);
+		
+		// ax + by = c
+		// c is distance from origin
+		// real refC = Dot( refFaceNormal, v1 );
+		// real negSide = -Dot( sidePlaneNormal, v1 );
+		// real posSide = Dot( sidePlaneNormal, v2 );
+		float refC = Vector2f.dotProduct (refFaceNormal, v1);
+		float negSide = -Vector2f.dotProduct (sidePlaneNormal, v1);
+		float posSide = Vector2f.dotProduct (sidePlaneNormal, v2);
+		
+		// Clip incident face to reference face side planes
+		// if(Clip( -sidePlaneNormal, negSide, incidentFace ) < 2)
+		sidePlaneNormal.negative ();
+		if (clip (sidePlaneNormal, negSide, incidentFace) < 2){
+			manifold.areBodiesCollision = false;
+			return; // Due to floating point error, possible to not have required
+			// points
+		}
+		sidePlaneNormal.negative ();
+		
+		// if(Clip( sidePlaneNormal, posSide, incidentFace ) < 2)
+		if (clip (sidePlaneNormal, posSide, incidentFace) < 2){
+			manifold.areBodiesCollision = false;
+			return; // Due to floating point error, possible to not have required
+			// points
+		}
+		
+		// Flip
+		manifold.normal.set (refFaceNormal);
+		if (flip){
 			manifold.normal.negative ();
 		}
-		float a;
-		float b;
-		float c;
-		a = prey.vertices[(indexFace + 1) % prey.vertexCount].y - prey.vertices[indexFace].y;
-		b = prey.vertices[indexFace].x - prey.vertices[(indexFace + 1) % prey.vertexCount].x;
-		c = prey.vertices[(indexFace + 1) % prey.vertexCount].x * prey.vertices[indexFace].y;
-		c -= prey.vertices[indexFace].x * prey.vertices[(indexFace + 1) % prey.vertexCount].y;
 		
-		manifold.penetration = Math.abs (a * contactVertices[0].x + b * contactVertices[0].y + c);
-		manifold.penetration /= Math.sqrt (a * a + b * b);
+		// Keep points behind reference face
+		int cp = 0; // clipped points behind reference face
+		float separation = Vector2f.dotProduct (refFaceNormal, incidentFace[0]) - refC;
+		if (separation <= 0.0f){
+			manifold.contacts[cp].set (incidentFace[0]);
+			manifold.penetration = -separation;
+			++cp;
+		}
+		else{
+			manifold.penetration = 0;
+		}
+		
+		separation = Vector2f.dotProduct (refFaceNormal, incidentFace[1]) - refC;
+		
+		if (separation <= 0.0f){
+			manifold.contacts[cp].set (incidentFace[1]);
+			
+			manifold.penetration += -separation;
+			++cp;
+			
+			// Average penetration
+			manifold.penetration /= cp;
+		}
+		
+		manifold.contactCount = cp;
 	}
+	
+	public float findAxisLeastPenetration (int[] faceIndex, Polygon A, Polygon B){
+		//ищем ось наименьшего проникновения
+		float bestDistance = -Float.MAX_VALUE;
+		int bestIndex = 0;
+		
+		for (int i = 0; i < A.vertexCount; ++i){
+			// Retrieve a face normal from A
+			// Vec2 n = A->m_normals[i];
+			// Vec2 nw = A->u * n;
+			Vector2f nw = new Vector2f ();
+			A.rotateMatrix.mul (A.normals[i], nw);
+			
+			// Transform face normal into B's model space
+			// Mat2 buT = B->u.Transpose( );
+			// n = buT * nw;
+			Vector2f n = new Vector2f ();
+			B.rotateMatrix.transposeMul (nw, n);
+			
+			// Retrieve support point from B along -n
+			// Vector2f s = B->GetSupport( -n );
+			n.negative ();
+			Vector2f s = B.getSupport (n);
+			n.negative ();
+			
+			// Retrieve vertex on face from A, transform into
+			// B's model space
+			// Vec2 v = A->m_vertices[i];
+			// v = A->u * v + A->body->position;
+			// v -= B->body->position;
+			// v = buT * v;
+			Vector2f v = new Vector2f (A.vertices[i]);
+			A.rotateMatrix.mul (v, v);
+			v.add (A.body.position);
+			v.sub (B.body.position);
+			B.rotateMatrix.transposeMul (v, v);
+			
+			// Compute penetration distance (in B's model space)
+			// real d = Dot( n, s - v );
+			float d = Vector2f.dotProduct (n, Vector2f.sub (s, v));
+			
+			// Store greatest distance
+			if (d > bestDistance){
+				bestDistance = d;
+				bestIndex = i;
+			}
+		}
+		
+		faceIndex[0] = bestIndex;
+		return bestDistance;
+	}
+	
+	public void findIncidentFace (Vector2f[] v, Polygon RefPoly, Polygon IncPoly, int referenceIndex){
+		Vector2f referenceNormal = RefPoly.normals[referenceIndex];
+		
+		// Calculate normal in incident's frame of reference
+		// referenceNormal = RefPoly->u * referenceNormal; // To world space
+		// referenceNormal = IncPoly->u.Transpose( ) * referenceNormal; // To
+		// incident's model space
+		RefPoly.rotateMatrix.mul (referenceNormal, referenceNormal); // To world space
+		IncPoly.rotateMatrix.transposeMul (referenceNormal, referenceNormal);// To
+		// incident's
+		// model
+		// space
+		
+		// Find most anti-normal face on incident polygon
+		int incidentFace = 0;
+		float minDot = Float.MAX_VALUE;
+		for (int i = 0; i < IncPoly.vertexCount; ++i){
+			// real dot = Dot( referenceNormal, IncPoly->m_normals[i] );
+			float dotProduct = Vector2f.dotProduct (referenceNormal, IncPoly.normals[i]);
+			
+			if (dotProduct < minDot){
+				minDot = dotProduct;
+				incidentFace = i;
+			}
+		}
+		
+		// Assign face vertices for incidentFace
+		// v[0] = IncPoly->u * IncPoly->m_vertices[incidentFace] +
+		// IncPoly->body->position;
+		// incidentFace = incidentFace + 1 >= (int32)IncPoly->m_vertexCount ? 0 :
+		// incidentFace + 1;
+		// v[1] = IncPoly->u * IncPoly->m_vertices[incidentFace] +
+		// IncPoly->body->position;
+		IncPoly.rotateMatrix.mul (IncPoly.vertices[incidentFace], v[0]);
+		incidentFace = incidentFace + 1 >= IncPoly.vertexCount ? 0 : incidentFace + 1;
+		IncPoly.rotateMatrix.mul (IncPoly.vertices[incidentFace], v[1]);
+	}
+	
+	public int clip (Vector2f n, float c, Vector2f[] face){
+		int sp = 0;
+		Vector2f[] out = {new Vector2f (face[0]), new Vector2f (face[1])};
+		
+		// Retrieve distances from each endpoint to the line
+		// d = ax + by - c
+		// real d1 = Dot( n, face[0] ) - c;
+		// real d2 = Dot( n, face[1] ) - c;
+		float d1 = Vector2f.dotProduct (n, face[0]) - c;
+		float d2 = Vector2f.dotProduct (n, face[1]) - c;
+		
+		// If negative (behind plane) clip
+		// if(d1 <= 0.0f) out[sp++] = face[0];
+		// if(d2 <= 0.0f) out[sp++] = face[1];
+		if (d1 <= 0.0f){
+			out[sp++].set (face[0]);
+		}
+		if (d2 <= 0.0f){
+			out[sp++].set (face[1]);
+		}
+		
+		// If the points are on different sides of the plane
+		if (d1 * d2 < 0.0f) // less than to ignore -0.0f
+		{
+			// Push intersection point
+			// real alpha = d1 / (d1 - d2);
+			// out[sp] = face[0] + alpha * (face[1] - face[0]);
+			// ++sp;
+			
+			float alpha = d1 / (d1 - d2);
+			out[sp] = Vector2f.sub (face[1], face[0]);
+			out[sp].mul (alpha);
+			out[sp].add (face[0]);
+			sp++;
+		}
+		
+		// Assign our new converted values
+		face[0] = out[0];
+		face[1] = out[1];
+		
+		// assert( sp != 3 );
+		
+		return sp;
+	}
+	
 }
-
