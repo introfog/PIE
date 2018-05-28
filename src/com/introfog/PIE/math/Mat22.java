@@ -5,6 +5,13 @@ public class Mat22{
 	private float m00, m01;
 	private float m10, m11;
 	
+	public void setAngle (Vector2f x, Vector2f y){
+		m00 = x.x;
+		m01 = x.y;
+		m01 = y.x;
+		m11 = y.y;
+	}
+	
 	public void setAngle (float radian){
 		float cos = (float) Math.cos (radian);
 		float sin = (float) Math.sin (radian);

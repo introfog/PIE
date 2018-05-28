@@ -27,28 +27,4 @@ public class MathPIE{
 	public static boolean equal (float a, float b){
 		return Math.abs (a - b) <= EPSILON;
 	}
-	
-	public static float signumWithoutZero (float value){
-		if (value == 0f){
-			return 1;
-		}
-		return Math.signum (value);
-	}
-	
-	public static float clamp (float min, float max, float value){
-		if (value < min){
-			return min;
-		}
-		else if (value > max){
-			return max;
-		}
-		return value;
-	}
-	
-	public static final float BIAS_RELATIVE = 0.95f;
-	public static final float BIAS_ABSOLUTE = 0.01f;
-	
-	public static boolean gt (float a, float b){
-		return a >= b * BIAS_RELATIVE + a * BIAS_ABSOLUTE;
-	}
 }

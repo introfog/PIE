@@ -47,21 +47,22 @@ public class Polygon extends Shape{
 		return new Polygon (density, restitution, centerX, centerY, vertices);
 	}
 	
-	public Vector2f getSupport (Vector2f dir){
+	public int getSupportIndex (Vector2f dir){
+		//возвращает индекс вершины самой удаленной в заданном направлении
 		float bestProjection = -Float.MAX_VALUE;
-		Vector2f bestVertex = new Vector2f ();
+		int index = -1;
 		
 		for (int i = 0; i < vertexCount; ++i){
 			Vector2f v = vertices[i];
 			float projection = Vector2f.dotProduct (v, dir);
 			
 			if (projection > bestProjection){
-				bestVertex.set (v);
+				index = i;
 				bestProjection = projection;
 			}
 		}
 		
-		return bestVertex;
+		return index;
 	}
 	
 	@Override
@@ -102,8 +103,8 @@ public class Polygon extends Shape{
 		aabb.min.x = Float.MAX_VALUE;
 		aabb.min.y = Float.MAX_VALUE;
 		
-		aabb.max.x = Float.MIN_VALUE;
-		aabb.max.y = Float.MIN_VALUE;
+		aabb.max.x = -Float.MAX_VALUE;
+		aabb.max.y = -Float.MIN_VALUE;
 		for (int i = 0; i < vertexCount; i++){
 			tmpV.set (vertices[i]);
 			rotateMatrix.mul (tmpV, tmpV);

@@ -49,9 +49,9 @@ public class Display extends JPanel implements ActionListener{
 		
 		rectangle = Polygon.generateRectangle (600f, 400f, 80f, 60f, MathPIE.STATIC_BODY_DENSITY, 0.4f);
 		World.getInstance ().addShape (rectangle);
-		//rectangle = Polygon.generateRectangle (570f, 150f, 40f, 20f, MathPIE.STATIC_BODY_DENSITY, 0.01f);
+		rectangle = Polygon.generateRectangle (570f, 150f, 40f, 20f, 0.4f, 0.01f);
 		//rectangle.setOrientation (MathPIE.PI / 4f);
-		//World.getInstance ().addShape (rectangle);
+		World.getInstance ().addShape (rectangle);
 		
 		//rectangle = Polygon.generateRectangle (558f, 138f, 30f, 40f, 0.4f, 0.01f);
 		//World.getInstance ().addShape (rectangle);
