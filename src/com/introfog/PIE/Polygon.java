@@ -49,11 +49,16 @@ public class Polygon extends Shape{
 	
 	public int getSupportIndex (Vector2f dir){
 		//возвращает индекс вершины самой удаленной в заданном направлении
+		
 		float bestProjection = -Float.MAX_VALUE;
+		float projection;
 		int index = -1;
 		
 		for (int i = 0; i < vertexCount; ++i){
-			float projection = Vector2f.dotProduct (vertices[i], dir);
+			tmpV.set (vertices[i]);
+			rotateMatrix.mul (tmpV, tmpV);
+			projection = Vector2f.dotProduct (tmpV, dir);
+			
 			if (projection > bestProjection){
 				index = i;
 				bestProjection = projection;

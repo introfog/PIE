@@ -41,11 +41,12 @@ public class World{
 		//broadPhase.sweepAndPrune (mayBeCollision);
 		broadPhase.spatialHashing (mayBeCollision);
 		
-		narrowPhase ();
 		
 		
 		//Integrate forces
 		bodies.forEach ((body) -> integrateForces (body)); //Hanna modification Euler's method is used!
+		
+		narrowPhase ();
 		
 		//Solve collisions
 		for (int i = 0; i < iterations; i++){

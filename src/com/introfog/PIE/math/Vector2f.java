@@ -76,10 +76,15 @@ public class Vector2f{
 	}
 	
 	public void normalize (){
-		float length = (float) Math.sqrt (lengthWithoutSqrt ());
+		if (MathPIE.equal (x * x + y * y, 1f)){
+			return;
+		}
+		
+		float length = lengthWithoutSqrt ();
 		if (length == 0f){
 			return;
 		}
+		length = (float) Math.sqrt (length);
 		x /= length;
 		y /= length;
 	}

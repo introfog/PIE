@@ -5,7 +5,6 @@ import com.introfog.PIE.math.*;
 
 public class CollisionPolygonPolygon implements CollisionCallback{
 	public static final CollisionPolygonPolygon instance = new CollisionPolygonPolygon ();
-	public static int counter = 0;
 	
 	
 	private float minPenetration (Polygon A, Polygon B, int[] indexMinPenetrationNormal){
@@ -38,7 +37,7 @@ public class CollisionPolygonPolygon implements CollisionCallback{
 				axisY.normalize ();
 			}
 			currRotateMatrix.setAngle (axisX, axisY);
-			//сделил новую систему координат, которая по оси Х совпадает с нормой к ребру полигона А
+			//сделали новую систему координат, которая по оси Х совпадает с нормой к ребру полигона А
 			//вычисляем координаты проекций осей в новой системе координат, и смотрим персечение отрезков по оси Х
 			
 			indexMaxA = A.getSupportIndex (axisX);
@@ -136,8 +135,6 @@ public class CollisionPolygonPolygon implements CollisionCallback{
 	
 	@Override
 	public void handleCollision (Manifold manifold){
-		counter++;
-		
 		Polygon A = manifold.polygonA;
 		Polygon B = manifold.polygonB;
 		
@@ -177,7 +174,6 @@ public class CollisionPolygonPolygon implements CollisionCallback{
 			B.rotateMatrix.mul (manifold.normal, manifold.normal);
 			manifold.penetration = minPenetrationB;
 			direction.set (manifold.normal);
-			direction.negative ();
 			manifold.contactCount = A.getSupportIndices (direction, indicesContacts);
 			for (int i = 0; i < manifold.contactCount; i++){
 				manifold.contacts[i].set (A.vertices[indicesContacts[i]]);

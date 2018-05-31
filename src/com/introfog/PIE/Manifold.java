@@ -7,6 +7,8 @@ public class Manifold{
 	public boolean areBodiesCollision;
 	public float penetration;
 	public float e;
+	public float staticFriction;
+	public float dynamicFriction;
 	public Vector2f normal;
 	public int contactCount = 0;
 	public Vector2f[] contacts;
@@ -55,6 +57,12 @@ public class Manifold{
 		
 		Collisions.table[a.shape.type.ordinal ()][b.shape.type.ordinal ()].handleCollision (this);
 		
+		staticFriction = (float) StrictMath.sqrt (
+				a.staticFriction * a.staticFriction + b.staticFriction * b.staticFriction);
+		dynamicFriction = (float) StrictMath.sqrt (
+				a.dynamicFriction * a.dynamicFriction + b.dynamicFriction * b.dynamicFriction);
+		
+		
 		// Вычисляем упругость
 		e = Math.min (a.restitution, b.restitution);
 		
@@ -87,7 +95,7 @@ public class Manifold{
 	public void solve (){
 		normal.normalize ();
 		
-		//System.out.println ("Normal: " + normal);
+		System.out.println ("Normal: " + normal + " contactsCount: " + contactCount);
 		for (int i = 0; i < contactCount; i++){
 			//Вычисляем точки контанка относителньо центров
 			Vector2f radA = Vector2f.sub (contacts[i], a.position);
@@ -115,7 +123,7 @@ public class Manifold{
 			float invertMassSum = a.invertMass + b.invertMass + (raCrossN * raCrossN) * a.invertInertia + (rbCrossN * rbCrossN) * b.invertInertia;
 			
 			// Вычисляем скаляр импульса силы
-			float j = -(1 + e) * velAlongNormal;
+			float j = -(1.0f + e) * velAlongNormal;
 			j /= invertMassSum;
 			j /= contactCount;
 			
@@ -133,6 +141,8 @@ public class Manifold{
 			rv.sub (Vector2f.crossProduct (a.angularVelocity, radA));
 			
 			//Вычисялем касательный вектор: tangent = rb - dotProduct (rv, normal) * normal
+			// Vec2 t = rv - (normal * Dot( rv, normal ));
+			// t.Normalize( );
 			Vector2f t = Vector2f.sub (rv, Vector2f.mul (normal, Vector2f.dotProduct (rv, normal)));
 			t.normalize ();
 			
@@ -146,7 +156,7 @@ public class Manifold{
 				return;
 			}
 			
-			//Вычисляем Мю,
+			/*//Вычисляем Мю,
 			float Mu = (float) Math.sqrt (a.staticFriction * a.staticFriction + b.staticFriction * b.staticFriction);
 			//Статическое трение - величина, показывающая сколько нужно приложить энергии что бы свдинуть тела, т.е. это
 			//порог, если энергия ниже, то тела покоятся, если выше, то они сдвинулись
@@ -162,7 +172,23 @@ public class Manifold{
 				float dynamicFriction = (float) Math.sqrt (
 						a.dynamicFriction * a.dynamicFriction + b.dynamicFriction * b.dynamicFriction);
 				frictionImpulse = Vector2f.mul (t, -j * dynamicFriction);
+			}*/
+			
+			// Coulumb's law
+			Vector2f frictionImpulse = new Vector2f ();
+			// if(std::abs( jt ) < j * sf)
+			if (Math.abs (jt) < j * staticFriction){
+				// frictionImpulse = t * jt;
+				t.mul (jt);
+				frictionImpulse.set (t);
 			}
+			else{
+				// frictionImpulse = t * -j * df;
+				t.mul (-j * dynamicFriction);
+				frictionImpulse.set (t);
+			}
+			
+			
 			//Пркладываем
 			b.applyImpulse (frictionImpulse, radB);
 			frictionImpulse.negative ();
