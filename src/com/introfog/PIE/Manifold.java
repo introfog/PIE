@@ -87,6 +87,7 @@ public class Manifold{
 	public void solve (){
 		normal.normalize ();
 		
+		//System.out.println ("Normal: " + normal);
 		for (int i = 0; i < contactCount; i++){
 			//Вычисляем точки контанка относителньо центров
 			Vector2f radA = Vector2f.sub (contacts[i], a.position);

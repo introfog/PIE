@@ -53,9 +53,7 @@ public class Polygon extends Shape{
 		int index = -1;
 		
 		for (int i = 0; i < vertexCount; ++i){
-			Vector2f v = vertices[i];
-			float projection = Vector2f.dotProduct (v, dir);
-			
+			float projection = Vector2f.dotProduct (vertices[i], dir);
 			if (projection > bestProjection){
 				index = i;
 				bestProjection = projection;
@@ -63,6 +61,34 @@ public class Polygon extends Shape{
 		}
 		
 		return index;
+	}
+	
+	public int getSupportIndices (Vector2f dir, int[] indices){
+		//возвращает индекс вершины самой удаленной в заданном направлении
+		float bestProjection = -Float.MAX_VALUE;
+		float projection;
+		
+		for (int i = 0; i < vertexCount; i++){
+			tmpV.set (vertices[i]);
+			rotateMatrix.mul (tmpV, tmpV);
+			projection = Vector2f.dotProduct (tmpV, dir);
+			
+			if (projection > bestProjection){
+				bestProjection = projection;
+			}
+		}
+		
+		int counter = 0;
+		for (int i = 0; i < vertexCount; i++){
+			tmpV.set (vertices[i]);
+			rotateMatrix.mul (tmpV, tmpV);
+			projection = Vector2f.dotProduct (tmpV, dir);
+			if (MathPIE.equal (projection, bestProjection)){
+				indices[counter++] = i;
+			}
+		}
+		
+		return counter;
 	}
 	
 	@Override
