@@ -47,53 +47,21 @@ public class Polygon extends Shape{
 		return new Polygon (density, restitution, centerX, centerY, vertices);
 	}
 	
-	public int getSupportIndex (Vector2f dir){
-		//возвращает индекс вершины самой удаленной в заданном направлении
-		
+	public Vector2f getSupport (Vector2f dir){
 		float bestProjection = -Float.MAX_VALUE;
-		float projection;
-		int index = -1;
+		Vector2f bestVertex = new Vector2f ();
 		
 		for (int i = 0; i < vertexCount; ++i){
-			tmpV.set (vertices[i]);
-			rotateMatrix.mul (tmpV, tmpV);
-			projection = Vector2f.dotProduct (tmpV, dir);
+			Vector2f v = vertices[i];
+			float projection = Vector2f.dotProduct (v, dir);
 			
 			if (projection > bestProjection){
-				index = i;
+				bestVertex.set (v);
 				bestProjection = projection;
 			}
 		}
 		
-		return index;
-	}
-	
-	public int getSupportIndices (Vector2f dir, int[] indices){
-		//возвращает индекс вершины самой удаленной в заданном направлении
-		float bestProjection = -Float.MAX_VALUE;
-		float projection;
-		
-		for (int i = 0; i < vertexCount; i++){
-			tmpV.set (vertices[i]);
-			rotateMatrix.mul (tmpV, tmpV);
-			projection = Vector2f.dotProduct (tmpV, dir);
-			
-			if (projection > bestProjection){
-				bestProjection = projection;
-			}
-		}
-		
-		int counter = 0;
-		for (int i = 0; i < vertexCount; i++){
-			tmpV.set (vertices[i]);
-			rotateMatrix.mul (tmpV, tmpV);
-			projection = Vector2f.dotProduct (tmpV, dir);
-			if (MathPIE.equal (projection, bestProjection)){
-				indices[counter++] = i;
-			}
-		}
-		
-		return counter;
+		return bestVertex;
 	}
 	
 	@Override

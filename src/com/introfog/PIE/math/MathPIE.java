@@ -27,4 +27,12 @@ public class MathPIE{
 	public static boolean equal (float a, float b){
 		return Math.abs (a - b) <= EPSILON;
 	}
+	
+	
+	public static final float BIAS_RELATIVE = 0.95f;
+	public static final float BIAS_ABSOLUTE = 0.01f;
+	
+	public static boolean gt (float a, float b){
+		return a >= b * BIAS_RELATIVE + a * BIAS_ABSOLUTE;
+	}
 }

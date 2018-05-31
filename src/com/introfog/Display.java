@@ -31,29 +31,26 @@ public class Display extends JPanel implements ActionListener{
 	
 	
 	private void initializeBodies (){
-		Circle circle;
-		circle = new Circle (40f, 220f, 350f, MathPIE.STATIC_BODY_DENSITY, 0.3f);
-		World.getInstance ().addShape (circle);
+		//Circle circle;
+		//circle = new Circle (40f, 220f, 350f, MathPIE.STATIC_BODY_DENSITY, 0.2f);
+		//World.getInstance ().addShape (circle);
 		
 		
 		
-		World.getInstance ().setIterations (1);
+		World.getInstance ().setIterations (10);
 		
-		Vector2f[] vertices = {new Vector2f (20f, -20f), new Vector2f (40f, 20f), new Vector2f (0f, 60f), new Vector2f (-60f, 40f), new Vector2f (-40f, 0f)};
-		Polygon polygon = new Polygon (MathPIE.STATIC_BODY_DENSITY, 0.3f, 200f, 100f, vertices);
-		World.getInstance ().addShape (polygon);
+		/*Vector2f[] vertices = {new Vector2f (20f, -20f), new Vector2f (40f, 20f), new Vector2f (0f, 60f), new Vector2f (-60f, 40f), new Vector2f (-40f, 0f)};
+		Polygon polygon = new Polygon (MathPIE.STATIC_BODY_DENSITY, 0.2f, 200f, 100f, vertices);
+		World.getInstance ().addShape (polygon);*/
 		
 		
 		//circle = new Circle (30f, 580f, 400f, MathPIE.STATIC_BODY_DENSITY, 0.4f);
 		//World.getInstance ().addShape (circle);
 		
-		rectangle = Polygon.generateRectangle (600f, 400f, 80f, 60f, MathPIE.STATIC_BODY_DENSITY, 0.2f);
-		World.getInstance ().addShape (rectangle);
-		rectangle = Polygon.generateRectangle (590f, 150f, 140f, 20f, 1f, 0.2f);
+		//rectangle = Polygon.generateRectangle (600f, 400f, 80f, 60f, MathPIE.STATIC_BODY_DENSITY, 0.2f);
+		//World.getInstance ().addShape (rectangle);
+		//rectangle = Polygon.generateRectangle (590f, 150f, 140f, 20f, 1f, 0.2f);
 		//rectangle.setOrientation (MathPIE.PI / 4f);
-		World.getInstance ().addShape (rectangle);
-		
-		//rectangle = Polygon.generateRectangle (558f, 138f, 30f, 40f, 0.4f, 0.01f);
 		//World.getInstance ().addShape (rectangle);
 	}
 	
@@ -70,8 +67,8 @@ public class Display extends JPanel implements ActionListener{
 			}
 			
 			if (World.getInstance ().getAmountBodies () % 2 == 0){
-				rectangle = Polygon.generateRectangle (currXNewBody * (SIZE + 1f) + SIZE / 2f, currYNewBody + SIZE / 2f, SIZE / 2f, SIZE / 2f, 0.4f,
-													   0.5f);
+				rectangle = Polygon.generateRectangle (currXNewBody * (SIZE + 1f) + SIZE / 2f, currYNewBody + SIZE / 2f, SIZE, SIZE, 1f,
+													   0.2f);
 				World.getInstance ().addShape (rectangle);
 				float dt = deltaTime * 100000;
 				dt = Math.round (dt);
@@ -137,7 +134,7 @@ public class Display extends JPanel implements ActionListener{
 		g.drawString ("Bodies: " + World.getInstance ().getAmountBodies (), 2, 24);
 		g.drawString ("Version: 0.2.0 without some collision", 2, 36);
 		
-		//testProductivity ();
+		testProductivity ();
 		//testBodiesPenetration ();
 		
 		//rectangle.setOrientation (rectangle.body.orientation + 0.001f);
