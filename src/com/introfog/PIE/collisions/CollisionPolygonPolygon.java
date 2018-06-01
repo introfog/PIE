@@ -11,7 +11,7 @@ public class CollisionPolygonPolygon implements CollisionCallback{
 		Polygon A = manifold.polygonA;
 		Polygon B = manifold.polygonB;
 		
-		// Check for a separating axis with A's face planes
+		//Ищем разделительную ось с внешними гранями А
 		int[] faceA = {0};
 		float penetrationA = findAxisLeastPenetration (faceA, A, B);
 		if (penetrationA >= 0.0f){
@@ -19,7 +19,7 @@ public class CollisionPolygonPolygon implements CollisionCallback{
 			return;
 		}
 		
-		// Check for a separating axis with B's face planes
+		//Ищем разделительную ось с внешними гранями В
 		int[] faceB = {0};
 		float penetrationB = findAxisLeastPenetration (faceB, B, A);
 		if (penetrationB >= 0.0f){
@@ -28,12 +28,12 @@ public class CollisionPolygonPolygon implements CollisionCallback{
 		}
 		
 		int referenceIndex;
-		boolean flip; // Always point from a to b
+		boolean flip; // Всегда указываем от а к b
 		
 		Polygon RefPoly; // Reference (ссылка)
 		Polygon IncPoly; // Incident (падающий)
 		
-		// Determine which shape contains reference face
+		// Определяем, какой полигон содержит опорную грань
 		if (MathPIE.gt (penetrationA, penetrationB)){
 			RefPoly = A;
 			IncPoly = B; //падающий объект B
@@ -70,7 +70,7 @@ public class CollisionPolygonPolygon implements CollisionCallback{
 		referenceIndex = referenceIndex + 1 == RefPoly.vertexCount ? 0 : referenceIndex + 1;
 		Vector2f v2 = new Vector2f (RefPoly.vertices[referenceIndex]);
 		
-		// Transform vertices to world space
+		// Трансформируем вектора к мировым координатам
 		// v1 = RefPoly->u * v1 + RefPoly->body->position;
 		// v2 = RefPoly->u * v2 + RefPoly->body->position;
 		RefPoly.rotateMatrix.mul (v1, v1);
@@ -89,7 +89,7 @@ public class CollisionPolygonPolygon implements CollisionCallback{
 		Vector2f refFaceNormal = new Vector2f (sidePlaneNormal.y, -sidePlaneNormal.x);
 		
 		// ax + by = c
-		// c is distance from origin
+		// c - расстояние от источника
 		// real refC = Dot( refFaceNormal, v1 );
 		// real negSide = -Dot( sidePlaneNormal, v1 );
 		// real posSide = Dot( sidePlaneNormal, v2 );
@@ -275,8 +275,6 @@ public class CollisionPolygonPolygon implements CollisionCallback{
 		// Assign our new converted values
 		face[0] = out[0];
 		face[1] = out[1];
-		
-		// assert( sp != 3 );
 		
 		return sp;
 	}

@@ -9,8 +9,8 @@ public class Polygon extends Shape{
 	public Vector2f[] vertices = Vector2f.arrayOf (MathPIE.MAX_POLY_VERTEX_COUNT);
 	public Vector2f[] normals = Vector2f.arrayOf (MathPIE.MAX_POLY_VERTEX_COUNT);
 	
-	private Vector2f tmpV = new Vector2f ();
-	private Vector2f tmpV2 = new Vector2f ();
+	public Vector2f tmpV = new Vector2f ();
+	public Vector2f tmpV2 = new Vector2f ();
 	
 	//TODO у меня правильно создаётся фигура, если ее вершина расставлять последовательно по часовой стрелке т.к. берется левая нормаль
 	//TODO реализовать поиск минимальной выпуклой оболочки (например алгоритм Грэхема)
@@ -62,39 +62,6 @@ public class Polygon extends Shape{
 		}
 		
 		return bestVertex;
-	}
-	
-	@Override
-	public void render (Graphics graphics){
-		if (World.getInstance ().onDebugDraw){
-			renderAABB (graphics);
-		}
-		graphics.setColor (Color.BLUE);
-		
-		for (int i = 0; i < vertexCount; i++){
-			tmpV.set (vertices[i]);
-			rotateMatrix.mul (tmpV, tmpV);
-			tmpV.add (body.position);
-			
-			tmpV2.set (vertices[(i + 1) % vertexCount]);
-			rotateMatrix.mul (tmpV2, tmpV2);
-			tmpV2.add (body.position);
-			graphics.drawLine ((int) tmpV.x, (int) tmpV.y, (int) tmpV2.x, (int) tmpV2.y);
-		}
-		
-		graphics.setColor (Color.RED);
-		tmpV.set (10f, 0f);
-		rotateMatrix.mul (tmpV, tmpV);
-		tmpV.add (body.position);
-		graphics.drawLine ((int) body.position.x, (int) body.position.y, (int) tmpV.x, (int) tmpV.y);
-		graphics.setColor (Color.GREEN);
-		tmpV.set (0f, 10f);
-		rotateMatrix.mul (tmpV, tmpV);
-		tmpV.add (body.position);
-		graphics.drawLine ((int) body.position.x, (int) body.position.y, (int) tmpV.x, (int) tmpV.y);
-		
-		
-		graphics.drawLine ((int) body.position.x, (int) body.position.y, (int) body.position.x, (int) body.position.y);
 	}
 	
 	@Override
@@ -150,13 +117,5 @@ public class Polygon extends Shape{
 		body.invertMass = (mass != 0f) ? 1f / mass : 0f;
 		float inertia = I * body.density;
 		body.invertInertia = (inertia != 0f) ? 1f / inertia : 0f;
-	}
-	
-	@Override
-	protected void renderAABB (Graphics graphics){
-		computeAABB ();
-		graphics.setColor (Color.GRAY);
-		graphics.drawRect ((int) aabb.min.x, (int) aabb.min.y, (int) (aabb.max.x - aabb.min.x),
-						   (int) (aabb.max.y - aabb.min.y));
 	}
 }

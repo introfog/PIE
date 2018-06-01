@@ -10,9 +10,9 @@ import java.util.*;
 public class World{
 	private int iterations = 1;
 	private float accumulator;
-	private LinkedList <Body> bodies;
+	public LinkedList <Body> bodies;
 	private LinkedList <Pair <Body, Body>> mayBeCollision;
-	private LinkedList <Manifold> collisions;
+	public LinkedList <Manifold> collisions;
 	private BroadPhase broadPhase;
 	
 	public boolean onDebugDraw = true;
@@ -22,6 +22,7 @@ public class World{
 	private void narrowPhase (){
 		amountMayBeCollisionBodies = mayBeCollision.size ();
 		
+		collisions.clear ();
 		mayBeCollision.forEach ((collision) -> {
 			if (collision.getKey ().invertMass != 0f || collision.getValue ().invertMass != 0f){
 				Manifold manifold = new Manifold (collision.getKey (), collision.getValue ());
@@ -64,7 +65,6 @@ public class World{
 		
 		//Clear all forces
 		bodies.forEach ((body) -> body.force.set (0f, 0f));
-		collisions.clear ();
 	}
 	
 	private void integrateForces (Body b){
@@ -116,10 +116,6 @@ public class World{
 			step (); //обновление физики всегда происходит через равный промежуток времени
 			accumulator -= MathPIE.FIXED_DELTA_TIME;
 		}
-	}
-	
-	public void draw (Graphics graphics){
-		bodies.forEach ((body) -> body.shape.render (graphics));
 	}
 	
 	public void addShape (Shape shape){

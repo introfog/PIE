@@ -26,11 +26,7 @@ public abstract class Shape{
 		rotateMatrix.setAngle (radian);
 	}
 	
-	public abstract void render (Graphics graphics);
-	
 	public abstract void computeAABB ();
 	
 	protected abstract void computeMass ();
-	
-	protected abstract void renderAABB (Graphics graphics);
 }

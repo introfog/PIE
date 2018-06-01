@@ -2,6 +2,7 @@ package com.introfog;
 
 import com.introfog.PIE.*;
 import com.introfog.PIE.Polygon;
+import com.introfog.PIE.Shape;
 import com.introfog.PIE.collisionDetection.BroadPhase;
 import com.introfog.PIE.math.*;
 
@@ -35,7 +36,8 @@ public class Display extends JPanel implements ActionListener{
 		//circle = new Circle (40f, 220f, 350f, MathPIE.STATIC_BODY_DENSITY, 0.2f);
 		//World.getInstance ().addShape (circle);
 		
-		
+		rectangle = Polygon.generateRectangle (350f, 440f, 300f, 20f, MathPIE.STATIC_BODY_DENSITY, 0.2f);
+		World.getInstance ().addShape (rectangle);
 		
 		World.getInstance ().setIterations (10);
 		
@@ -98,6 +100,71 @@ public class Display extends JPanel implements ActionListener{
 		timer -= deltaTime;
 	}
 	
+	private void draw (Graphics graphics){
+		World.getInstance ().bodies.forEach ((body) -> {
+			if (body.shape instanceof Polygon){
+				Polygon polygon = (Polygon) body.shape;
+				
+				if (World.getInstance ().onDebugDraw){ //рисвание AABB
+					polygon.computeAABB ();
+					graphics.setColor (Color.GRAY);
+					graphics.drawRect ((int) polygon.aabb.min.x, (int) polygon.aabb.min.y,
+									   (int) (polygon.aabb.max.x - polygon.aabb.min.x),
+									   (int) (polygon.aabb.max.y - polygon.aabb.min.y));
+				}
+				
+				graphics.setColor (Color.BLUE);
+				
+				for (int i = 0; i < polygon.vertexCount; i++){
+					polygon.tmpV.set (polygon.vertices[i]);
+					polygon.rotateMatrix.mul (polygon.tmpV, polygon.tmpV);
+					polygon.tmpV.add (body.position);
+					
+					polygon.tmpV2.set (polygon.vertices[(i + 1) % polygon.vertexCount]);
+					polygon.rotateMatrix.mul (polygon.tmpV2, polygon.tmpV2);
+					polygon.tmpV2.add (body.position);
+					graphics.drawLine ((int) polygon.tmpV.x, (int) polygon.tmpV.y, (int) polygon.tmpV2.x, (int) polygon.tmpV2.y);
+				}
+				
+				graphics.drawLine ((int) body.position.x, (int) body.position.y, (int) body.position.x, (int) body.position.y);
+			}
+			else if (body.shape instanceof Circle){
+				Circle circle = (Circle) body.shape;
+				
+				if (World.getInstance ().onDebugDraw){ //рисвание AABB
+					circle.computeAABB ();
+					graphics.setColor (Color.GRAY);
+					graphics.drawRect ((int) circle.aabb.min.x, (int) circle.aabb.min.y,
+									   (int) (circle.aabb.max.x - circle.aabb.min.x),
+									   (int) (circle.aabb.max.y - circle.aabb.min.y));
+				}
+				graphics.setColor (Color.RED);
+				graphics.drawLine ((int) body.position.x, (int) body.position.y,
+								   (int) body.position.x, (int) body.position.y);
+				graphics.drawLine ((int) body.position.x, (int) body.position.y,
+								   (int) (body.position.x + circle.radius * Math.cos (body.orientation)),
+								   (int) (body.position.y + circle.radius * Math.sin (body.orientation)));
+				graphics.drawOval ((int) (body.position.x - circle.radius), (int) (body.position.y - circle.radius),
+								   (int) circle.radius * 2, (int) circle.radius * 2);
+			}
+		});
+		
+		
+		if (World.getInstance ().onDebugDraw){ //рисвание нормалей к точкам касания в коллизии
+			graphics.setColor (Color.GREEN);
+			World.getInstance ().collisions.forEach ((collision) -> {
+				for (int i = 0; i < collision.contactCount; i++){
+					graphics.drawLine ((int) collision.contacts[i].x, (int) collision.contacts[i].y,
+									   (int) (collision.contacts[i].x + collision.normal.x * 10),
+									   (int) (collision.contacts[i].y + collision.normal.y * 10));
+					graphics.drawLine ((int) collision.contacts[i].x + 1, (int) collision.contacts[i].y + 1,
+									   (int) (collision.contacts[i].x + collision.normal.x * 10 + 1),
+									   (int) (collision.contacts[i].y + collision.normal.y * 10 + 1));
+				}
+			});
+		}
+	}
+	
 	
 	public Display (){
 		Timer timer = new Timer (0, this);
@@ -132,15 +199,15 @@ public class Display extends JPanel implements ActionListener{
 		
 		g.drawString ("FPS: " + (int) (1 / deltaTime), 2, 12);
 		g.drawString ("Bodies: " + World.getInstance ().getAmountBodies (), 2, 24);
-		g.drawString ("Version: 0.2.0 without some collision", 2, 36);
+		g.drawString ("Version: 1.0", 2, 36);
 		
-		testProductivity ();
+		//testProductivity ();
 		//testBodiesPenetration ();
 		
 		//rectangle.setOrientation (rectangle.body.orientation + 0.001f);
 		
 		World.getInstance ().update (deltaTime);
-		World.getInstance ().draw (g);
+		draw (g);
 	}
 	
 	@Override
