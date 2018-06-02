@@ -2,8 +2,6 @@ package com.introfog.PIE;
 
 import com.introfog.PIE.math.*;
 
-import java.awt.*;
-
 public class Polygon extends Shape{
 	public int vertexCount;
 	public Vector2f[] vertices = Vector2f.arrayOf (MathPIE.MAX_POLY_VERTEX_COUNT);
@@ -16,9 +14,25 @@ public class Polygon extends Shape{
 	//TODO реализовать поиск минимальной выпуклой оболочки (например алгоритм Грэхема)
 	public Polygon (float density, float restitution, float centreX, float centreY, Vector2f... vertices){
 		body = new Body (this, centreX, centreY, density, restitution);
-		aabb = new AABB ();
 		
 		vertexCount = vertices.length;
+		
+		//находим самую верхнюю и правую координату, она станет стартовой точкой, и точно принадлежит МВО (мин. выпукл. оболочке)
+		tmpV.y = Float.MAX_VALUE;
+		tmpV.x = Float.MAX_VALUE;
+		for (int i = 0; i < vertexCount; i++){
+			if (tmpV.y < vertices[i].y){
+				tmpV.set (vertices[i]);
+			}
+			else if (tmpV.y == vertices[i].y){
+				if (tmpV.x > vertices[i].x){
+					tmpV.set (vertices[i]);
+				}
+			}
+		}
+		
+		
+		
 		for (int i = 0; i < vertexCount; i++){
 			this.vertices[i].set (vertices[i]);
 		}
@@ -48,6 +62,7 @@ public class Polygon extends Shape{
 	}
 	
 	public Vector2f getSupport (Vector2f dir){
+		//Ищем самую удаленную точку в заданном направлении
 		float bestProjection = -Float.MAX_VALUE;
 		Vector2f bestVertex = new Vector2f ();
 		
@@ -70,7 +85,7 @@ public class Polygon extends Shape{
 		aabb.min.y = Float.MAX_VALUE;
 		
 		aabb.max.x = -Float.MAX_VALUE;
-		aabb.max.y = -Float.MIN_VALUE;
+		aabb.max.y = -Float.MAX_VALUE;
 		for (int i = 0; i < vertexCount; i++){
 			tmpV.set (vertices[i]);
 			rotateMatrix.mul (tmpV, tmpV);
@@ -108,9 +123,9 @@ public class Polygon extends Shape{
 			
 			area += triangleArea;
 			
-			float intx2 = p1.x * p1.x + p2.x * p1.x + p2.x * p2.x;
-			float inty2 = p1.y * p1.y + p2.y * p1.y + p2.y * p2.y;
-			I += (0.25f * k_inv3 * D) * (intx2 + inty2);
+			float intX2 = p1.x * p1.x + p2.x * p1.x + p2.x * p2.x;
+			float intY2 = p1.y * p1.y + p2.y * p1.y + p2.y * p2.y;
+			I += (0.25f * k_inv3 * D) * (intX2 + intY2);
 		}
 		
 		float mass = body.density * area;

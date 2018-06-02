@@ -4,19 +4,18 @@ import com.introfog.PIE.collisionDetection.BroadPhase;
 import com.introfog.PIE.math.MathPIE;
 import javafx.util.Pair;
 
-import java.awt.*;
 import java.util.*;
 
 public class World{
-	private int iterations = 1;
 	private float accumulator;
-	public LinkedList <Body> bodies;
 	private LinkedList <Pair <Body, Body>> mayBeCollision;
-	public LinkedList <Manifold> collisions;
 	private BroadPhase broadPhase;
 	
 	public boolean onDebugDraw = true;
+	public int iterations = 1;
 	public int amountMayBeCollisionBodies = 0;
+	public LinkedList <Manifold> collisions;
+	public LinkedList <Body> bodies;
 	
 	
 	private void narrowPhase (){
@@ -125,9 +124,5 @@ public class World{
 	
 	public int getAmountBodies (){
 		return bodies.size ();
-	}
-	
-	public void setIterations (int iterations){
-		this.iterations = iterations;
 	}
 }

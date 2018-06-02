@@ -2,8 +2,6 @@ package com.introfog.PIE;
 
 import com.introfog.PIE.math.MathPIE;
 
-import java.awt.*;
-
 public class Circle extends Shape{
 	public float radius;
 	

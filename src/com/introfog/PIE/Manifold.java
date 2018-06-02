@@ -57,6 +57,11 @@ public class Manifold{
 		
 		Collisions.table[a.shape.type.ordinal ()][b.shape.type.ordinal ()].handleCollision (this);
 		
+		
+		//Статическое трение - величина, показывающая сколько нужно приложить энергии что бы свдинуть тела, т.е. это
+		//порог, если энергия ниже, то тела покоятся, если выше, то они сдвинулись
+		//Динамическое трение - трение в обычном понимании, когда тела труться друг об друга, они теряют часть своей
+		//энергии друг об друга
 		staticFriction = (float) StrictMath.sqrt (
 				a.staticFriction * a.staticFriction + b.staticFriction * b.staticFriction);
 		dynamicFriction = (float) StrictMath.sqrt (
@@ -155,38 +160,14 @@ public class Manifold{
 				return;
 			}
 			
-			/*//Вычисляем Мю,
-			float Mu = (float) Math.sqrt (a.staticFriction * a.staticFriction + b.staticFriction * b.staticFriction);
-			//Статическое трение - величина, показывающая сколько нужно приложить энергии что бы свдинуть тела, т.е. это
-			//порог, если энергия ниже, то тела покоятся, если выше, то они сдвинулись
-			//Динамическое трение - трение в обычном понимании, когда тела труться друг об друга, они теряют часть своей
-			//энергии друг об друга
-			
 			Vector2f frictionImpulse;
-			if (Math.abs (
-					jt) < j * Mu){ //Закон Амонтона — Кулона (если велечина j слишком маленькая, то тела должны покояться)
+			if (Math.abs (jt) < j * staticFriction){
+				//Закон Амонтона — Кулона (если велечина j слишком маленькая, то тела должны покояться)
 				frictionImpulse = Vector2f.mul (t, jt);
 			}
 			else{
-				float dynamicFriction = (float) Math.sqrt (
-						a.dynamicFriction * a.dynamicFriction + b.dynamicFriction * b.dynamicFriction);
 				frictionImpulse = Vector2f.mul (t, -j * dynamicFriction);
-			}*/
-			
-			// Coulumb's law
-			Vector2f frictionImpulse = new Vector2f ();
-			// if(std::abs( jt ) < j * sf)
-			if (Math.abs (jt) < j * staticFriction){
-				// frictionImpulse = t * jt;
-				t.mul (jt);
-				frictionImpulse.set (t);
 			}
-			else{
-				// frictionImpulse = t * -j * df;
-				t.mul (-j * dynamicFriction);
-				frictionImpulse.set (t);
-			}
-			
 			
 			//Пркладываем
 			b.applyImpulse (frictionImpulse, radB);
@@ -199,11 +180,6 @@ public class Manifold{
 		if (penetration < MathPIE.MIN_BORDER_SLOP){
 			return;
 		}
-		
-		if (penetration < 0f){
-			System.out.println ("ERROR! Penetration < 0!");
-		}
-		
 		Vector2f correction = Vector2f.mul (normal,
 											penetration * MathPIE.CORRECT_POSITION_PERCENT / (a.invertMass + b.invertMass));
 		a.position.sub (Vector2f.mul (correction, a.invertMass));
