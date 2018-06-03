@@ -10,38 +10,78 @@ public class Polygon extends Shape{
 	public Vector2f tmpV = new Vector2f ();
 	public Vector2f tmpV2 = new Vector2f ();
 	
-	//TODO у меня правильно создаётся фигура, если ее вершина расставлять последовательно по часовой стрелке т.к. берется левая нормаль
-	//TODO реализовать поиск минимальной выпуклой оболочки (например алгоритм Грэхема)
+	//TODO поиск минимальной выпуклой оболочки (Джарвис) работает за O(n*h) где h-кол-во вершин в МВО
 	public Polygon (float density, float restitution, float centreX, float centreY, Vector2f... vertices){
 		body = new Body (this, centreX, centreY, density, restitution);
 		
-		vertexCount = vertices.length;
-		
-		//находим самую верхнюю и правую координату, она станет стартовой точкой, и точно принадлежит МВО (мин. выпукл. оболочке)
-		tmpV.y = Float.MAX_VALUE;
-		tmpV.x = Float.MAX_VALUE;
-		for (int i = 0; i < vertexCount; i++){
-			if (tmpV.y < vertices[i].y){
+		//Алгоритм Джарвиса построения минимальной выпуклой оболочки
+		//находим самую нижнюю и правую координату, она станет стартовой точкой, и точно принадлежит МВО (мин. выпукл. оболочке)
+		tmpV.set (vertices[0]);
+		int rightMost = -1;
+		for (int i = 0; i < vertices.length; i++){
+			if (vertices[i].x > tmpV.x){
 				tmpV.set (vertices[i]);
+				rightMost = i;
 			}
-			else if (tmpV.y == vertices[i].y){
-				if (tmpV.x > vertices[i].x){
-					tmpV.set (vertices[i]);
+			else if (tmpV.x == vertices[i].x && tmpV.y > vertices[i].y){
+				tmpV.set (vertices[i]);
+				rightMost = i;
+			}
+		}
+		
+		int[] hull = new int[MathPIE.MAX_POLY_VERTEX_COUNT];
+		int outCount = 0;
+		int indexHull = rightMost;
+		
+		for (; ; ){
+			hull[outCount] = indexHull;
+			
+			//ищем вершину, с самым большим углом против часовой стрелки, от текущей
+			//(считаем угол через векторное произведение)
+			int nextHullIndex = 0;
+			for (int i = 1; i < vertices.length; ++i){
+				//пропускаем одинаковые вершины, т.к. нам нужны уникальные вершины в треугольнике
+				if (nextHullIndex == indexHull){
+					nextHullIndex = i;
+					continue;
+				}
+				//перебираем все треугольника, ища самую крайнюю вершину
+				tmpV.set (vertices[nextHullIndex]);
+				tmpV.sub (vertices[hull[outCount]]);
+				
+				tmpV2.set (vertices[i]);
+				tmpV2.sub (vertices[hull[outCount]]);
+				float c = Vector2f.crossProduct (tmpV, tmpV2);
+				if (c < 0.0f){
+					nextHullIndex = i;
+				}
+				//если векторное произведение равно 0, то они лежат на одной прямой, и нам нужна вершина
+				//самая удаленная от заданой
+				if (c == 0.0f && tmpV2.lengthWithoutSqrt () > tmpV.lengthWithoutSqrt ()){
+					nextHullIndex = i;
 				}
 			}
+			
+			outCount++;
+			indexHull = nextHullIndex;
+			
+			//когда дошли до стартойо вершины, алгоритм Джарвиса закончен
+			if (nextHullIndex == rightMost){
+				vertexCount = outCount;
+				break;
+			}
 		}
-		
 		
 		
 		for (int i = 0; i < vertexCount; i++){
-			this.vertices[i].set (vertices[i]);
+			this.vertices[i].set (vertices[hull[i]]);
 		}
 		
-		for (int i = 0; i < vertexCount; ++i){
-			tmpV.set (vertices[(i + 1) % vertexCount]);
-			tmpV.sub (vertices[i]);
+		for (int i = 0; i < vertexCount; i++){
+			tmpV.set (this.vertices[(i + 1) % vertexCount]);
+			tmpV.sub (this.vertices[i]);
 			
-			normals[i].set (tmpV.y, -tmpV.x); //берем левую нормаль
+			normals[i].set (tmpV.y, -tmpV.x); //берем правую нормаль
 			normals[i].normalize ();
 		}
 		

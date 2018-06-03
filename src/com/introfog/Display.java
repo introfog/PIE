@@ -32,18 +32,18 @@ public class Display extends JPanel implements ActionListener{
 	
 	
 	private void initializeBodies (){
-		//Circle circle;
-		//circle = new Circle (40f, 220f, 350f, MathPIE.STATIC_BODY_DENSITY, 0.2f);
-		//World.getInstance ().addShape (circle);
+		Circle circle;
+		circle = new Circle (40f, 220f, 350f, MathPIE.STATIC_BODY_DENSITY, 0.2f);
+		World.getInstance ().addShape (circle);
 		
 		rectangle = Polygon.generateRectangle (350f, 440f, 300f, 20f, MathPIE.STATIC_BODY_DENSITY, 0.2f);
 		World.getInstance ().addShape (rectangle);
 		
 		World.getInstance ().iterations = 10;
 		
-		/*Vector2f[] vertices = {new Vector2f (20f, -20f), new Vector2f (40f, 20f), new Vector2f (0f, 60f), new Vector2f (-60f, 40f), new Vector2f (-40f, 0f)};
+		Vector2f[] vertices = {new Vector2f (20f, -20f), new Vector2f (40f, 20f), new Vector2f (0f, 60f), new Vector2f (-60f, 40f), new Vector2f (-40f, 0f), new Vector2f (0f, 0f)};
 		Polygon polygon = new Polygon (MathPIE.STATIC_BODY_DENSITY, 0.2f, 200f, 100f, vertices);
-		World.getInstance ().addShape (polygon);*/
+		World.getInstance ().addShape (polygon);
 		
 		
 		//circle = new Circle (30f, 580f, 400f, MathPIE.STATIC_BODY_DENSITY, 0.4f);
