@@ -1,7 +1,9 @@
 package com.introfog.PIE.collisionDetection;
 
 import com.introfog.PIE.*;
+import com.introfog.PIE.Body;
 import com.introfog.PIE.math.MathPIE;
+
 import javafx.util.Pair;
 
 import java.util.*;
@@ -10,7 +12,7 @@ public class SpatialHash{
 	private int cellSize;
 	private HashMap <Integer, LinkedList <Body>> cells;
 	private HashMap <Body, LinkedList <Integer>> objects;
-	LinkedHashSet <Pair <Body, Body>> collisionPairSet;
+	private LinkedHashSet <Pair <Body, Body>> collisionPairSet;
 	
 	
 	private int GenerateKey (float x, float y){

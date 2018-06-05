@@ -169,8 +169,7 @@ public class CollisionPolygonPolygon implements CollisionCallback{
 			Vector2f s = B.getSupport (n);
 			n.negative ();
 			
-			// Retrieve vertex on face from A, transform into
-			// B's model space
+			//переводим грань А, в локальные координаты B
 			// Vec2 v = A->m_vertices[i];
 			// v = A->u * v + A->body->position;
 			// v -= B->body->position;
@@ -181,11 +180,11 @@ public class CollisionPolygonPolygon implements CollisionCallback{
 			v.sub (B.body.position);
 			B.rotateMatrix.transposeMul (v, v);
 			
-			// Compute penetration distance (in B's model space)
+			//Высчитываем проникновение (в локальных координатах B)
 			// real d = Dot( n, s - v );
 			float d = Vector2f.dotProduct (n, Vector2f.sub (s, v));
 			
-			// Store greatest distance
+			//Запоминаем лучшее проникновение
 			if (d > bestDistance){
 				bestDistance = d;
 				bestIndex = i;
@@ -278,5 +277,4 @@ public class CollisionPolygonPolygon implements CollisionCallback{
 		
 		return sp;
 	}
-	
 }

@@ -2,8 +2,6 @@ package com.introfog.PIE;
 
 import com.introfog.PIE.math.Mat22;
 
-import java.awt.*;
-
 public abstract class Shape{
 	public enum Type{
 		circle, polygon
