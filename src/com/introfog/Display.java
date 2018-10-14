@@ -8,6 +8,7 @@ import com.introfog.PIE.math.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+
 import java.io.*;
 
 import javax.swing.JPanel;
@@ -35,28 +36,11 @@ public class Display extends JPanel implements ActionListener{
 		/*circle = new Circle (40f, 220f, 350f, MathPIE.STATIC_BODY_DENSITY, 0.2f);
 		World.getInstance ().addShape (circle);*/
 		
-		rectangle = Polygon.generateRectangle (450f, 560f, 300f, 20f, MathPIE.STATIC_BODY_DENSITY, 0.2f);
-		rectangle.setOrientation ((float) -Math.PI / 16f);
-		World.getInstance ().addShape (rectangle);
-		
-		rectangle = Polygon.generateRectangle (200f, 530f, 400f, 20f, MathPIE.STATIC_BODY_DENSITY, 0.2f);
-		rectangle.setOrientation ((float) Math.PI / 16f);
-		World.getInstance ().addShape (rectangle);
-		
 		demoPIE ();
 		
 		/*Vector2f[] vertices = {new Vector2f (20f, -20f), new Vector2f (40f, 20f), new Vector2f (0f, 60f), new Vector2f (-60f, 40f), new Vector2f (-40f, 0f), new Vector2f (0f, 0f)};
 		polygon = new Polygon (MathPIE.STATIC_BODY_DENSITY, 0.2f, 470f, 400f, vertices);
 		World.getInstance ().addShape (polygon);*/
-		
-		circle = new Circle (30f, 400f, 450f, MathPIE.STATIC_BODY_DENSITY, 0.2f);
-		World.getInstance ().addShape (circle);
-		
-		rectangle = Polygon.generateRectangle (400f, 410f, 300f, 20f, 1f, 0.2f);
-		World.getInstance ().addShape (rectangle);
-		
-		circle = new Circle (10f, 530f, 395f, 1.f, 0.2f);
-		World.getInstance ().addShape (circle);
 	}
 	
 	private void testProductivity (){
@@ -103,7 +87,27 @@ public class Display extends JPanel implements ActionListener{
 		timer -= deltaTime;
 	}
 	
-	private void demoPIE (){
+	public static void demoPIE (){
+		Polygon rectangle;
+		Circle circle;
+		Polygon polygon;
+		
+		Vector2f[] vertices5 = {new Vector2f (20f, -20f), new Vector2f (40f, 20f), new Vector2f (0f, 60f), new Vector2f (-60f, 40f), new Vector2f (-40f, 0f), new Vector2f (0f, 0f)};
+		polygon = new Polygon (MathPIE.STATIC_BODY_DENSITY, 0.2f, 515f, 470f, vertices5);
+		polygon.setOrientation ((float) -Math.PI / 16f);
+		World.getInstance ().addShape (polygon);
+		
+		rectangle = Polygon.generateRectangle (450f, 540f, 220f, 20f, MathPIE.STATIC_BODY_DENSITY, 0.2f);
+		rectangle.setOrientation ((float) -Math.PI / 16f);
+		World.getInstance ().addShape (rectangle);
+		
+		rectangle = Polygon.generateRectangle (200f, 530f, 235f, 20f, MathPIE.STATIC_BODY_DENSITY, 0.2f);
+		rectangle.setOrientation ((float) Math.PI / 18f);
+		World.getInstance ().addShape (rectangle);
+		
+		
+		
+		
 		rectangle = Polygon.generateRectangle (200f, 100f, 20f, 160f, 1f, 0.2f);
 		World.getInstance ().addShape (rectangle);
 		
@@ -140,6 +144,17 @@ public class Display extends JPanel implements ActionListener{
 		Vector2f[] vertices4 = {new Vector2f (-30f, -10f), new Vector2f (30f, -10f), new Vector2f (30f, 0f), new Vector2f (20f, 10f), new Vector2f (-30f, 10f)};
 		polygon = new Polygon (1f, 0.2f, 420f, 170f, vertices4);
 		World.getInstance ().addShape (polygon);
+		
+		
+		
+		circle = new Circle (30f, 400f, 450f, MathPIE.STATIC_BODY_DENSITY, 0.2f);
+		World.getInstance ().addShape (circle);
+		
+		rectangle = Polygon.generateRectangle (400f, 410f, 300f, 20f, 1f, 0.2f);
+		World.getInstance ().addShape (rectangle);
+		
+		circle = new Circle (10f, 530f, 395f, 1.f, 0.2f);
+		World.getInstance ().addShape (circle);
 	}
 	
 	private void draw (Graphics graphics){
@@ -247,7 +262,6 @@ public class Display extends JPanel implements ActionListener{
 		//testProductivity ();
 		//testBodiesPenetration ();
 		//rectangle.setOrientation (rectangle.body.orientation + 0.001f);
-		//polygon.setOrientation (polygon.body.orientation + 0.001f);
 		
 		World.getInstance ().update (deltaTime);
 		draw (g);
