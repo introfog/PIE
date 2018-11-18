@@ -15,9 +15,8 @@ import javax.swing.JPanel;
 import javax.swing.Timer;
 
 public class Display extends JPanel implements ActionListener{
-	private boolean isFirstUpdate = true;
 	private float deltaTime;
-	private long previousTime = 0L;
+	private long previousTime;
 	
 	private float TIMER = 0.05f;
 	private float timer = TIMER;
@@ -33,14 +32,12 @@ public class Display extends JPanel implements ActionListener{
 	
 	
 	private void initializeBodies (){
-		/*circle = new Circle (40f, 220f, 350f, MathPIE.STATIC_BODY_DENSITY, 0.2f);
-		World.getInstance ().addShape (circle);*/
+		circle = new Circle (40f, 220f, 350f, MathPIE.STATIC_BODY_DENSITY, 0.2f);
+		World.getInstance ().addShape (circle);
 		
-		demoPIE ();
-		
-		/*Vector2f[] vertices = {new Vector2f (20f, -20f), new Vector2f (40f, 20f), new Vector2f (0f, 60f), new Vector2f (-60f, 40f), new Vector2f (-40f, 0f), new Vector2f (0f, 0f)};
+		Vector2f[] vertices = {new Vector2f (20f, -20f), new Vector2f (40f, 20f), new Vector2f (0f, 60f), new Vector2f (-60f, 40f), new Vector2f (-40f, 0f), new Vector2f (0f, 0f)};
 		polygon = new Polygon (MathPIE.STATIC_BODY_DENSITY, 0.2f, 470f, 400f, vertices);
-		World.getInstance ().addShape (polygon);*/
+		World.getInstance ().addShape (polygon);
 	}
 	
 	private void testProductivity (){
@@ -85,76 +82,6 @@ public class Display extends JPanel implements ActionListener{
 			World.getInstance ().addShape (rectangle);
 		}
 		timer -= deltaTime;
-	}
-	
-	public static void demoPIE (){
-		Polygon rectangle;
-		Circle circle;
-		Polygon polygon;
-		
-		Vector2f[] vertices5 = {new Vector2f (20f, -20f), new Vector2f (40f, 20f), new Vector2f (0f, 60f), new Vector2f (-60f, 40f), new Vector2f (-40f, 0f), new Vector2f (0f, 0f)};
-		polygon = new Polygon (MathPIE.STATIC_BODY_DENSITY, 0.2f, 515f, 470f, vertices5);
-		polygon.setOrientation ((float) -Math.PI / 16f);
-		World.getInstance ().addShape (polygon);
-		
-		rectangle = Polygon.generateRectangle (450f, 540f, 220f, 20f, MathPIE.STATIC_BODY_DENSITY, 0.2f);
-		rectangle.setOrientation ((float) -Math.PI / 16f);
-		World.getInstance ().addShape (rectangle);
-		
-		rectangle = Polygon.generateRectangle (200f, 530f, 235f, 20f, MathPIE.STATIC_BODY_DENSITY, 0.2f);
-		rectangle.setOrientation ((float) Math.PI / 18f);
-		World.getInstance ().addShape (rectangle);
-		
-		
-		
-		
-		rectangle = Polygon.generateRectangle (200f, 100f, 20f, 160f, 1f, 0.2f);
-		World.getInstance ().addShape (rectangle);
-		
-		Vector2f[] vertices = {new Vector2f (-30f, -10f), new Vector2f (20f, -10f), new Vector2f (30f, 0f), new Vector2f (30f, 10f), new Vector2f (-30f, 10f)};
-		polygon = new Polygon (1f, 0.2f, 240f, 30f, vertices);
-		World.getInstance ().addShape (polygon);
-		
-		rectangle = Polygon.generateRectangle (260f, 60f, 20f, 40f, 1f, 0.2f);
-		World.getInstance ().addShape (rectangle);
-		
-		Vector2f[] vertices2 = {new Vector2f (-30f, -10f), new Vector2f (30f, -10f), new Vector2f (30f, 0f), new Vector2f (20f, 10f), new Vector2f (-30f, 10f)};
-		polygon = new Polygon (1f, 0.2f, 240f, 90f, vertices2);
-		World.getInstance ().addShape (polygon);
-		
-		rectangle = Polygon.generateRectangle (320f, 30f, 60f, 20f, 1f, 0.2f);
-		World.getInstance ().addShape (rectangle);
-		
-		rectangle = Polygon.generateRectangle (320f, 100f, 20, 120f, 1f, 0.2f);
-		World.getInstance ().addShape (rectangle);
-		
-		rectangle = Polygon.generateRectangle (320f, 170f, 60f, 20f, 1f, 0.2f);
-		World.getInstance ().addShape (rectangle);
-		
-		rectangle = Polygon.generateRectangle (380f, 100f, 20f, 160f, 1f, 0.2f);
-		World.getInstance ().addShape (rectangle);
-		
-		rectangle = Polygon.generateRectangle (405f, 100f, 30f, 20f, 1f, 0.2f);
-		World.getInstance ().addShape (rectangle);
-		
-		Vector2f[] vertices3 = {new Vector2f (-30f, -10f), new Vector2f (20f, -10f), new Vector2f (30f, 0f), new Vector2f (30f, 10f), new Vector2f (-30f, 10f)};
-		polygon = new Polygon (1f, 0.2f, 420f, 30f, vertices3);
-		World.getInstance ().addShape (polygon);
-		
-		Vector2f[] vertices4 = {new Vector2f (-30f, -10f), new Vector2f (30f, -10f), new Vector2f (30f, 0f), new Vector2f (20f, 10f), new Vector2f (-30f, 10f)};
-		polygon = new Polygon (1f, 0.2f, 420f, 170f, vertices4);
-		World.getInstance ().addShape (polygon);
-		
-		
-		
-		circle = new Circle (30f, 400f, 450f, MathPIE.STATIC_BODY_DENSITY, 0.2f);
-		World.getInstance ().addShape (circle);
-		
-		rectangle = Polygon.generateRectangle (400f, 410f, 300f, 20f, 1f, 0.2f);
-		World.getInstance ().addShape (rectangle);
-		
-		circle = new Circle (10f, 530f, 395f, 1.f, 0.2f);
-		World.getInstance ().addShape (circle);
 	}
 	
 	private void draw (Graphics graphics){
@@ -230,6 +157,7 @@ public class Display extends JPanel implements ActionListener{
 		
 		initializeBodies ();
 		World.getInstance ().iterations = 10;
+		previousTime = System.nanoTime ();
 		
 		try{
 			out = new PrintWriter (new FileWriter (".\\tests\\Test something.txt"));
@@ -240,12 +168,6 @@ public class Display extends JPanel implements ActionListener{
 	}
 	
 	public void paint (Graphics g){
-		if (isFirstUpdate){
-			isFirstUpdate = false;
-			previousTime = System.nanoTime ();
-			return;
-		}
-		
 		long currentTime = System.nanoTime ();
 		deltaTime = (currentTime - previousTime) / 1_000_000_000f;
 		previousTime = currentTime;
@@ -257,7 +179,7 @@ public class Display extends JPanel implements ActionListener{
 		
 		g.drawString ("FPS: " + (int) (1 / deltaTime), 2, 12);
 		g.drawString ("Bodies: " + World.getInstance ().getAmountBodies (), 2, 24);
-		g.drawString ("Version: 1.0", 2, 36);
+		g.drawString ("Version: 0.2", 2, 36);
 		
 		//testProductivity ();
 		//testBodiesPenetration ();
